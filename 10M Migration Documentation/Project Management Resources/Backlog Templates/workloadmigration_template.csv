@@ -1,2 +1,0 @@
-Workload Name,Server Name,IP,Environment,Cutover Date,Server OS,Migration Target,Description
-Example,Server01,10.0.0.1,PROD,3/19/2020,Windows Server 2016,,Some server
