@@ -1,0 +1,76 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "virtualNetworkName": {
+      "type": "string"
+    },
+    "subnetName": {
+      "type": "string"
+    },
+    "VNetResourceGroupName": {
+      "type": "string"
+    },
+    "subnetAddress": {
+      "type": "string"
+    },
+    "vnetAddress": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    }
+  },
+  "variables": {
+    "vnetId": "[resourceId(parameters('VNetResourceGroupName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('name')]",
+      "type": "Microsoft.Web/hostingEnvironments",
+      "apiVersion": "2015-02-01",
+      "location": "[parameters('location')]",
+      "kind": "[parameters('kind')]",
+      "properties": {
+        "name": "[parameters('name')]",
+        "location": "[parameters('location')]",
+        "VirtualNetwork": {
+          "Id": "[variables('vnetId')]",
+          "type": "Microsoft.Network/virtualNetworks",
+          "Subnet": "[parameters('subnetName')]"
+        }
+      }
+    }
+  ]
+}

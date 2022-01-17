@@ -1,0 +1,9 @@
+all:
+  hosts:
+    vm-1804lts:
+      ansible_connection: ssh
+      ansible_host: 10.252.56.28
+  vars:
+    ansible_ssh_user: cloudadmin
+    ansible_ssh_pass: {{ adminPassword }}
+    ansible_sudo_pass: {{ adminPassword }}

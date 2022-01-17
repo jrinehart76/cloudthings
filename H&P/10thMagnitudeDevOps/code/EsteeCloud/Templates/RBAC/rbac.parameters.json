@@ -1,0 +1,12 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "principalId": {
+        "value": "6287d023-281b-42b8-929a-c29ba2b231ec"
+      },
+      "builtInRoleType": {
+        "value": "Reader"
+      }
+    }
+  }

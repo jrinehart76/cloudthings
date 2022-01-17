@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "value": "test-Databrick02"
+    },
+    "customPublicSubnetName": {
+      "value": "databrick-public2"
+    },
+    "customPrivateSubnetName": {
+      "value": "databrick-private2"
+    },
+    "location": {
+      "value": "East US"
+    },
+    "virtualNetworkName": {
+      "value": "test-vnet"
+    },
+    "vnetResourceGroupName": {
+      "value": "test-vnet"
+    }
+  }
+}

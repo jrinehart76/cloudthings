@@ -1,0 +1,166 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ilbName": {
+            "type": "string"
+        },
+        "virtualNetworkRGName": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "frontEndName": {
+            "type": "string"
+        },
+        "frontEndSubnetName": {
+            "type": "string"
+        },
+        "frontEndIp": {
+            "type": "string"
+        },
+        "backendPoolName": {
+            "type": "string"
+        },
+        "lbRuleName": {
+            "type": "string"
+        },
+        "lbFrontEndPort": {
+            "type": "int"
+        },
+        "lbBackEndPort": {
+            "type": "int"
+        },
+        "lbProtocol": {
+            "type": "string"
+        },
+        "probeName": {
+            "type": "string"
+        },
+        "probeProtocol": {
+            "type": "string"
+        },
+        "probePort": {
+            "type": "int"
+        },
+        "virtualMachines": {
+            "type": "array"
+        },
+        "tags": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "vnetId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[parameters('ilbName')]",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('tags')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[parameters('frontEndName')]",
+                        "properties": {
+                            "privateIPAddress": "[parameters('frontEndIp')]",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[concat(variables('vnetId'), '/subnets/', parameters('frontEndSubnetName'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[parameters('backendPoolName')]"
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "[parameters('lbRuleName')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('ilbName')), '/frontendIpConfigurations/', parameters('frontEndName'))]"
+                            },
+                            "frontendPort": "[parameters('lbFrontEndPort')]",
+                            "backendPort": "[parameters('lbBackEndPort')]",
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "[parameters('lbProtocol')]",
+                            "loadDistribution": "Default",
+                            "disableOutboundSnat": false,
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('ilbName')), '/backendAddressPools/', parameters('backendPoolName'))]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('ilbName')), '/probes/', parameters('probeName'))]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "[parameters('probeName')]",
+                        "properties": {
+                            "protocol": "[parameters('probeProtocol')]",
+                            "port": "[parameters('probePort')]",
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ],
+                "inboundNatRules": [],
+                "outboundNatRules": [],
+                "inboundNatPools": []
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('virtualMachines')[copyIndex()].nic.name]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[length(parameters('virtualMachines'))]"
+            },
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[parameters('virtualMachines')[copyIndex()].nic.ipConfigurationName]",
+                        "properties": {
+                            "privateIPAddress": "[parameters('virtualMachines')[copyIndex()].nic.ipAddress]",
+                            "privateIPAllocationMethod": "[parameters('virtualMachines')[copyIndex()].nic.ipAllocationMethod]",
+                            "subnet": {
+                                "id": "[concat(variables('vnetId'), '/subnets/', parameters('virtualMachines')[copyIndex()].nic.subnetName)]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('ilbName')), '/backendAddressPools/', parameters('backendPoolName'))]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": "[parameters('virtualMachines')[copyIndex()].nic.enableAcceleratedNetworking]",
+                "enableIPForwarding": "[parameters('virtualMachines')[copyIndex()].nic.enableIPForwarding]",
+                "primary": "[parameters('virtualMachines')[copyIndex()].nic.primaryNIC]",
+                "virtualMachine": {
+                    "id": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines')[copyIndex()].name)]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/loadBalancers', parameters('ilbName'))]"
+            ]
+        }
+    ]
+}

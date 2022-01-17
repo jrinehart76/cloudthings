@@ -1,0 +1,152 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "numberOfInstances": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "The number of instances per plan"
+      }
+    },
+    "newStorageAccountTier": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "The tier of the storage account for the ML workspace"
+      }
+    },
+    "newStorageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "The tier of the storage account for the ML workspace"
+      }
+    },
+    "ownerEmail": {
+      "type": "string",
+      "defaultValue": "example@organization.com",
+      "metadata": {
+        "description": "The tier of the storage account for the ML workspace"
+      }
+    },
+    "skuName": {
+      "type": "string",
+      "allowedValues": [
+        "DevTest",
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "metadata": {
+        "description": "The particular sku of the ML workspace tier"
+      }
+    },
+    "skuTier": {
+      "type": "string",
+      "allowedValues": [
+        "Standard"
+      ],
+      "metadata": {
+        "description": "The tier of ML workspace"
+      }
+    },
+    "skuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "allowedValues": [
+        1,
+        2,
+        3
+      ],
+      "metadata": {
+        "description": "The scale-out capacity of the resource"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    }
+  },
+  "variables": {
+    "workspaceName": "[tolower(concat('ml', '-', parameters('region'), '-', parameters('shortlocation'), '-', parameters('environment'), '-', parameters('application'), '-'))]",
+    "newStorageAccountName": "[tolower(concat('sa', parameters('region'), parameters('shortlocation'), parameters('environment'), parameters('application')))]",
+    "planName": "[tolower(concat('mlplan', '-', parameters('region'), '-', parameters('shortlocation'), '-', parameters('environment'), '-', parameters('application'), '-'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-04-01",
+      "name": "[concat(variables('workspaceName'), padLeft(copyIndex(1), 4, '0'))]",
+      "location": "[parameters('location')]",
+      "type": "Microsoft.MachineLearning/workspaces",
+      "properties": {
+        "userStorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Storage/storageAccounts/', variables('newStorageAccountName'), padLeft(copyIndex(1), 4, '0'))]",
+        "ownerEmail": "[parameters('ownerEmail')]"
+      },
+      "dependsOn": [
+        "[concat(variables('newStorageAccountName'), padLeft(1, 4,'0'))]"
+      ],
+      "copy": {
+        "name": "mlCopy",
+        "count": "[parameters('numberOfInstances')]"
+      }
+    },
+    {
+      "apiVersion": "2017-10-01",
+      "name": "[concat(variables('newStorageAccountName'), padLeft(1, 4,'0'))]",
+      "location": "[parameters('location')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "[parameters('newStorageAccountType')]",
+        "tier": "[parameters('newStorageAccountTier')]"
+      },
+      "kind": "Storage"
+    },
+    {
+      "apiVersion": "2016-05-01-preview",
+      "name": "[concat(variables('planName'), padLeft(1, 4,'0'))]",
+      "type": "Microsoft.MachineLearning/commitmentPlans",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('skuName')]",
+        "tier": "[parameters('skuTier')]",
+        "capacity": "[parameters('skuCapacity')]"
+      },
+      "properties": {}
+    }
+  ]
+}

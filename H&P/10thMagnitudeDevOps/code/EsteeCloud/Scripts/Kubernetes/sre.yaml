@@ -1,0 +1,19 @@
+﻿apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: spinnaker
+spec: {}
+status: {}
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: spinnaker-quota
+  namespace: spinnaker
+spec:
+  hard:
+    requests.cpu: "4"
+    requests.memory: 8Gi
+    limits.cpu: "4"
+    limits.memory: 8Gi

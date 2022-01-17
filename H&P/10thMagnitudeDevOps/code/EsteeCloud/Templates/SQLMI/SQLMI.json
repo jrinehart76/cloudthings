@@ -1,0 +1,234 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    "location": {
+        "type": "string",
+        "metadata": {
+            "description": "Location of the deployment"
+        }
+    },
+    "region": {
+        "type": "string",
+        "metadata": {
+            "description": "The two character region code"
+        }
+    },
+    "application": {
+        "type": "string",
+        "metadata": {
+            "description": "The abbreviated application code"
+        }
+    },
+    "environment": {
+        "type": "string",
+        "metadata": {
+            "description": "The environment identifier"
+        }
+    },
+    "skuName": {
+        "type": "string",
+        "allowedValues":[
+            "GP_Gen4",
+            "GP_Gen5",
+            "BC_Gen4",
+            "BC_Gen5"
+        ],
+        "defaultValue": "GP_Gen5",
+        "metadata": {
+            "description": "Enter sku name. General Purpose or Business Critical"
+        }
+    },
+    "vCores": {
+        "type": "int",
+        "allowedValues":[
+            8,
+            16,
+            24,
+            32,
+            40,
+            64,
+            80
+        ],              
+        "metadata": {
+            "description": "Enter number of vCores."
+        }
+    },
+    "storageSizeInGB": {
+        "type": "int",         
+        "minValue": 32,
+        "maxValue": 8192,
+        "metadata": {
+            "description": "Enter storage size."
+        }
+    },
+    "licenseType": {
+        "type": "string",
+        "allowedValues":[
+            "BasePrice",
+            "LicenseIncluded"
+        ],             
+        "metadata": {
+            "description": "Enter license type."
+        }
+    },
+    "subnetName": {
+        "type": "string",
+        "metadata": {
+            "description": "The subnet where the instance will be deployed"
+        }
+    },
+    "virtualNetworkName": {
+        "type": "string",
+        "metadata": {
+            "description": "The virtual network where the instance will be deployed"
+        }
+    },
+    "administratorLogin": {
+        "type": "string",
+        "metadata": {
+            "description": "The administrator login username"
+        }
+    },
+    "administratorLoginPassword": {
+        "type": "securestring",
+        "metadata": {
+            "description": "The administrator login password"
+        }
+    },
+    "managedInstanceCreateMode": {
+        "type": "string",
+        "allowedValues": [
+            "Default",
+            "Restore"
+        ],  
+        "metadata": {
+            "description": "The mode of creation for the instance. Default: Regular instance creation. Restore: Creates an instance by restoring a set of backups to specific point in time. RestorePointInTime and SourceManagedInstanceId must be specified. - Default or PointInTimeRestore"
+        }
+    },
+    "collation": {
+        "type": "string",
+        "defaultValue": "SQL_Latin1_General_CP1_CI_AS",
+        "metadata": {
+            "description": "The collation of the SQL instance"
+        }
+    },
+    "workspaceName": {
+        "type": "string",
+        "allowedValues": [
+            "la-am-eastus-NonProd-PaaS",
+            "la-am-eastus-prod-paas",
+            "la-ap-southeastasia-nonprod-v2",
+            "la-ap-southeastasia-prod-v2",
+            "la-eu-uksouth-nonprod-v2",
+            "la-eu-uksouth-prod-v2",
+            "la-am-eastus-devopspoc",
+            "la-am-eastus-NonProd-CEPLATAM",
+            "aa-cn-chinaeast2-nonprod",
+            "aa-cn-chinaeast2-prod",
+            "la-prod-learn",
+            "la-prod-cornerstone",
+            "la-am-eastus-devopspoc"
+        ],
+        "metadata": {
+            "description": "Log Analytics workspace ID for the Log Analytics workspace to which logs will be sent."
+        }
+    },
+    "laResourceGroup": {
+    "type": "string",
+    "defaultValue": "RG-AM-EastUS-DevOpsPOC-Mgmt",
+    "allowedValues": [
+        "RG-AM-EastUS-MYELX-Mgmt",
+        "RG-AM-EastUS-NonProd-PaaS-Mgmt",
+        "RG-AM-EastUS-Prod-PaaS-Mgmt",
+        "RG-AP-SoutheastAsia-NONPROD-V2-Mgmt",
+        "RG-AP-SoutheastAsia-Prod-V2-MGMT",
+        "RG-EU-UKSouth-NonProd-V2-MGMT",
+        "RG-EU-UKSouth-Prod-V2-MGMT",
+        "RG-AM-EastUS-DevOpsPOC-Mgmt",
+        "RG-AM-EastUS-NonProd-CEPLATAM-Mgmt",
+        "RG-CN-ChinaEast2-NonProd-Mgmt",
+        "RG-CN-ChinaEast2-Prod-Mgmt",
+        "RG-PROD-LEARN-MGMT",
+        "rg-prod-cornerstone-mgmt",
+        "RG-AM-EastUS-DevOpsPOC-Mgmt"
+    ],
+    "metadata": {
+        "description": "The Resource Group where the Log Analytics workspace resides to which logs will be sent."
+    }
+    },
+    "settingName": {
+        "type": "string",
+        "defaultValue": "logAnalyticsService",
+        "metadata": {
+          "description": "Name of the setting. Name for the diagnostic setting resource. Eg. 'archiveToStorage' or 'forSecurityTeam'."
+        }
+      },
+    "virtualNetworkRGName": {
+    "type": "string",
+    "metadata": {
+        "description": "Resource Group of the virtual network"
+    }
+    }
+    },
+    "variables": {
+        "name": "[concat('SQLMI', '-', parameters('region'), '-', parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+        "vnetId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "workspaceId": "[resourceId(parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+    },
+    "resources": 
+    [
+        {
+            "name": "[variables('name')]",
+            "type": "Microsoft.Sql/managedInstances",
+            "apiVersion": "2018-06-01-preview",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('skuName')]"
+            },
+            "properties": {
+                "managedInstanceCreateMode": "[parameters('managedInstanceCreateMode')]",
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "subnetId": "[variables('subnetRef')]",
+                "licenseType": "[parameters('LicenseType')]",
+                "vCores": "[parameters('vCores')]",
+                "storageSizeInGB": "[parameters('storageSizeInGB')]",
+                "collation": "[parameters('collation')]"
+            },
+            "resources": [
+            {
+                "type": "providers/diagnosticSettings",
+                "name": "Microsoft.Insights/diagnostics",
+                "dependsOn": [
+                    "[variables('name')]"
+                ],
+                "apiVersion": "2017-05-01-preview",
+                "properties": {
+                    "name": "[parameters('settingName')]",
+                    "workspaceId": "[variables('workspaceId')]",
+                    "logs":[
+                    {
+                        "category": "ResourceUsageStats",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 90,
+                            "enabled": true
+                        }
+                    },
+                    {
+                        "category": "SQLSecurityAuditEvents",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 90,
+                            "enabled": true
+                        }
+                    }
+                    ]
+                }
+            }
+            ]        
+        }
+    ]
+}

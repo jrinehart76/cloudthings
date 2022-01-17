@@ -1,0 +1,29 @@
+{
+  "Name": "Developer Custom RBAC",
+  "Id": "268d95fc-9ce6-4432-84e7-8ec682c932cb",
+  "IsCustom": true,
+  "Description": "Enables Developers to access infrastructure without modifying it.",
+  "Actions": [
+    "*"
+
+  ],
+  "NotActions": [
+    "Microsoft.Authorization/*/Delete",
+    "Microsoft.Authorization/*/Write",
+    "Microsoft.Authorization/elevateAccess/Action",
+    "Microsoft.Blueprint/blueprintAssignments/write",
+    "Microsoft.Blueprint/blueprintAssignments/delete",
+    "Microsoft.Compute/*/delete/action",
+    "Microsoft.Compute/*/stop/action",
+    "Microsoft.Compute/*/restart/action",
+    "Microsoft.Network/networkSecurityGroups/*",
+    "Microsoft.Network/virtualNetworks/*",
+    "Microsoft.DBforMySQL/servers/firewallRules/*",
+    "Microsoft.DBforPostgreSQL/servers/firewallRules/*",
+    "Microsoft.DBforMariaDB/servers/firewallRules/*"
+
+  ],
+  "AssignableScopes": [
+    "/"
+  ]
+}

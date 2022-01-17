@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "routeTables": {
+      "value": [
+        {
+          "routeTableName": "RouteTable-AM-EastUS-POC-StandardSubnets",
+          "resourceGroup": "RG-AM-EastUS-POC-SS",
+          "subscriptionId": "314d5655-9d37-4818-8ca3-5e0f40ad675f"
+        },
+        {
+          "routeTableName": "RouteTable-AM-EastUS-Dev-StandardSubnets",
+          "resourceGroup": "RG-AM-EastUS-Dev-SS",
+          "subscriptionId": "b202964a-6e48-4b7f-985b-3ae314297a5a"
+        },
+        {
+          "routeTableName": "RouteTable-AM-EastUS-QA-StandardSubnets",
+          "resourceGroup": "RG-AM-EastUS-QA-SS",
+          "subscriptionId": "b202964a-6e48-4b7f-985b-3ae314297a5a"
+        },
+        {
+          "routeTableName": "RouteTable-AM-EastUS-Prod-StandardSubnets",
+          "resourceGroup": "RG-AM-EastUS-Prod-SS",
+          "subscriptionId": "48264701-1c9f-4c70-b78c-8ea57b94538d"
+        }
+      ]
+    },
+    "routes": {
+      "value": [
+        {
+          "name": "UDR-VNET-AM-EastUS-Prod-SecureAppSubnet",
+          "addressPrefix": "10.252.70.0/24"
+        },
+        {
+          "name": "UDR-VNET-AM-EastUS-Prod-SecureWebSubnet",
+          "addressPrefix": "10.252.71.0/24"
+        },
+        {
+          "name": "UDR-VNET-AM-EastUS-Prod-SecureDBSubnet",
+          "addressPrefix": "10.252.72.0/24"
+        }
+      ]
+    },
+    "nextHopIpAddress": {
+      "value": "10.252.127.102"
+    },
+    "disableBgpRoutePropagation": {
+      "value": true
+    }
+  }
+}

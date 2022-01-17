@@ -1,0 +1,68 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "adlStoreName": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the EXISTING Data Lake Store account."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "EastUS",
+        "metadata": {
+          "description": "The Azure region for this deployment"
+        }
+      },
+      "environment": {
+        "type": "string",
+        "defaultValue": "Dev",
+        "metadata": {
+          "description": "The abbreviated environment label"
+        }
+      },
+      "application": {
+        "type": "string",
+        "defaultValue": "APP",
+        "metadata": {
+          "description": "The abbreviated application name"
+        }
+      },
+      "region": {
+        "type": "string",
+        "defaultValue": "AM",
+        "metadata": {
+          "description": "The abbreviated Azure Region code"
+        }
+      }
+        },
+    "variables": {
+      "adlsApiVersion": "2016-11-01",
+      "adlaApiVersion": "2016-11-01",
+      "adlAnalyticsName":"[parameters('adlStoreName')]",
+      "location": "[resourceGroup().location]"
+    },
+    "resources": [
+      {
+        "name": "[variables('adlAnalyticsName')]",
+        "type": "Microsoft.DataLakeAnalytics/accounts",
+        "location": "[variables('location')]",
+        "apiVersion": "2016-11-01",
+        "properties": {
+          "defaultDataLakeStoreAccount": "[parameters('adlStoreName')]",
+          "dataLakeStoreAccounts": [
+            {
+              "name": "[parameters('adlStoreName')]"
+            }
+          ]
+        }
+      }
+    ],
+    "outputs": {
+      "adlAnalyticsAccount": {
+        "type": "object",
+        "value": "[reference(resourceId('Microsoft.DataLakeAnalytics/accounts',variables('adlAnalyticsName')))]"
+      }
+    }
+  }

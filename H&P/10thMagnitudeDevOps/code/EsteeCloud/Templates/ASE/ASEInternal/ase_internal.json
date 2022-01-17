@@ -1,0 +1,173 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "kind": {
+      "type": "string",
+      "defaultValue": "ASEV2",
+      "metadata": {
+        "description": "The kind of App Service Environment. Current version is ASEV2. Do not modifiy this parameter"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the existing virtual network into which the App Service Environment will be deployed"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the existing subnet into which the App Service Environment will be deployed"
+      }
+    },
+    "VNetResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the existing resource group of the virtual network into which the App Service Environment will be deployed"
+      }
+    },
+    "aseLocation": {
+      "type": "string",
+      "defaultValue": "East US",
+      "metadata": {
+        "description": "requires space in name"
+      }
+    },
+    "locationabv": {
+      "type": "string",
+      "defaultValue": "eastus2",
+      "metadata": {
+        "description": "The abbreviated region location of the deployment. E.G. eastus2"
+      }
+    },
+    "internalLoadBalancingMode": {
+      "type": "int",
+      "defaultValue": 1,
+      "allowedValues": [ 0, 1, 2, 3 ],
+      "metadata": {
+        "description": "0 = public VIP only, 1 = only ports 80/443 are mapped to ILB VIP, 2 = only FTP ports are mapped to ILB VIP, 3 = both ports 80/443 and FTP ports are mapped to an ILB VIP."
+      }
+    },
+    "dnsSuffix": {
+      "type": "string",
+      "metadata": {
+        "description": "Set this to the root domain associated with the ASE. For example: contoso.com"
+      }
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "Isolated",
+      "metadata": {
+        "description": "The name of the App Service Plan SKU. Isolated App Service Plans do not share infrastructure and are completely isolated in their own network. Production and Dev or Test SKUs work with shared infrastructure ASEs"
+      }
+    },
+    "skuCode": {
+      "type": "string",
+      "defaultValue": "I1",
+      "allowedValues": [
+        "I1",
+        "I2",
+        "I3"
+      ],
+      "metadata": {
+        "description": "The tier of the App Service Plan SKU"
+      }
+    },
+    "reserved": {
+      "type": "bool",
+      "allowedValues": [
+        true,
+        false
+      ],
+      "defaultValue": false,
+      "metadata": {
+        "description": "If Linux app service plan select true, false otherwise"
+      }
+    },
+    "capacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Defines the number of instances that will be allocated to the app service plan"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    }
+  },
+  "variables": {
+    "vnetId": "[resourceId(parameters('VNetResourceGroupName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "namingSuffix": "[concat(parameters('region'), '-', parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "aseName": "[concat('ASE-', variables('namingSuffix'))]",
+    "aspName": "[tolower(concat('SrvPln-', variables('namingSuffix'), '-ase'))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('aseName')]",
+      "type": "Microsoft.Web/hostingEnvironments",
+      "apiVersion": "2015-02-01",
+      "location": "[parameters('aseLocation')]",
+      "kind": "[parameters('kind')]",
+      "properties": {
+        "name": "[variables('aseName')]",
+        "location": "[parameters('aseLocation')]",
+        "dnsSuffix": "[parameters('dnsSuffix')]",
+        "internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]",
+        "VirtualNetwork": {
+          "Id": "[variables('vnetId')]",
+          "type": "Microsoft.Network/virtualNetworks",
+          "Subnet": "[parameters('subnetName')]"
+        }
+      }
+    },
+    {
+      "name": "[variables('aspName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-03-01",
+      "location": "[parameters('aseLocation')]",
+      "dependsOn": [
+        "[ concat('Microsoft.Web/hostingEnvironments/', variables('aseName')) ]"
+      ],
+      "properties": {
+        "name": "[variables('aspName')]",
+        "hostingEnvironmentProfile": {
+          "id": "[resourceId('Microsoft.Web/hostingEnvironments',variables('aseName'))]",
+          "reserved": "parameters('reserved')"
+        }
+      },
+      "sku": {
+        "Name": "[parameters('skuCode')]",
+        "Tier": "[parameters('sku')]",
+        "size": "[parameters('skuCode')]",
+        "family": "I",
+        "capacity": "[parameters('capacity')]"
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "recoveryVaultName": {
+        "type": "string"
+      },
+      "recoveryVaultLocation": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "recoveryStorageAccountName": "[toLower(concat('rsv', uniqueString(resourceGroup().id)))]",
+      "recoveryStorageType": "Standard_LRS"
+    },
+    "resources": [
+      {
+        "apiVersion": "2016-06-01",
+        "location": "[parameters('recoveryVaultLocation')]",
+        "name": "[parameters('recoveryVaultName')]",
+        "type": "Microsoft.RecoveryServices/vaults",
+        "sku": {
+          "name": "RS0",
+          "tier": "Standard"
+        },
+        "properties": {},
+        "resources": [
+          {
+            "apiVersion": "2016-06-01",
+            "name": "HyperVPrimarySite",
+            "type": "replicationFabrics",
+            "id": "[resourceId('Microsoft.RecoveryServices/vaults/replicationFabrics', parameters('recoveryVaultName'), 'HyperVPrimarySite')]",
+            "dependsOn": [
+              "[concat('Microsoft.RecoveryServices/vaults/', parameters('recoveryVaultName'))]"
+            ],
+            "properties": {
+              "friendlyName": "PrimarySite",
+              "fabricType": "HyperVSite"
+            }
+          }
+        ]
+      },
+      {
+        "apiVersion": "2015-06-15",
+        "location": "[parameters('recoveryVaultLocation')]",
+        "name": "[variables('recoveryStorageAccountName')]",
+        "type": "Microsoft.Storage/storageAccounts",
+        "properties": {
+          "accountType": "[variables('recoveryStorageType')]"
+        }
+      }
+    ],
+    "outputs": {}
+  }

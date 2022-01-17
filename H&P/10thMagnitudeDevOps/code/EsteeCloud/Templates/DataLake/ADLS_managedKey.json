@@ -1,0 +1,59 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "0.9.0.0",
+    "parameters": {
+      "location": {
+        "type": "string",
+        "defaultValue": "EastUS",
+        "metadata": {
+          "description": "The Azure region for this deployment"
+        }
+      },
+      "environment": {
+        "type": "string",
+        "defaultValue": "Dev",
+        "metadata": {
+          "description": "The abbreviated environment label"
+        }
+      },
+      "application": {
+        "type": "string",
+        "defaultValue": "APP",
+        "metadata": {
+          "description": "The abbreviated application name"
+        }
+      },
+      "region": {
+        "type": "string",
+        "defaultValue": "AM",
+        "metadata": {
+          "description": "The abbreviated Azure Region code"
+        }
+      }
+        },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "baseNamingPrefix": "[concat(parameters('region'),  parameters('location'), parameters('environment'))]",
+        "enabledForDeployment": "True",
+        "enabledForTemplateDeployment": "True",
+        "tenantId": "[subscription().subscriptionId]",
+        "dataLakeStoreName": "[tolower(concat('adls',variables('baseNamingPrefix'),parameters('application')))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2016-11-01",
+            "name": "[variables('dataLakeStoreName')]",
+            "location": "[variables('location')]",
+            "type": "Microsoft.DataLakeStore/accounts",
+            "properties": {
+                "encryptionState": "Enabled",
+                "encryptionConfig": {
+                    "type": "ServiceManaged"
+                }
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            }
+        }
+    ]
+}

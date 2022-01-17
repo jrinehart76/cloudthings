@@ -1,0 +1,19 @@
+﻿apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: #{AppName}#
+spec: {}
+status: {}
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: #{AppName}#-quota
+  namespace: #{AppName}#
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 2Gi
+    limits.cpu: "#{CpuThreshold}#"
+    limits.memory: #{MemoryInGB}#Gi

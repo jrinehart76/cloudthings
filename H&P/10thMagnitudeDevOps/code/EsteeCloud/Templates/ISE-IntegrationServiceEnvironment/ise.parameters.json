@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+	"parameters": {
+   "subnet1Name": {
+     "value": "ise5"
+   },
+   "subnet2Name": {
+     "value": "ise6"
+   },
+   "subnet3Name": {
+     "value": "ise7"
+   },
+   "subnet4Name": {
+     "value": "ise8"
+   },
+   "application": {
+     "value": "tst"
+   },
+   "VNetResourceGroupName": {
+     "value": "10mresources"
+   },
+   "managedConnectors": {
+     "value": [
+       "sql",
+       "ftp",
+       "azureblob",
+       "azurefile",
+       "azurequeues",
+       "azuretables",
+       "sftpwithssh",
+       "edifact",
+       "x12",
+       "servicebus",
+       "documentdb",
+       "eventhub",
+       "mq",
+       "sqldw",
+       "db2",
+       "smtp",
+       "si3270"
+     ]
+   },
+   "virtualNetworkName": {
+     "value": "10mresources2"
+   }
+
+	}
+}

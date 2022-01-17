@@ -1,0 +1,155 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    },
+    "orchestratorType": {
+      "type": "string",
+      "defaultValue": "Kubernetes",
+      "allowedValues": [
+        "Kubernetes",
+        "DCOS",
+        "Swarm"
+      ],
+      "metadata": {
+        "description": "The type of orchestrator used to manage the applications on the cluster."
+      }
+    },
+    "masterCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "allowedValues": [
+        1,
+        3,
+        5
+      ],
+      "metadata": {
+        "description": "The number of Kubernetes masters for the cluster."
+      }
+    },
+    "nodeAgentCount": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Default Number of Agent Nodes in the cluster"
+      }
+    },
+    "nodeSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2_v2",
+      "metadata": {
+        "description": "Default VM size for Agent Nodes in the cluster"
+      }
+    },
+    "nodeAdminUsername": {
+      "type": "string",
+      "defaultValue": "cloudadmin",
+      "metadata": {
+        "description": "VM admin user"
+      }
+    },
+    "nodeSSHPublicKey": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Configure all linux machines with the SSH public key string.  Your key should include three parts, for example 'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm'"
+      }
+    },
+    "azureServicePrincipalAppId": {
+      "type": "string",
+      "metadata": {
+        "description": "Service Principal App ID (also called Client ID) that has contributor rights to the subscription used for this deployment. It is used by the Kubernetes cluster to dynamically manage resources (e.g. user-defined load balancers)."
+      }
+    },
+    "azureServicePrincipalAppKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Service Principal App Key (also called Client Secret) that has contributor rights to the subscription used for this deployment. It is used by the Kubernetes cluster to dynamically manage resources (e.g. user-defined load balancers)."
+      }
+    }
+  },
+  "variables": {
+    "baseNamePrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "dnsBaseNamePrefix": "[toLower(concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment')))]",
+    "agentsEndpointDNSNamePrefix": "[concat(variables('dnsBaseNamePrefix'),'-agents')]",
+    "mastersEndpointDNSNamePrefix": "[concat(variables('dnsBaseNamePrefix'),'-mgmt')]",
+    "clusterName": "[concat('ACS-', variables('baseNamePrefix'))]",
+    "useServicePrincipalDictionary": {
+      "DCOS": 0,
+      "Swarm": 0,
+      "Kubernetes": 1
+    },
+    "useServicePrincipal": "[variables('useServicePrincipalDictionary')[parameters('orchestratorType')]]",
+    "servicePrincipalFields": [
+      null,
+      {
+        "ClientId": "[parameters('azureServicePrincipalAppId')]",
+        "Secret": "[parameters('azureServicePrincipalAppKey')]"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-09-30",
+      "type": "Microsoft.ContainerService/containerServices",
+      "location": "[parameters('location')]",
+      "name": "[variables('clusterName')]",
+      "properties": {
+        "orchestratorProfile": {
+          "orchestratorType": "[parameters('orchestratorType')]"
+        },
+        "masterProfile": {
+          "count": "[parameters('masterCount')]",
+          "dnsPrefix": "[variables('mastersEndpointDNSNamePrefix')]"
+        },
+        "agentPoolProfiles": [
+          {
+            "name": "agentpools",
+            "count": "[parameters('nodeAgentCount')]",
+            "vmSize": "[parameters('nodeSize')]",
+            "dnsPrefix": "[variables('agentsEndpointDNSNamePrefix')]"
+          }
+        ],
+        "linuxProfile": {
+          "adminUsername": "[parameters('nodeAdminUsername')]",
+          "ssh": {
+            "publicKeys": [
+              {
+                "keyData": "[parameters('nodeSSHPublicKey')]"
+              }
+            ]
+          }
+        },
+        "servicePrincipalProfile": "[variables('servicePrincipalFields')[variables('useServicePrincipal')]]"
+      }
+    }
+  ],
+  "outputs": {}
+}
