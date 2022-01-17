@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.dbforpostgresql",
+    "priority": 9,
+    "height": 9,
+    "parts": "'PostgreSqlOverview', 'PostGRESQLAverageConnections', 'PostGRESQLFailedConnections','PostgresSQLCPUConsumption','PostGRESQLMemoryConsumption','PostGRESQLNetworkEgress','PostGRESQLStorageConsumption',''"
+}

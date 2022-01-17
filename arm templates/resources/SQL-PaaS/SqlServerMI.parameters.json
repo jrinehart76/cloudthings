@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "managedInstanceName": {
+            "value": "mi-eu-uksouth-ipc-dev"
+        },
+        "location": {
+            "value": ""
+        },
+        "administratorLogin": {
+            "value": "sqlAdmin"
+        },
+        "administratorLoginPassword": {
+            "value": null
+        },
+        "virtualNetworkResourceGroupName": {
+            "value": ""
+        },
+        "virtualNetworkName": {
+            "value": ""
+        },
+        "subnetName": {
+            "value": ""
+        },
+        "skuName": {
+            "value": ""
+        },
+        "skuEdition": {
+            "value": ""
+        },
+        "storageSizeInGB": {
+            "value": 256
+        },
+        "vCores": {
+            "value": 8
+        },
+        "licenseType": {
+            "value": "LicenseIncluded"
+        },
+        "hardwareFamily": {
+            "value": ""
+        },
+        "dnsZonePartner": {
+            "value": ""
+        },
+        "timezoneId": {
+            "value": "UTC"
+        },
+        "collation": {
+            "value": "SQL_Latin1_General_CP1_CI_AS"
+        },
+        "proxyOverride": {
+            "value": "Proxy"
+        },
+        "publicDataEndpointEnabled": {
+            "value": false
+        },
+        "nsgForPublicEndpoint": {
+            "value": "allowFromAzureCloudTo3342NSG"
+        }
+    }
+}

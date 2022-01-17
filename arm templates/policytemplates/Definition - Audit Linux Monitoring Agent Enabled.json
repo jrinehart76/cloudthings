@@ -1,0 +1,52 @@
+{
+    "properties": {
+      "displayName": "Audit Linux Servers For Monitoring Extension",
+      "policyType": "Custom",
+      "mode": "All",
+      "metadata": {
+        "category": "Monitoring"
+    },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "type",
+              "equals": "Microsoft.Compute/virtualMachines"
+            },
+            {
+              "field": "Microsoft.Compute/imagePublisher",
+              "in": [
+                "Canonical",
+                "RedHat"
+              ]
+            },
+            {
+              "field": "Microsoft.Compute/imageOffer",
+              "in": [
+                "UbuntuServer",
+                "RHEL"
+              ]
+            }
+          ]
+        },
+        "then": {
+          "effect": "auditIfNotExists",
+          "details": {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "existenceCondition": {
+              "allOf": [
+                {
+                  "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+                  "equals": "Microsoft.EnterpriseCloud.Monitoring"
+                },
+                {
+                  "field": "Microsoft.Compute/virtualMachines/extensions/type",
+                  "equals": "OmsAgentForLinux"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+ }

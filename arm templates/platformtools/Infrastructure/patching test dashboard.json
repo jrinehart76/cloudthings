@@ -1,0 +1,717 @@
+{
+  "properties": {
+    "lenses": {
+      "0": {
+        "order": 0,
+        "parts": {
+          "0": {
+            "position": {
+              "x": 0,
+              "y": 0,
+              "colSpan": 4,
+              "rowSpan": 2
+            },
+            "metadata": {
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "#### 10th Magnitude\r\n#### Azure Managed Services\r\n#### support@10thmagnitude.com",
+                    "title": "Wbrantley test title",
+                    "subtitle": ""
+                  }
+                }
+              }
+            }
+          },
+          "1": {
+            "position": {
+              "x": 4,
+              "y": 0,
+              "colSpan": 12,
+              "rowSpan": 3
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "d3200bfd-11f2-4931-9c24-38fbfe938d72",
+                    "ResourceGroup": "defaultresourcegroup-wus2",
+                    "Name": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2",
+                    "ResourceId": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/defaultresourcegroup-wus2/providers/microsoft.operationalinsights/workspaces/workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "// Last heartbeat of each computer\n// Show the last heartbeat sent by each computer\nHeartbeat \r\n| summarize arg_max(TimeGenerated, *) by Computer"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "PartId",
+                  "value": "7256ebbb-2422-48bc-a064-6e304802c5cf"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Computers with Heartbeats",
+                  "PartSubTitle": "All OS"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "2": {
+            "position": {
+              "x": 16,
+              "y": 0,
+              "colSpan": 5,
+              "rowSpan": 2
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "d3200bfd-11f2-4931-9c24-38fbfe938d72",
+                    "ResourceGroup": "defaultresourcegroup-wus2",
+                    "Name": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2",
+                    "ResourceId": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/defaultresourcegroup-wus2/providers/microsoft.operationalinsights/workspaces/workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "Update \r\n| where OSType != \"Windows\" and Optional == \"false\" and Classification == \"Update Rollups\" and UpdateState == \"Needed\"\r\n| project TimeGenerated, Computer, Title, KBID, Classification, PublishedDate\r\n| sort by TimeGenerated desc\r\n| summarize count(Computer) \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "PartId",
+                  "value": "53179efd-eb9c-49b9-8ee8-8f33399a7524"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Computers Missing Update Rollups",
+                  "PartSubTitle": "Windows OS"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "3": {
+            "position": {
+              "x": 0,
+              "y": 2,
+              "colSpan": 4,
+              "rowSpan": 2
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "id",
+                  "value": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/DefaultResourceGroup-WUS2/providers/Microsoft.OperationalInsights/workspaces/Workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-WUS2/views/Updates(Workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-WUS2)"
+                },
+                {
+                  "name": "solutionId",
+                  "value": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/DefaultResourceGroup-WUS2/providers/Microsoft.OperationsManagement/solutions/Updates(Workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-WUS2)",
+                  "isOptional": true
+                },
+                {
+                  "name": "timeInterval",
+                  "isOptional": true
+                },
+                {
+                  "name": "timeRange",
+                  "binding": "timeRange",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/ViewTileIFramePart"
+            }
+          },
+          "4": {
+            "position": {
+              "x": 16,
+              "y": 2,
+              "colSpan": 5,
+              "rowSpan": 2
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "d3200bfd-11f2-4931-9c24-38fbfe938d72",
+                    "ResourceGroup": "defaultresourcegroup-wus2",
+                    "Name": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2",
+                    "ResourceId": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/defaultresourcegroup-wus2/providers/microsoft.operationalinsights/workspaces/workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "Update \r\n| where OSType != \"Windows\" and UpdateState == \"Needed\" and Optional == \"false\" and Classification in (\"Security Updates\", \"Critical Updates\")\r\n| sort by TimeGenerated desc\r\n| summarize count(Computer) \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "PartId",
+                  "value": "5ba8731c-af8e-4791-b65f-e4437d67c6bc"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Computers Missing Critcal or Security Updates",
+                  "PartSubTitle": "Windows OS"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "5": {
+            "position": {
+              "x": 4,
+              "y": 3,
+              "colSpan": 12,
+              "rowSpan": 2
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "d3200bfd-11f2-4931-9c24-38fbfe938d72",
+                    "ResourceGroup": "defaultresourcegroup-wus2",
+                    "Name": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2",
+                    "ResourceId": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/defaultresourcegroup-wus2/providers/microsoft.operationalinsights/workspaces/workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "// Unavailable computers\n// List all known computers that didn't send a heartbeat in the last 5 hours\nHeartbeat \n| summarize LastHeartbeat=max(TimeGenerated) by Computer \n| where LastHeartbeat < ago(1m)\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "PartId",
+                  "value": "e3a929f9-f5ad-4492-a02c-1df6a0debf87"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Computer without Heartbeats",
+                  "PartSubTitle": "More than 1 hours ago",
+                  "Query": "// Unavailable computers\n// List all known computers that didn't send a heartbeat in the last 5 hours\nHeartbeat \n| summarize LastHeartbeat=max(TimeGenerated) by Computer \n| where LastHeartbeat < ago(1h)\n"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "6": {
+            "position": {
+              "x": 0,
+              "y": 4,
+              "colSpan": 4,
+              "rowSpan": 2
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "id",
+                  "value": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/wbrantley-rg/providers/Microsoft.OperationalInsights/workspaces/wbrantley-LAW/views/WaaSUpdateInsights(wbrantley-LAW)"
+                },
+                {
+                  "name": "solutionId",
+                  "value": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourceGroups/wbrantley-rg/providers/Microsoft.OperationsManagement/solutions/WaaSUpdateInsights(wbrantley-LAW)",
+                  "isOptional": true
+                },
+                {
+                  "name": "timeInterval",
+                  "isOptional": true
+                },
+                {
+                  "name": "timeRange",
+                  "binding": "timeRange",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/ViewTileIFramePart"
+            }
+          },
+          "7": {
+            "position": {
+              "x": 16,
+              "y": 4,
+              "colSpan": 5,
+              "rowSpan": 2
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "d3200bfd-11f2-4931-9c24-38fbfe938d72",
+                    "ResourceGroup": "defaultresourcegroup-wus2",
+                    "Name": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2",
+                    "ResourceId": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/defaultresourcegroup-wus2/providers/microsoft.operationalinsights/workspaces/workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "Update \r\n| where OSType != \"Windows\" and UpdateState == \"Needed\" and Optional == \"false\"\r\n| project TimeGenerated, Computer, Title, KBID, Classification, PublishedDate\r\n| sort by TimeGenerated desc\r\n| summarize dcount(Computer) \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "PartId",
+                  "value": "ee04fce5-1b4d-4c37-836a-78ac1a1ffd32"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Computers Needing any Updates",
+                  "PartSubTitle": "Windows OS"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "8": {
+            "position": {
+              "x": 4,
+              "y": 5,
+              "colSpan": 12,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "d3200bfd-11f2-4931-9c24-38fbfe938d72",
+                    "ResourceGroup": "defaultresourcegroup-wus2",
+                    "Name": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2",
+                    "ResourceId": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/defaultresourcegroup-wus2/providers/microsoft.operationalinsights/workspaces/workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "// Computers availability today\n// Chart the number of computers sending logs, each hour\nHeartbeat \r\n| summarize dcount(ComputerIP) by bin(TimeGenerated, 1h)    \r\n| render timechart"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "PartId",
+                  "value": "3ba30b55-a006-4b4b-94f7-403b175eca24"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Summary of Approval Sources",
+                  "PartSubTitle": "All OS",
+                  "Query": "Update\n| summarize dcount(Computer) by ApprovalSource"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "9": {
+            "position": {
+              "x": 0,
+              "y": 6,
+              "colSpan": 4,
+              "rowSpan": 2
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "id"
+                },
+                {
+                  "name": "solutionId",
+                  "isOptional": true
+                },
+                {
+                  "name": "timeInterval",
+                  "isOptional": true
+                },
+                {
+                  "name": "timeRange",
+                  "binding": "timeRange",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/ViewTileIFramePart"
+            }
+          },
+          "10": {
+            "position": {
+              "x": 16,
+              "y": 6,
+              "colSpan": 5,
+              "rowSpan": 5
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "d3200bfd-11f2-4931-9c24-38fbfe938d72",
+                    "ResourceGroup": "defaultresourcegroup-wus2",
+                    "Name": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2",
+                    "ResourceId": "/subscriptions/d3200bfd-11f2-4931-9c24-38fbfe938d72/resourcegroups/defaultresourcegroup-wus2/providers/microsoft.operationalinsights/workspaces/workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "UpdateSummary \r\n| summarize AggregatedValue = count() by WindowsUpdateSetting\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "WindowsUpdateSetting",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "AggregatedValue",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "PartId",
+                  "value": "a6f60111-5157-4283-8cfc-913759569983"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "workspace-893ceb48-fc56-43df-9a9b-9f8fb4d0b2d0-wus2"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Window Update Settings",
+                  "PartSubTitle": "Windows OS"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "model": {
+        "timeRange": {
+          "value": {
+            "relative": {
+              "duration": 24,
+              "timeUnit": 1
+            }
+          },
+          "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+        },
+        "filterLocale": {
+          "value": "en-us"
+        },
+        "filters": {
+          "value": {
+            "MsPortalFx_TimeRange": {
+              "model": {
+                "format": "utc",
+                "granularity": "auto",
+                "relative": "24h"
+              },
+              "displayCache": {
+                "name": "UTC Time",
+                "value": "Past 24 hours"
+              },
+              "filteredPartIds": [
+                "StartboardPart-AnalyticsPart-b7655bb6-e372-443a-8875-3ddc003b3007",
+                "StartboardPart-AnalyticsPart-b7655bb6-e372-443a-8875-3ddc003b3009",
+                "StartboardPart-AnalyticsPart-b7655bb6-e372-443a-8875-3ddc003b300d",
+                "StartboardPart-AnalyticsPart-b7655bb6-e372-443a-8875-3ddc003b300f",
+                "StartboardPart-AnalyticsPart-b7655bb6-e372-443a-8875-3ddc003b3013",
+                "StartboardPart-AnalyticsPart-b7655bb6-e372-443a-8875-3ddc003b3015",
+                "StartboardPart-AnalyticsPart-b7655bb6-e372-443a-8875-3ddc003b3019"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "name": "wbrantley patching test dashboard",
+  "type": "Microsoft.Portal/dashboards",
+  "location": "INSERT LOCATION",
+  "tags": {
+    "hidden-title": "wbrantley patching test dashboard"
+  },
+  "apiVersion": "2015-08-01-preview"
+}

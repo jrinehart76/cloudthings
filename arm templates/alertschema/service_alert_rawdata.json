@@ -1,0 +1,67 @@
+{
+    "headers": {
+        "Expect": "100-continue",
+        "Host": "prod-63.eastus.logic.azure.com",
+        "User-Agent": "IcMBroadcaster/1.0",
+        "X-CorrelationContext": "RkkKACgAAAACAAAAEAB+tT7AY82jQrrQ9cpS8WaEAQAQACyZugQ17gJKnJ+4FV2Q79Y=",
+        "Content-Length": "4316",
+        "Content-Type": "application/json; charset=utf-8"
+    },
+    "body": {
+        "schemaId": "azureMonitorCommonAlertSchema",
+        "data": {
+            "essentials": {
+                "alertId": "/subscriptions/0ffde392-0ea6-4c28-b315-92e6417ab377/providers/Microsoft.AlertsManagement/alerts/13ff0cbca0062c3c4c669efd6d9783cf8bd5c56ef43663767ab34eec0151f3b4",
+                "alertRule": "10m-azure-service-alert",
+                "severity": "Sev4",
+                "signalType": "Activity Log",
+                "monitorCondition": "Fired",
+                "monitoringService": "ServiceHealth",
+                "alertTargetIDs": [
+                    "/subscriptions/0ffde392-0ea6-4c28-b315-92e6417ab377"
+                ],
+                "originAlertId": "ee0ea8b0-9db8-279f-1bcd-76d3187b669b",
+                "firedDateTime": "2020-02-17T13:19:12.423814",
+                "description": "Resolved: Log Analytics - UK South - Mitigated",
+                "essentialsVersion": "1.0",
+                "alertContextVersion": "1.0"
+            },
+            "alertContext": {
+                "authorization": null,
+                "channels": 1,
+                "claims": null,
+                "caller": null,
+                "correlationId": "77c8bb95-ebca-4938-a30d-0918ddb2203b",
+                "eventSource": 2,
+                "eventTimestamp": "2020-02-17T13:19:09.4581529+00:00",
+                "httpRequest": null,
+                "eventDataId": "ee0ea8b0-9db8-279f-1bcd-76d3187b669b",
+                "level": 3,
+                "operationName": "Microsoft.ServiceHealth/incident/action",
+                "operationId": "77c8bb95-ebca-4938-a30d-0918ddb2203b",
+                "properties": {
+                    "title": "Log Analytics - UK South - Mitigated",
+                    "service": "Log Analytics",
+                    "region": "UK South",
+                    "communication": "<p><strong>Summary of impact</strong>: Between 15:00 UTC on 15 Feb 2020 and 12:30 UTC on 17 Feb 2020, you were identified as a customer using Azure Monitor / Log Analytics in UK South who may have been unable to access ingested data from Windows Perf Counter, Security Events and Heartbeat.</p><p><strong>Preliminary root cause</strong>: Engineers determined that a recent deployment task caused a backend database instance, from which Azure Monitor ingests data, to reach an operational threshold. This prevented some data from being ingested as expected.</p><p><strong>Mitigation</strong>: Engineers took the impacting instance out of rotation and rolled back the deployment, allowing data ingestion to resume, thus mitigating the issue.</p><p><strong>Next steps</strong>: Engineers will continue to investigate to establish the full root cause and prevent future occurrences. Stay informed about Azure service issues by creating custom service health alerts: <a href=\"https://aka.ms/ash-videos\">https://aka.ms/ash-videos</a> for video tutorials and <a href=\"https://aka.ms/ash-alerts\">https://aka.ms/ash-alerts</a> for how-to documentation.</p>",
+                    "incidentType": "Incident",
+                    "trackingId": "Z_C4-5C8",
+                    "impactStartTime": "2020-02-15T15:00:00Z",
+                    "impactMitigationTime": "2020-02-17T12:30:00Z",
+                    "impactedServices": "[{\"ImpactedRegions\":[{\"RegionName\":\"UK South\"}],\"ServiceName\":\"Log Analytics\"}]",
+                    "impactedServicesTableRows": "<tr>\r\n<td align='center' style='padding: 5px 10px; border-right:1px solid black; border-bottom:1px solid black'>Log Analytics</td>\r\n<td align='center' style='padding: 5px 10px; border-bottom:1px solid black'>UK South<br></td>\r\n</tr>\r\n",
+                    "defaultLanguageTitle": "Log Analytics - UK South - Mitigated",
+                    "defaultLanguageContent": "<p><strong>Summary of impact</strong>: Between 15:00 UTC on 15 Feb 2020 and 12:30 UTC on 17 Feb 2020, you were identified as a customer using Azure Monitor / Log Analytics in UK South who may have been unable to access ingested data from Windows Perf Counter, Security Events and Heartbeat.</p><p><strong>Preliminary root cause</strong>: Engineers determined that a recent deployment task caused a backend database instance, from which Azure Monitor ingests data, to reach an operational threshold. This prevented some data from being ingested as expected.</p><p><strong>Mitigation</strong>: Engineers took the impacting instance out of rotation and rolled back the deployment, allowing data ingestion to resume, thus mitigating the issue.</p><p><strong>Next steps</strong>: Engineers will continue to investigate to establish the full root cause and prevent future occurrences. Stay informed about Azure service issues by creating custom service health alerts: <a href=\"https://aka.ms/ash-videos\">https://aka.ms/ash-videos</a> for video tutorials and <a href=\"https://aka.ms/ash-alerts\">https://aka.ms/ash-alerts</a> for how-to documentation.</p>",
+                    "stage": "Resolved",
+                    "communicationId": "11000043739928",
+                    "isHIR": "false",
+                    "version": "0.1.1"
+                },
+                "status": "Resolved",
+                "subStatus": null,
+                "submissionTimestamp": "2020-02-17T13:19:12.423814+00:00",
+                "ResourceType": null
+            }
+        }
+    }
+}

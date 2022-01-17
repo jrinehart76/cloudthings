@@ -1,0 +1,78 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "skuName": {
+      "type": "string",
+      "defaultValue": "devtest",
+      "metadata": {
+        "description": "The sku of the ML experimentation resource"
+      }
+    },
+    "skuTier": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "metadata": {
+        "description": "The sku tier of the ML experimentation resource"
+      }
+    },
+    "skuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "The SKU capacity"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    }
+  },
+  "variables": {
+    "name": "[tolower(concat('ml', '-', parameters('region'), '-', parameters('location'), '-', parameters('environment'), '-', parameters('application'), '-'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-09-01-preview",
+      "name": "[concat(variables('name'), padleft(copyIndex(1), 4, '0'))]",
+      "location": "[parameters('location')]",
+      "type": "Microsoft.MachineLearningModelManagement/accounts",
+      "properties": {
+        "description": ""
+      },
+      "copy": {
+        "name": "exCopy",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "sku": {
+        "name": "[parameters('skuName')]",
+        "tier": "[parameters('skuTier')]",
+        "capacity": "[parameters('skuCapacity')]"
+      }
+    }
+  ]
+}

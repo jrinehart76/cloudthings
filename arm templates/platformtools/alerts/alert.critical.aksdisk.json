@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "critAlertDetails": [
+                {
+                    "alertName": "10m-aks-disk-critical",
+                    "alertDescription": "[concat('Critical Disk Alert on Kubernetes. ', parameters('version'))]",
+                    "query": "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; InsightsMetrics | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where Origin == 'container.azm.ms/telegraf' | where Namespace has 'container.azm.ms/disk' | extend Tags = todynamic(Tags) | project TimeGenerated, _ResourceId, Node=tostring(Tags.hostName), Device=tostring(Tags.device), Path=tostring(Tags.path), DiskMetricName=Name, DiskMetricValue=Val, Computer=tostring(Tags.['container.azm.ms/clusterName']) | where DiskMetricName has 'used_percent' | summarize ['% Disk Used']=max(DiskMetricValue) by Computer, Node | where ['% Disk Used'] >= 90",
+                    "frequencyInMinutes": 5,  
+                    "timeWindowInMinutes": 60,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Critical-Disk-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').critAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').critAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').critAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').critAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').critAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').critAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').critAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').critAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

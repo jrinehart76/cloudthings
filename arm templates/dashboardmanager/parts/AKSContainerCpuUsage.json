@@ -1,0 +1,88 @@
+{
+    "name": "AKSContainerCpuUsage",
+    "part": {
+        "position": {
+            "x": 0,
+            "y": 5,
+            "colSpan": 7,
+            "rowSpan": 4
+          },
+        "metadata": {
+            "inputs": [
+                {
+                "name": "ComponentId",
+                "value": "[variables('OMSWorkspace')]"
+                },
+                {
+                "name": "Query",
+                "value": "[concat('KubePodInventory | where TimeGenerated > now(-24h) | where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')\r\n | extend InstanceName = strcat(ClusterId, \"/\", ContainerName), ContainerName = strcat(ControllerName, \"/\", tostring(split(ContainerName, \"/\")[1]))\r\n| distinct Computer, InstanceName, ContainerName, ClusterName\r\n| join hint.strategy=shuffle (\r\nPerf\r\n| where TimeGenerated > now(-24h) \r\n| where ObjectName == \"K8SContainer\"\r\n| where CounterName == \"cpuLimitNanoCores\"\r\n| summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, 15m)\r\n| project Computer, InstanceName, LimitValue\r\n) on Computer, InstanceName\r\n| join kind=inner hint.strategy=shuffle (\r\nPerf\r\n| where TimeGenerated > now(-24h) \r\n| where ObjectName == \"K8SContainer\"\r\n| where CounterName == \"cpuUsageNanoCores\"\r\n| project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated\r\n) on Computer, InstanceName\r\n| where TimeGenerated > now(-24h) \r\n| project Computer, ContainerName, TimeGenerated, UsagePercent = (UsageValue * 100.0 / LimitValue), LimitValue, ClusterName\r\n| summarize averageUsedCPU = avg(UsagePercent) by ContainerName, bin(TimeGenerated, 15m)\r\n| render timechart\r\n')]"
+                },
+                {
+                "name": "Dimensions",
+                "value": {
+                    "xAxis": {
+                    "name": "TimeGenerated",
+                    "type": "DateTime"
+                    },
+                    "yAxis": [
+                    {
+                        "name": "averageUsedCPU",
+                        "type": "Double"
+                    }
+                    ],
+                    "splitBy": [
+                    {
+                        "name": "ContainerName",
+                        "type": "String"
+                    }
+                    ],
+                    "aggregation": "Average"
+                }
+                },
+                {
+                "name": "Version",
+                "value": "1.0"
+                },
+                {
+                "name": "PartTitle",
+                "value": "Analytics"
+                },
+                {
+                "name": "PartSubTitle",
+                "value": "[parameters('OMSWorkspace')]"
+                },
+                {
+                "name": "resourceTypeMode",
+                "value": "workspace"
+                },
+                {
+                "name": "ControlType",
+                "value": "AnalyticsChart"
+                },
+                {
+                "name": "SpecificChart",
+                "value": "Line"
+                },
+                {
+                "name": "TimeRange",
+                "isOptional": true
+                },
+                {
+                "name": "DashboardId",
+                "isOptional": true
+                }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+                "content": {
+                "PartTitle": "Container CPU Usage",
+                "PartSubTitle": "Last 24 Hours"
+                }
+            },
+            "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+            }
+        }
+    }
+}

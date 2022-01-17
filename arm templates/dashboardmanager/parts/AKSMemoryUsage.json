@@ -1,0 +1,92 @@
+{
+    "name": "AKSMemoryUsage",
+    "part": {
+        "position": {
+            "x": 7,
+            "y": 1,
+            "colSpan": 7,
+            "rowSpan": 4
+          },
+        "metadata": {
+            "inputs": [
+                {
+                "name": "ComponentId",
+                "value": "[variables('OMSWorkspace')]"
+                },
+                {
+                "name": "Query",
+                "value": "[concat('KubeNodeInventory | where TimeGenerated > now(-24h) | where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')\r\n| distinct ClusterName, Computer\r\n| join hint.strategy=shuffle (\r\nPerf\r\n| where TimeGenerated > now(-24h) \r\n| where ObjectName == \"K8SNode\"\r\n| where CounterName == \"memoryCapacityBytes\"\r\n| summarize LimitValue = max(CounterValue) by Computer, CounterName, bin(TimeGenerated, 15m)\r\n| project Computer, LimitValue\r\n) on Computer\r\n| join kind=inner hint.strategy=shuffle (\r\nPerf\r\n| where TimeGenerated > now(-24h) \r\n| where ObjectName == \"K8SNode\"\r\n| where CounterName == \"memoryRssBytes\"\r\n| project Computer, UsageValue = CounterValue, TimeGenerated\r\n) on Computer\r\n| where TimeGenerated > now(-24h) \r\n| project ClusterName, Computer, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue\r\n| summarize averagePercentMemoryUsage = avg(UsagePercent) by ClusterName, bin(TimeGenerated, 15m)\r\n| render timechart \n')]"
+                },
+                {
+                "name": "Dimensions",
+                "value": {
+                    "xAxis": {
+                    "name": "TimeGenerated",
+                    "type": "DateTime"
+                    },
+                    "yAxis": [
+                    {
+                        "name": "averagePercentMemoryUsage",
+                        "type": "Double"
+                    }
+                    ],
+                    "splitBy": [
+                    {
+                        "name": "ClusterName",
+                        "type": "String"
+                    }
+                    ],
+                    "aggregation": "Average"
+                }
+                },
+                {
+                "name": "Version",
+                "value": "1.0"
+                },
+                {
+                "name": "PartId",
+                "value": "06ec99cb-08cd-422a-a7a1-f2399fb9ad12"
+                },
+                {
+                "name": "PartTitle",
+                "value": "Analytics"
+                },
+                {
+                "name": "PartSubTitle",
+                "value": "[parameters('OMSWorkspace')]"
+                },
+                {
+                "name": "resourceTypeMode",
+                "value": "workspace"
+                },
+                {
+                "name": "ControlType",
+                "value": "AnalyticsChart"
+                },
+                {
+                "name": "SpecificChart",
+                "value": "Line"
+                },
+                {
+                "name": "TimeRange",
+                "isOptional": true
+                },
+                {
+                "name": "DashboardId",
+                "isOptional": true
+                }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+                "content": {
+                "PartTitle": "AKS Memory Usage",
+                "PartSubTitle": "Last 24 Hours"
+                }
+            },
+            "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+            }
+        }
+    }
+}

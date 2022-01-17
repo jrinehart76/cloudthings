@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "warnAlertDetails": [
+                {
+                    "alertName": "10m-kubernetes-node-warning",
+                    "alertDescription": "Warning Node Alert on Kubernetes. This is the same as a VM being down. v1",
+                    "query": "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; KubeNodeInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | distinct ClusterName, Computer, TimeGenerated | summarize ClusterSnapshotCount = count() by bin(TimeGenerated, trendBinSize), ClusterName, Computer | join hint.strategy=broadcast kind=inner (KubeNodeInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | summarize TotalCount = count(), ReadyCount = sumif(1, Status contains (\"Ready\")) by ClusterName, Computer,  bin(TimeGenerated, trendBinSize) | extend NotReadyCount = TotalCount - ReadyCount) on ClusterName, Computer, TimeGenerated | project TimeGenerated, ClusterName, Node=Computer, ReadyCount = todouble(ReadyCount) / ClusterSnapshotCount, NotReadyCount = todouble(NotReadyCount) / ClusterSnapshotCount | order by ClusterName asc, Node asc, TimeGenerated desc | summarize TotalNotReadyCount=sum(NotReadyCount) by ClusterName, Computer=Node, ReadyCount, NotReadyCount | where TotalNotReadyCount between (15 .. 29)",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 60,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-NodeNotReady-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 4
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').warnAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').warnAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').warnAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').warnAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').warnAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').warnAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').warnAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 60,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').warnAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').warnAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').warnAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,135 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "critAlertDetails": [
+                {
+                    "alertName": "10m-aks-pod-failed-warning",
+                    "alertDescription": "[concat('Warning POD Failed Alert. ', parameters('version'))]",
+                    "query": "//aks failed pod alert for clusters\r\n let endDateTime = now();\r\n let startDateTime = ago(30m);\r\n let trendBinSize = 1m;\r\n KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, TimeGenerated, Name\r\n | summarize ClusterSnapshotCount = count() by bin(TimeGenerated, trendBinSize), ClusterName, Name\r\n | join hint.strategy=broadcast (KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, Computer, PodUid, TimeGenerated, PodStatus, Name\r\n | summarize TotalCount = count(), PendingCount = sumif(1, PodStatus =~ 'Pending'), RunningCount = sumif(1, PodStatus =~ 'Running'), SucceededCount = sumif(1, PodStatus =~ 'Succeeded'), FailedCount = sumif(1, PodStatus =~ 'Failed'), CrashCount = sumif(1, PodStatus =~ 'CrashLoopBackOff'), TerminateCount = sumif(1, PodStatus =~ 'Terminating'), EvictedCount = sumif(1, PodStatus =~ 'Evicted')\r\n by ClusterName, Name, bin(TimeGenerated, trendBinSize)\r\n ) on ClusterName, Name, TimeGenerated\r\n | extend UnknownCount = TotalCount - PendingCount - RunningCount - SucceededCount - FailedCount\r\n | project ClusterName, Name, TimeGenerated, TotalCount = todouble(TotalCount) / ClusterSnapshotCount, PendingCount = todouble(PendingCount) / ClusterSnapshotCount, RunningCount = todouble(RunningCount) / ClusterSnapshotCount, SucceededCount = todouble(SucceededCount) / ClusterSnapshotCount, FailedCount = todouble(FailedCount) / ClusterSnapshotCount, UnknownCount = todouble(UnknownCount) / ClusterSnapshotCount, CrashCount = todouble(CrashCount) / ClusterSnapshotCount, TerminateCount = todouble(TerminateCount) / ClusterSnapshotCount, EvictedCount = todouble(EvictedCount) / ClusterSnapshotCount\r\n | summarize [\"Minutes in Failed\"] = sum(FailedCount) by Computer=ClusterName, Pod=Name\r\n | where [\"Minutes in Failed\"] < 20",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-POD-Failed-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                },
+                {
+                    "alertName": "10m-aks-pod-unknown-warning",
+                    "alertDescription": "[concat('Warning POD Unknown Alert. ', parameters('version'))]",
+                    "query": "//aks unknown pod alert for clusters\r\n let endDateTime = now();\r\n let startDateTime = ago(30m);\r\n let trendBinSize = 1m;\r\n KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, TimeGenerated, Name\r\n | summarize ClusterSnapshotCount = count() by bin(TimeGenerated, trendBinSize), ClusterName, Name\r\n | join hint.strategy=broadcast (KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, Computer, PodUid, TimeGenerated, PodStatus, Name\r\n | summarize TotalCount = count(), PendingCount = sumif(1, PodStatus =~ 'Pending'), RunningCount = sumif(1, PodStatus =~ 'Running'), SucceededCount = sumif(1, PodStatus =~ 'Succeeded'), FailedCount = sumif(1, PodStatus =~ 'Failed'), CrashCount = sumif(1, PodStatus =~ 'CrashLoopBackOff'), TerminateCount = sumif(1, PodStatus =~ 'Terminating'), EvictedCount = sumif(1, PodStatus =~ 'Evicted')\r\n by ClusterName, Name, bin(TimeGenerated, trendBinSize)\r\n ) on ClusterName, Name, TimeGenerated\r\n | extend UnknownCount = TotalCount - PendingCount - RunningCount - SucceededCount - FailedCount\r\n | project ClusterName, Name, TimeGenerated, TotalCount = todouble(TotalCount) / ClusterSnapshotCount, PendingCount = todouble(PendingCount) / ClusterSnapshotCount, RunningCount = todouble(RunningCount) / ClusterSnapshotCount, SucceededCount = todouble(SucceededCount) / ClusterSnapshotCount, FailedCount = todouble(FailedCount) / ClusterSnapshotCount, UnknownCount = todouble(UnknownCount) / ClusterSnapshotCount, CrashCount = todouble(CrashCount) / ClusterSnapshotCount, TerminateCount = todouble(TerminateCount) / ClusterSnapshotCount, EvictedCount = todouble(EvictedCount) / ClusterSnapshotCount\r\n | summarize [\"Minutes in Unknown\"] = sum(UnknownCount) by Computer=ClusterName, Pod=Name\r\n | where [\"Minutes in Unknown\"] < 20",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-POD-Unknown-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                },
+                {
+                    "alertName": "10m-aks-pod-crashloop-warning",
+                    "alertDescription": "[concat('Warning POD Crashloop Alert. ', parameters('version'))]",
+                    "query": "//aks crashloop pod alert for clusters\r\n let endDateTime = now();\r\n let startDateTime = ago(30m);\r\n let trendBinSize = 1m;\r\n KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, TimeGenerated, Name\r\n | summarize ClusterSnapshotCount = count() by bin(TimeGenerated, trendBinSize), ClusterName, Name\r\n | join hint.strategy=broadcast (KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, Computer, PodUid, TimeGenerated, PodStatus, Name\r\n | summarize TotalCount = count(), PendingCount = sumif(1, PodStatus =~ 'Pending'), RunningCount = sumif(1, PodStatus =~ 'Running'), SucceededCount = sumif(1, PodStatus =~ 'Succeeded'), FailedCount = sumif(1, PodStatus =~ 'Failed'), CrashCount = sumif(1, PodStatus =~ 'CrashLoopBackOff'), TerminateCount = sumif(1, PodStatus =~ 'Terminating'), EvictedCount = sumif(1, PodStatus =~ 'Evicted')\r\n by ClusterName, Name, bin(TimeGenerated, trendBinSize)\r\n ) on ClusterName, Name, TimeGenerated\r\n | extend UnknownCount = TotalCount - PendingCount - RunningCount - SucceededCount - FailedCount\r\n | project ClusterName, Name, TimeGenerated, TotalCount = todouble(TotalCount) / ClusterSnapshotCount, PendingCount = todouble(PendingCount) / ClusterSnapshotCount, RunningCount = todouble(RunningCount) / ClusterSnapshotCount, SucceededCount = todouble(SucceededCount) / ClusterSnapshotCount, FailedCount = todouble(FailedCount) / ClusterSnapshotCount, UnknownCount = todouble(UnknownCount) / ClusterSnapshotCount, CrashCount = todouble(CrashCount) / ClusterSnapshotCount, TerminateCount = todouble(TerminateCount) / ClusterSnapshotCount, EvictedCount = todouble(EvictedCount) / ClusterSnapshotCount\r\n | summarize [\"Minutes in Crashloop\"] = sum(CrashCount) by Computer=ClusterName, Pod=Name\r\n | where [\"Minutes in Crashloop\"] < 20",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-POD-CrashLoop-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                },
+                {
+                    "alertName": "10m-aks-pod-terminating-warning",
+                    "alertDescription": "[concat('Warning POD Terminating Alert. ', parameters('version'))]",
+                    "query": "//aks terminating pod alert for clusters\r\n let endDateTime = now();\r\n let startDateTime = ago(30m);\r\n let trendBinSize = 1m;\r\n KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, TimeGenerated, Name\r\n | summarize ClusterSnapshotCount = count() by bin(TimeGenerated, trendBinSize), ClusterName, Name\r\n | join hint.strategy=broadcast (KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, Computer, PodUid, TimeGenerated, PodStatus, Name\r\n | summarize TotalCount = count(), PendingCount = sumif(1, PodStatus =~ 'Pending'), RunningCount = sumif(1, PodStatus =~ 'Running'), SucceededCount = sumif(1, PodStatus =~ 'Succeeded'), FailedCount = sumif(1, PodStatus =~ 'Failed'), CrashCount = sumif(1, PodStatus =~ 'CrashLoopBackOff'), TerminateCount = sumif(1, PodStatus =~ 'Terminating'), EvictedCount = sumif(1, PodStatus =~ 'Evicted')\r\n by ClusterName, Name, bin(TimeGenerated, trendBinSize)\r\n ) on ClusterName, Name, TimeGenerated\r\n | extend UnknownCount = TotalCount - PendingCount - RunningCount - SucceededCount - FailedCount\r\n | project ClusterName, Name, TimeGenerated, TotalCount = todouble(TotalCount) / ClusterSnapshotCount, PendingCount = todouble(PendingCount) / ClusterSnapshotCount, RunningCount = todouble(RunningCount) / ClusterSnapshotCount, SucceededCount = todouble(SucceededCount) / ClusterSnapshotCount, FailedCount = todouble(FailedCount) / ClusterSnapshotCount, UnknownCount = todouble(UnknownCount) / ClusterSnapshotCount, CrashCount = todouble(CrashCount) / ClusterSnapshotCount, TerminateCount = todouble(TerminateCount) / ClusterSnapshotCount, EvictedCount = todouble(EvictedCount) / ClusterSnapshotCount\r\n | summarize [\"Minutes in Terminated\"] = sum(TerminateCount) by Computer=ClusterName, Pod=Name\r\n | where [\"Minutes in Terminated\"] < 20",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-POD-Terminating-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                },
+                {
+                    "alertName": "10m-aks-pod-evicted-warning",
+                    "alertDescription": "[concat('Warning POD Evicted Alert. ', parameters('version'))]",
+                    "query": "//aks evicted pod alert for clusters\r\n let endDateTime = now();\r\n let startDateTime = ago(30m);\r\n let trendBinSize = 1m;\r\n KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, TimeGenerated, Name\r\n | summarize ClusterSnapshotCount = count() by bin(TimeGenerated, trendBinSize), ClusterName, Name\r\n | join hint.strategy=broadcast (KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, Computer, PodUid, TimeGenerated, PodStatus, Name\r\n | summarize TotalCount = count(), PendingCount = sumif(1, PodStatus =~ 'Pending'), RunningCount = sumif(1, PodStatus =~ 'Running'), SucceededCount = sumif(1, PodStatus =~ 'Succeeded'), FailedCount = sumif(1, PodStatus =~ 'Failed'), CrashCount = sumif(1, PodStatus =~ 'CrashLoopBackOff'), TerminateCount = sumif(1, PodStatus =~ 'Terminating'), EvictedCount = sumif(1, PodStatus =~ 'Evicted')\r\n by ClusterName, Name, bin(TimeGenerated, trendBinSize)\r\n ) on ClusterName, Name, TimeGenerated\r\n | extend UnknownCount = TotalCount - PendingCount - RunningCount - SucceededCount - FailedCount\r\n | project ClusterName, Name, TimeGenerated, TotalCount = todouble(TotalCount) / ClusterSnapshotCount, PendingCount = todouble(PendingCount) / ClusterSnapshotCount, RunningCount = todouble(RunningCount) / ClusterSnapshotCount, SucceededCount = todouble(SucceededCount) / ClusterSnapshotCount, FailedCount = todouble(FailedCount) / ClusterSnapshotCount, UnknownCount = todouble(UnknownCount) / ClusterSnapshotCount, CrashCount = todouble(CrashCount) / ClusterSnapshotCount, TerminateCount = todouble(TerminateCount) / ClusterSnapshotCount, EvictedCount = todouble(EvictedCount) / ClusterSnapshotCount\r\n | summarize [\"Minutes in Evicted\"] = sum(EvictedCount) by Computer=ClusterName, Pod=Name\r\n | where [\"Minutes in Evicted\"] < 20",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-POD-Evicted-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                },
+                {
+                    "alertName": "10m-aks-pod-pending-warning",
+                    "alertDescription": "[concat('Warning POD Pending Alert. ', parameters('version'))]",
+                    "query": "//aks pending pod alert for clusters\r\n let endDateTime = now();\r\n let startDateTime = ago(30m);\r\n let trendBinSize = 1m;\r\n KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, TimeGenerated, Name\r\n | summarize ClusterSnapshotCount = count() by bin(TimeGenerated, trendBinSize), ClusterName, Name\r\n | join hint.strategy=broadcast (KubePodInventory\r\n | where TimeGenerated < endDateTime\r\n | where TimeGenerated >= startDateTime\r\n | distinct ClusterName, Computer, PodUid, TimeGenerated, PodStatus, Name\r\n | summarize TotalCount = count(), PendingCount = sumif(1, PodStatus =~ 'Pending'), RunningCount = sumif(1, PodStatus =~ 'Running'), SucceededCount = sumif(1, PodStatus =~ 'Succeeded'), FailedCount = sumif(1, PodStatus =~ 'Failed'), CrashCount = sumif(1, PodStatus =~ 'CrashLoopBackOff'), TerminateCount = sumif(1, PodStatus =~ 'Terminating'), EvictedCount = sumif(1, PodStatus =~ 'Evicted')\r\n by ClusterName, Name, bin(TimeGenerated, trendBinSize)\r\n ) on ClusterName, Name, TimeGenerated\r\n | extend UnknownCount = TotalCount - PendingCount - RunningCount - SucceededCount - FailedCount\r\n | project ClusterName, Name, TimeGenerated, TotalCount = todouble(TotalCount) / ClusterSnapshotCount, PendingCount = todouble(PendingCount) / ClusterSnapshotCount, RunningCount = todouble(RunningCount) / ClusterSnapshotCount, SucceededCount = todouble(SucceededCount) / ClusterSnapshotCount, FailedCount = todouble(FailedCount) / ClusterSnapshotCount, UnknownCount = todouble(UnknownCount) / ClusterSnapshotCount, CrashCount = todouble(CrashCount) / ClusterSnapshotCount, TerminateCount = todouble(TerminateCount) / ClusterSnapshotCount, EvictedCount = todouble(EvictedCount) / ClusterSnapshotCount\r\n | summarize [\"Minutes in Pending\"] = sum(PendingCount) by Computer=ClusterName, Pod=Name\r\n | where [\"Minutes in Pending\"] < 20",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-POD-Pending-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').critAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').critAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').critAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').critAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').critAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').critAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').critAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').critAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

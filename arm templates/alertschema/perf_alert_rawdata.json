@@ -1,0 +1,86 @@
+{
+    "headers": {
+        "Connection": "Keep-Alive",
+        "Expect": "100-continue",
+        "Host": "prod-67.eastus.logic.azure.com",
+        "User-Agent": "IcMBroadcaster/1.0",
+        "X-CorrelationContext": "RkkKACgAAAACAAAAEABi81j84ueYS4GFYeIiHM/IAQAQAKtIfGf1pPZEjTqOCGr59Ns=",
+        "Content-Length": "4003",
+        "Content-Type": "application/json; charset=utf-8"
+    },
+    "body": {
+        "schemaId": "azureMonitorCommonAlertSchema",
+        "data": {
+            "essentials": {
+                "alertId": "/subscriptions/f57996ce-6cfe-400a-a311-f797fd8484d8/providers/Microsoft.AlertsManagement/alerts/677c48ab-a4f5-44f6-8d3a-8e086af9f4db",
+                "alertRule": "10m-kubernetes-disk-critical",
+                "severity": "Sev2",
+                "signalType": "Log",
+                "monitorCondition": "Fired",
+                "monitoringService": "Log Analytics",
+                "alertTargetIDs": [
+                    "/subscriptions/f57996ce-6cfe-400a-a311-f797fd8484d8/resourcegroups/rg-am-eastus-prod-paas-mgmt/providers/microsoft.operationalinsights/workspaces/la-am-eastus-prod-paas"
+                ],
+                "originAlertId": "25f18c61-9f64-460c-a0c7-b011955f2e9c",
+                "firedDateTime": "2020-02-17T23:27:32.9028317Z",
+                "description": "Critical Disk Alert on Kubernetes. v1",
+                "essentialsVersion": "1.0",
+                "alertContextVersion": "1.1"
+            },
+            "alertContext": {
+                "SearchQuery": "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; InsightsMetrics | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where Origin == 'container.azm.ms/telegraf' | where Namespace has 'container.azm.ms/disk' | extend Tags = todynamic(Tags) | project TimeGenerated, _ResourceId, Node=tostring(Tags.hostName), Device=tostring(Tags.device), Path=tostring(Tags.path), DiskMetricName=Name, DiskMetricValue=Val, Computer=tostring(Tags.['container.azm.ms/clusterName']) | where DiskMetricName has 'used_percent' | summarize ['% Disk Used']=max(DiskMetricValue) by Computer, Node | where ['% Disk Used'] >= 85",
+                "SearchIntervalStartTimeUtc": "2020-02-17T22:27:32Z",
+                "SearchIntervalEndtimeUtc": "2020-02-17T23:27:32Z",
+                "ResultCount": 1,
+                "LinkToSearchResults": "https://portal.azure.com#@0c5638da-d686-4d6a-8df4-e0552c70cb17/blade/Microsoft_OperationsManagementSuite_Workspace/AnalyticsBlade/initiator/AnalyticsShareLinkToQuery/isQueryEditorVisible/true/scope/%7B%22resources%22%3A%5B%7B%22resourceId%22%3A%22%2Fsubscriptions%2Ff57996ce-6cfe-400a-a311-f797fd8484d8%2FresourceGroups%2Frg-am-eastus-prod-paas-mgmt%2Fproviders%2FMicrosoft.OperationalInsights%2Fworkspaces%2Fla-am-eastus-prod-paas%22%7D%5D%7D/query/let%20endDateTime%20%3D%20%28datetime%282020-02-17T23%3A27%3A32.0000000%29%20%29%3B%20let%20startDateTime%20%3D%20%28datetime%282020-02-17T23%3A27%3A32.0000000%29%20-%201h%29%3B%20let%20trendBinSize%20%3D%201m%3B%20InsightsMetrics%20%7C%20where%20TimeGenerated%20%3C%20endDateTime%20%7C%20where%20TimeGenerated%20%3E%3D%20startDateTime%20%7C%20where%20Origin%20%3D%3D%20%27container.azm.ms%2Ftelegraf%27%20%7C%20where%20Namespace%20has%20%27container.azm.ms%2Fdisk%27%20%7C%20extend%20Tags%20%3D%20todynamic%28Tags%29%20%7C%20project%20TimeGenerated%2C%20_ResourceId%2C%20Node%3Dtostring%28Tags.hostName%29%2C%20Device%3Dtostring%28Tags.device%29%2C%20Path%3Dtostring%28Tags.path%29%2C%20DiskMetricName%3DName%2C%20DiskMetricValue%3DVal%2C%20Computer%3Dtostring%28Tags.%5B%27container.azm.ms%2FclusterName%27%5D%29%20%7C%20where%20DiskMetricName%20has%20%27used_percent%27%20%7C%20summarize%20%5B%27%25%20Disk%20Used%27%5D%3Dmax%28DiskMetricValue%29%20by%20Computer%2C%20Node%20%7C%20where%20%5B%27%25%20Disk%20Used%27%5D%20%3E%3D%2085/isQuerybase64Compressed/false/timespanInIsoFormat/2020-02-17T22%3a27%3a32.0000000Z%2f2020-02-17T23%3a27%3a32.0000000Z",
+                "SeverityDescription": "High",
+                "WorkspaceId": "9da7ef4b-fda7-4b76-b315-8b056629b7df",
+                "SearchIntervalDurationMin": "60",
+                "AffectedConfigurationItems": [
+                    "AKS-AM-EastUS-Prod-SREPlatform"
+                ],
+                "AlertType": "Number of results",
+                "SearchIntervalInMinutes": "60",
+                "SearchResults": {
+                    "tables": [
+                        {
+                            "name": "PrimaryResult",
+                            "columns": [
+                                {
+                                    "name": "Computer",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "Node",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "% Disk Used",
+                                    "type": "real"
+                                }
+                            ],
+                            "rows": [
+                                [
+                                    "AKS-AM-EastUS-Prod-SREPlatform",
+                                    "aks-prodagtpool-80714504-vmss000007",
+                                    88.9904807811079
+                                ]
+                            ]
+                        }
+                    ],
+                    "dataSources": [
+                        {
+                            "resourceId": "/subscriptions/f57996ce-6cfe-400a-a311-f797fd8484d8/resourcegroups/rg-am-eastus-prod-paas-mgmt/providers/microsoft.operationalinsights/workspaces/la-am-eastus-prod-paas",
+                            "tables": [
+                                "InsightsMetrics"
+                            ]
+                        }
+                    ]
+                },
+                "Threshold": 0,
+                "Operator": "Greater Than",
+                "IncludedSearchResults": "True"
+            }
+        }
+    }
+}

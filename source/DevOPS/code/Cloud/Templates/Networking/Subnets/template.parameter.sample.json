@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subnets": {
+      "value": [
+        {
+          "subnetName": "Subnet-AM-EastUS-POC-App",
+          "vNetName": "VNET-AM-EastUS-POC",
+          "resourceGroup": "RG-AM-EastUS-POC-SS",
+          "subscriptionId": "314d5655-9d37-4818-8ca3-5e0f40ad675f",
+          "properties": {
+            "addressPrefix": "10.252.112.0/25",
+            "networkSecurityGroup": {
+              "id": "/subscriptions/314d5655-9d37-4818-8ca3-5e0f40ad675f/resourceGroups/RG-AM-EastUS-POC-MYCLD/providers/Microsoft.Network/networkSecurityGroups/NSG-AM-EastUS-POC-App"
+            },
+            "routeTable": {
+              "id": "/subscriptions/314d5655-9d37-4818-8ca3-5e0f40ad675f/resourceGroups/RG-AM-EastUS-POC-SS/providers/Microsoft.Network/routeTables/RouteTable-AM-EastUS-POC-SubnetsToNVA"
+            }
+          }
+        },
+        {
+          "subnetName": "Subnet-AM-EastUS-POC-DB",
+          "vNetName": "VNET-AM-EastUS-POC",
+          "resourceGroup": "RG-AM-EastUS-POC-SS",
+          "subscriptionId": "314d5655-9d37-4818-8ca3-5e0f40ad675f",
+          "properties": {
+            "addressPrefix": "10.252.112.128/25",
+            "routeTable": {
+              "id": "/subscriptions/314d5655-9d37-4818-8ca3-5e0f40ad675f/resourceGroups/RG-AM-EastUS-POC-SS/providers/Microsoft.Network/routeTables/RouteTable-AM-EastUS-POC-SubnetsToNVA"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

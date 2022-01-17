@@ -1,0 +1,253 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "metadata": {
+        "name" : "BaseTemplate"
+    },
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "SubscriptionId" : {
+            "type": "string"
+            
+        },
+        "ApplicationName": {
+            "type": "string"
+        },
+        "ResourceGroups" : {
+            "type": "string"
+        },
+        "OMSResourceGroup": {
+            "type": "string"
+        },
+        "OMSWorkspace": {
+            "type": "string"
+        },
+        "OMSWorkspaceId": {
+            "type": "string"
+        },
+        "Environment": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "subscription" : "[concat('/subscriptions/', parameters('SubscriptionId'))]",
+        "OMSWorkspace" : {
+            "SubscriptionId": "[parameters('SubscriptionId')]",
+            "ResourceGroup": "[parameters('OMSResourceGroup')]",
+            "Name": "[parameters('OMSWorkspace')]",
+            "ResourceId": "[parameters('OMSWorkspaceId')]"
+          }
+    },
+    "resources": [
+        {
+            "properties": {
+                "lenses": {
+                    "0": {
+                        "order": 0,
+                        "parts": {
+                            "0": {
+                                "position": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "colSpan": 5,
+                                    "rowSpan": 2
+                                },
+                                "metadata": {
+                                    "inputs": [],
+                                    "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                                    "settings": {
+                                        "content": {
+                                            "settings": {
+                                                "content": "#### 10th Magnitude\r\n#### Azure Managed Services\r\n#### support@10thmagnitude.com",
+                                                "title": "[subscription().displayName]",
+                                                "subtitle": ""
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "1": {
+                                "position": {
+                                    "x": 5,
+                                    "y": 0,
+                                    "colSpan": 4,
+                                    "rowSpan": 2
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[concat(parameters('OMSWorkspaceId') , '/views/Azure Backup Monitoring Solution')]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "timeInterval",
+                                            "value": {
+                                                "_Now": "2020-01-22T16:37:01.961Z",
+                                                "_duration": 86400000,
+                                                "_end": null
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "timeRange",
+                                            "binding": "timeRange",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/ViewTileIFramePart"
+                                }
+                            },
+                            "2": {
+                                "position": {
+                                    "x": 9,
+                                    "y": 0,
+                                    "colSpan": 4,
+                                    "rowSpan": 2
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[concat(parameters('OMSWorkspaceId'), '/views/Updates(', parameters('OMSWorkspace'),')')]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "timeInterval",
+                                            "value": {
+                                                "_Now": "2020-01-22T16:37:01.961Z",
+                                                "_duration": 86400000,
+                                                "_end": null
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "timeRange",
+                                            "binding": "timeRange",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/ViewTileIFramePart"
+                                }
+                            },
+                            "3": {
+                                "position": {
+                                    "x": 13,
+                                    "y": 0,
+                                    "colSpan": 4,
+                                    "rowSpan": 2
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[concat(parameters('OMSWorkspaceId') , '/views/ChangeTracking(', parameters('OMSWorkspace'), ')')]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "timeInterval",
+                                            "value": {
+                                                "_Now": "2020-01-22T16:37:01.961Z",
+                                                "_duration": 86400000,
+                                                "_end": null
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "timeRange",
+                                            "binding": "timeRange",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/ViewTileIFramePart"
+                                }
+                            },
+                            "4": {
+                                "position": {
+                                    "x": 17,
+                                    "y": 0,
+                                    "colSpan": 4,
+                                    "rowSpan": 2
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[concat(parameters('OMSWorkspaceId'), '/views/AgentHealthAssessment(', parameters('OMSWorkspace'), ')')]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "timeInterval",
+                                            "value": {
+                                                "_Now": "2020-01-22T16:37:01.961Z",
+                                                "_duration": 86400000,
+                                                "_end": null
+                                            },
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "timeRange",
+                                            "binding": "timeRange",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/ViewTileIFramePart"
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "model": {
+                        "timeRange": {
+                            "value": {
+                                "relative": {
+                                    "duration": 24,
+                                    "timeUnit": 1
+                                }
+                            },
+                            "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+                        },
+                        "filterLocale": {
+                            "value": "en-us"
+                        },
+                        "filters": {
+                            "value": {
+                                "MsPortalFx_TimeRange": {
+                                    "model": {
+                                        "format": "utc",
+                                        "granularity": "auto",
+                                        "relative": "24h"
+                                    },
+                                    "displayCache": {
+                                        "name": "UTC Time",
+                                        "value": "Past 24 hours"
+                                    },
+                                    "filteredPartIds": []
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "name": "[concat('Operations', replace(parameters('ApplicationName'), ' ', ''))]",
+            "type": "Microsoft.Portal/dashboards",
+            "location": "eastus",
+            "tags": {
+                "hidden-title": "[concat('Operations - ', parameters('ApplicationName'), ' - ', parameters('Environment'))]"
+            },
+            "apiVersion": "2015-08-01-preview"
+        }
+    ]
+}

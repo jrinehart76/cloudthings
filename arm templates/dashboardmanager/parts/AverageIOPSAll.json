@@ -1,0 +1,88 @@
+{
+    "name": "AverageIOPSAll",
+    "part": {
+        "position": {
+            "x": 7,
+            "y": 1,
+            "colSpan": 7,
+            "rowSpan": 4
+        },
+        "metadata": {
+            "inputs": [
+                {
+                    "name": "ComponentId",
+                    "value": "[variables('OMSWorkspace')]"
+                },
+                {
+                    "name": "Query",
+                    "value": "[concat('Perf | where TimeGenerated > now(-24h) | where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')\r\n| where Computer !startswith \"aks-\" \r\n| where ObjectName has \"logical disk\" or ObjectName has \"logicaldisk\" \r\n| where CounterName has \"transfers/sec\" and InstanceName has \"_total\"  \r\n| summarize averageIOPS=avg(CounterValue) by Computer, bin(TimeGenerated, 15m)\r\n| render timechart')]"
+                },
+                {
+                    "name": "Dimensions",
+                    "value": {
+                        "xAxis": {
+                            "name": "TimeGenerated",
+                            "type": "datetime"
+                        },
+                        "yAxis": [
+                            {
+                                "name": "averageIOPS",
+                                "type": "real"
+                            }
+                        ],
+                        "splitBy": [
+                            {
+                                "name": "Computer",
+                                "type": "string"
+                            }
+                        ],
+                        "aggregation": "Sum"
+                    }
+                },
+                {
+                    "name": "Version",
+                    "value": "1.0"
+                },
+                {
+                    "name": "PartTitle",
+                    "value": "Analytics"
+                },
+                {
+                    "name": "PartSubTitle",
+                    "value": "[parameters('OMSWorkspace')]"
+                },
+                {
+                    "name": "resourceTypeMode",
+                    "value": "workspace"
+                },
+                {
+                    "name": "ControlType",
+                    "value": "AnalyticsChart"
+                },
+                {
+                    "name": "SpecificChart",
+                    "value": "Line"
+                },
+                {
+                    "name": "TimeRange",
+                    "isOptional": true
+                },
+                {
+                    "name": "DashboardId",
+                    "isOptional": true
+                }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+                "content": {
+                    "PartTitle": "Average IOPS - All",
+                    "PartSubTitle": "Last 24 Hours"
+                }
+            },
+            "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+            }
+        }
+    }
+}

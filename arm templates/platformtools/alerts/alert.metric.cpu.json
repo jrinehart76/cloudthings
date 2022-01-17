@@ -1,0 +1,82 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "type": "string"
+        },
+        "alertSeverity": {
+            "type": "string"
+        },
+        "alertFrequencyInMinutes": {
+            "type": "int"
+        },
+        "alertWindowInMinutes": {
+            "type": "int"
+        },
+        "alertThreshold": {
+            "type":  "int"
+        },
+        "alertTriggerThreshold": {
+            "type": "int"
+        },
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "microsoft.insights/scheduledqueryrules",
+            "apiVersion": "2018-04-16",
+            "name": "[parameters('alertName')]",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": {
+                "ManagedBy": "10th Magnitude"
+            },
+            "properties": {
+                "description": "[concat('Metric CPU Alert - ', parameters('alertSeverity'))]",
+                "enabled": "true",
+                "source": {
+                    "query": "InsightsMetrics\n| where TimeGenerated > now(-60m)\n| where isnotempty(_ResourceId)\n| where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\n| where Namespace has 'Processor' and Name has 'UtilizationPercentage'\n| extend Data=parse_json(Tags)\n| extend CPUCount=toint(Data.['vm.azm.ms/totalCpus'])\n| project Computer=tolower(tostring(split(Computer, '.')[0])), round(Val), CPUCount, TimeGenerated \n| summarize AggregatedValue=round(avg(Val),0) by Computer, CPUCount, bin(TimeGenerated, 60m)",
+                    "authorizedResources": [],
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[parameters('alertFrequencyInMinutes')]",
+                    "timeWindowInMinutes": "[parameters('alertWindowInMinutes')]"
+                },
+                "action": {
+                    "severity": "3",
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[concat(parameters('customerId'),'-',parameters('alertSeverity'),'-CPU')]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": "[parameters('alertThreshold')]",
+                        "metricTrigger": {
+                            "thresholdOperator": "GreaterThan",
+                            "threshold": "[parameters('alertTriggerThreshold')]",
+                            "metricTriggerType": "Consecutive",
+                            "metricColumn": "Computer"
+                        }
+                    },
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"
+                }
+            }
+        }
+    ]
+}

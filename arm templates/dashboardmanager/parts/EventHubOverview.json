@@ -1,0 +1,25 @@
+{
+    "name": "EventHubOverview",
+    "part": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "colSpan": 22,
+          "rowSpan": 1
+        },
+        "metadata": {
+          "inputs": [],
+          "type": "Extension/HubsExtension/PartType/MarkdownPart",
+          "settings": {
+            "content": {
+              "settings": {
+                "content": "<div style=\"font-size:300%;\">Event Hub</div>",
+                "title": "",
+                "subtitle": "",
+                "markdownSource": 1
+              }
+            }
+          }
+        }
+      }
+}

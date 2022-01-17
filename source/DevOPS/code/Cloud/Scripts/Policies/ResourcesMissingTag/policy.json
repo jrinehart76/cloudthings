@@ -1,0 +1,27 @@
+{
+   "properties": {
+      "displayName": "Audit resources with missing tag",
+      "description": "Audit resources missing a particular tag",
+      "mode": "indexed",
+      "parameters": {
+         "tagName": {
+            "type": "String",
+            "metadata": {
+               "description": "Name of the tag, such as CostCenter"
+            }
+         }
+      },
+      "policyRule": {
+         "if": {
+            "field": "[concat('tags[',parameters('tagName'), ']')]",
+            "exists": "false"
+         },
+         "then": {
+            "effect": "audit"
+         }
+      },
+      "metadata": {
+         "category": "Tags"
+      }
+   }
+}

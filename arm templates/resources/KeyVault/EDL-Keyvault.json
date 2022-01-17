@@ -1,0 +1,88 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    },
+    "locationAbv": {
+      "type": "string",
+      "defaultValue": "eus",
+      "metadata": {
+        "description": "The shorter version of the deployment region. E.G. uksouth, seasia"
+      }
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "Premium",
+      "allowedValues": [
+        "Standard",
+        "standard",
+        "Premium",
+        "premium"
+      ],
+      "metadata": {
+        "description": "SKU for the vault"
+      }
+    },
+    "purpose": {
+      "type": "string",
+      "defaultValue": "Fin",
+      "metadata": {
+        "description": "Purpose for the vault"
+      }
+    }
+  },
+  "variables": {
+    "baseNamingPrefix": "[concat(parameters('region'), '-', toupper(parameters('locationAbv')), '-', parameters('environment'), '-', parameters('application'), '-', parameters('purpose'))]",
+    "enabledForDeployment": "True",
+    "enabledForTemplateDeployment": "True",
+    "enabledForDiskEncryption": "False",
+    "tenantId": "[subscription().tenantId]",
+    "keyvaultName": "[concat('AKV-', variables('baseNamingPrefix'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-10-01",
+      "name": "[variables('keyvaultName')]",
+      "location": "[resourceGroup().location]",
+      "type": "Microsoft.KeyVault/vaults",
+      "properties": {
+        "enabledForDeployment": "[variables('enabledForDeployment')]",
+        "enabledForTemplateDeployment": "[variables('enabledForTemplateDeployment')]",
+        "enabledForDiskEncryption": "[variables('enabledForDiskEncryption')]",
+        "tenantId": "[variables('tenantId')]",
+        "accessPolicies": [],
+        "sku": {
+          "name": "[parameters('sku')]",
+          "family": "A"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+    "name": "SparkAllocatedMemory",
+    "part": {
+        "position": {
+            "x": 0,
+            "y": 5,
+            "colSpan": 8,
+            "rowSpan": 3
+        },
+        "metadata": {
+            "inputs": [
+                {
+                    "name": "ComponentId",
+                    "value": "[variables('OMSWorkspace')]"
+                },
+                {
+                    "name": "Query",
+                    "value": "metrics_resourcemanager_queue_root_CL\r\n| where TimeGenerated > now(-1d) \r\n| where ClusterType_s == \"spark\"\r\n| summarize allocatedMEMinGB = max((AllocatedMB_d / 1024)) by bin(TimeGenerated, 15m), ClusterName_s\r\n| render timechart \r\n"
+                },
+                {
+                    "name": "Dimensions",
+                    "value": {
+                        "xAxis": {
+                            "name": "TimeGenerated",
+                            "type": "DateTime"
+                        },
+                        "yAxis": [
+                            {
+                                "name": "allocatedMEMinGB",
+                                "type": "Double"
+                            }
+                        ],
+                        "splitBy": [
+                            {
+                                "name": "ClusterName_s",
+                                "type": "String"
+                            }
+                        ],
+                        "aggregation": "Maximum"
+                    }
+                },
+                {
+                    "name": "Version",
+                    "value": "1.0"
+                },
+                {
+                    "name": "DashboardId",
+                    "value": "/subscriptions/76ad4304-5346-4b50-a862-f652c40ee4a5/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/8b95b03d-dce7-4527-ae88-444cbb146b33"
+                },
+                {
+                    "name": "PartTitle",
+                    "value": "Analytics"
+                },
+                {
+                    "name": "PartSubTitle",
+                    "value": "la-am-eastus-NonProd-DataLake"
+                },
+                {
+                    "name": "resourceTypeMode",
+                    "value": "workspace"
+                },
+                {
+                    "name": "ControlType",
+                    "value": "AnalyticsChart"
+                },
+                {
+                    "name": "SpecificChart",
+                    "value": "Line"
+                },
+                {
+                    "name": "TimeRange",
+                    "isOptional": true
+                }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+                "content": {
+                    "PartTitle": "Spark Allocated Memory (in GB)",
+                    "PartSubTitle": "Last 24 hours"
+                }
+            },
+            "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+            }
+        }
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.compute",
+    "priority" : 1,
+    "height": 9,
+    "parts": "'CpuAverageAll', 'VirtualMachineOveriew', 'CpuAverageAll','VirtualMachineOveriew','AverageNetworkUsageAll','AverageMemoryLinux','AverageMemoryWindows','AverageIOPSAll','AverageDiskTransfersAll'"
+}

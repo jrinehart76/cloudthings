@@ -1,0 +1,295 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachineNamePrefix": {
+      "type": "string",
+      "defaultValue": "US-AZR-PLAPP",
+      "metadata": {
+        "description": "Azure VM resource name"
+      }
+    },
+    "virtualMachineComputerNamePrefix": {
+      "type": "string",
+      "defaultValue": "US-AZR-PLAPP",
+      "metadata": {
+        "description": "OS computer name"
+      }
+    },
+    "virtualMachineSize": {
+      "type": "string",
+      "defaultValue": "Standard_A4",
+      "metadata": {
+        "description": "The size of the virtual machine"
+      }
+    },
+    "sharedImage": {
+      "type": "string",
+      "defaultValue": "SharedImage-AM-EastUS-SS-Ubuntu-1604",
+      "allowedValues": [
+      "SharedImage-AM-EastUS-SS-CentOS-75",
+      "SharedImage-AM-EastUS-SS-RHEL-74",
+      "SharedImage-AM-EastUS-SS-RHEL-76",
+      "SharedImage-AM-EastUS-SS-Ubuntu-1604",
+      "SharedImage-AM-EastUS-SS-Ubuntu-1804"
+      ],
+      "metadata": {
+          "description": "The name of the shared image"
+        }
+      },
+    "sharedImageVersion": {
+      "type": "string",
+      "defaultValue": "2019.01.18",
+      "allowedValues": [
+      "2019.01.18",
+      "2018.03.13",
+      "2018.08.13",
+      "2018.10.16"
+      ],
+      "metadata": {
+          "description": "The version of the shared image"
+        }
+      },      
+    "osDiskStorageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "The type of storage for the OS Disk"
+      }
+    },
+    "dataDisks": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "lun": 0,
+          "diskSizeGB": 32,
+          "managedDisk": {
+            "storageAccountType": "Standard_LRS"
+          },
+          "createOption": "empty",
+          "caching": "None"
+        }
+      ],
+      "metadata": {
+        "description": "The data disk array"
+      }
+    },
+    "adminUsername": {
+      "type": "string"
+    },
+    "sshKeyData": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The public SSH Key for the Virtual Machine Credentials"
+      }
+    },
+    "virtualNetworkRGName": {
+      "type": "string",
+      "defaultValue": "RG-AM-EastUS-DevOpsPOC-Mgmt",
+      "metadata": {
+        "description": "The name of the resource group that contians the vnet that the VM will be attached to"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "VNET-AM-EastUS-POC-10M",
+      "metadata": {
+        "description": "The virtual network to which the VM will be attached"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "default",
+      "metadata": {
+        "description": "The subnet to which the VM will be deployed"
+      }
+    },
+    "availabilitySetName": {
+      "type": "string",
+      "defaultValue": "AS-AM-EastUS-POC-10M-LServer",
+      "metadata": {
+        "description": "The availability set that will house the VM"
+      }
+    },
+    "availabilitySetUpdateDomainCount": {
+      "type": "int",
+      "defaultValue": 5,
+      "metadata": {
+        "description": "The number of update domains in the availability set"
+      }
+    },
+    "availabilitySetFaultDomainCount": {
+      "type": "int",
+      "defaultValue": 3,
+      "metadata": {
+        "description": "The number of fault domains in the availability set"
+      }
+    },
+    "diagStorageAccountName": {
+      "type": "string",
+      "defaultValue": "savmdiagdwxiqj64pubhw",
+      "metadata": {
+        "description": "The name of the diagnostic storage account for the subscription. The sotrage account should begin with savmdiag-"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    },
+    "numberOfInstances": {
+      "type": "int"
+    },
+    "startNumber": {
+      "type": "int"
+    }
+  },
+  "variables": {
+    "vnetId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2016-09-01",
+      "name": "[concat('NIC-',parameters('virtualMachineNamePrefix'),padLeft(copyIndex(parameters('startNumber')),2,'0'),'-1')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "dependsOn": [],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              },
+              "privateIPAllocationMethod": "Dynamic"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "apiVersion": "2016-04-30-preview",
+      "name": "[parameters('availabilitySetName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "platformUpdateDomainCount": "[parameters('availabilitySetUpdateDomainCount')]",
+        "platformFaultDomainCount": "[parameters('availabilitySetFaultDomainCount')]",
+        "virtualMachines": []
+      },
+      "sku": {
+        "name": "Aligned"
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2018-04-01",
+      "name": "[concat(parameters('virtualMachineNamePrefix'),padLeft(copyIndex(parameters('startNumber')),2,'0'))]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "virtualMachineLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "dependsOn": [
+        "nicLoop",
+        "[concat('Microsoft.Compute/availabilitySets/', parameters('availabilitySetName'))]"
+      ],
+      "properties": {
+        "osProfile": {
+          "computerName": "[concat(parameters('virtualMachineComputerNamePrefix'),padLeft(copyIndex(parameters('startNumber')),2,'0'))]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }        
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "id": "[concat('/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-SS-Images/providers/Microsoft.Compute/galleries/SharedImageGalleryAMEastUSSS/images/', parameters('sharedImage'),'/versions/', parameters('sharedImageVersion'))]"
+          },                  
+      "osDisk": {
+            "createOption": "FromImage",
+            "name": "[concat('Disk-',parameters('virtualMachineNamePrefix'),padLeft(copyIndex(parameters('startNumber')),2,'0'),'-OS')]",
+            "managedDisk": {
+              "storageAccountType": "[parameters('osDiskStorageType')]"
+            }
+          },
+          "copy": [
+            {
+              "name": "dataDisks",
+              "count": "[length(parameters('dataDisks'))]",
+              "input": {
+                "name": "[concat('Disk-',parameters('virtualMachineNamePrefix'),padLeft(copyIndex('virtualMachineLoop',parameters('startNumber')),2,'0'),'-Data-LUN',copyIndex('dataDisks'))]",
+                "lun": "[parameters('dataDisks')[copyIndex('dataDisks')].lun]",
+                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].diskSizeGB]",
+                "managedDisk": {
+                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].managedDisk.storageAccountType]"
+                },
+                "createOption": "[parameters('dataDisks')[copyIndex('dataDisks')].createOption]",
+                "caching": "[parameters('dataDisks')[copyIndex('dataDisks')].caching]"
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('NIC-',parameters('virtualMachineNamePrefix'),padLeft(copyIndex(parameters('startNumber')),2,'0'),'-1'))]"
+            }
+          ]
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true",
+            "storageUri": "[concat('http://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

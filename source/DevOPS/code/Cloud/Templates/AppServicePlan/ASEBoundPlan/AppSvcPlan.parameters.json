@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ASEResourceGroup": {
+      "value": "test-ase-01"
+    },
+    "ASEName": {
+      "value": "test-ase-01"
+    },
+    "installDate": {
+      "value": "2019.01.13"
+    },
+    "application": {
+      "value": "10M"
+    },
+    "applicationName": {
+      "value": "NA"
+    },
+    "applicationOwner": {
+      "value": "NA"
+    },
+    "applicationDeveloper": {
+      "value": "NA"
+    },
+    "applicationDescription": {
+      "value": "NA"
+    },
+    "costCenter": {
+      "value": "NA"
+    },
+    "departmentOrBrand": {
+      "value": "NA"
+    },
+    "projectID": {
+      "value": "NA"
+    },
+    "primaryFunction": {
+      "value": "NA"
+    },
+    "fiscalYear": {
+      "value": "NA"
+    },
+    "environmentTag": {
+      "value": "NA"
+    }
+  }
+}

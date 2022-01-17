@@ -1,0 +1,76 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vNetPeers": {
+      "value": [
+        {
+          "peerName": "Pasco-VNetPeer-EastUS-SS",
+          "localVNetName": "Pasco-VNet-EastUS-NonProd",
+          "resourceGroup": "Pasco-RG-EastUS-SS-Networking",
+          "subscriptionId": "56f07e26-69d8-4592-af19-41ef9f797770",
+          "remoteVNetId": "/subscriptions/226b94b2-329b-4b42-a392-de0c8b78fa36/resourceGroups/RG-EastUS-SS-Networking/providers/Microsoft.Network/virtualNetworks/VNet-EastUS-SS",
+          "allowVirtualNetworkAccess": true,
+          "allowForwardedTraffic": true,
+          "allowGatewayTransit": false,
+          "useRemoteGateways": true
+        },
+        {
+          "peerName": "Pasco-VNetPeer-EastUS-Prod",
+          "localVNetName": "Pasco-VNet-EastUS-NonProd",
+          "resourceGroup": "Pasco-RG-EastUS-SS-Networking",
+          "subscriptionId": "56f07e26-69d8-4592-af19-41ef9f797770",
+          "remoteVNetId": "/subscriptions/226b94b2-329b-4b42-a392-de0c8b78fa36/resourceGroups/RG-EastUS-Prod-Networking/providers/Microsoft.Network/virtualNetworks/VNet-EastUS-Prod",
+          "allowVirtualNetworkAccess": true,
+          "allowForwardedTraffic": false,
+          "allowGatewayTransit": false,
+          "useRemoteGateways": false
+        },
+        {
+          "peerName": "Pasco-VNetPeer-EastUS-NonProd",
+          "localVNetName": "Pasco-VNet-EastUS-NonProd",
+          "resourceGroup": "Pasco-RG-EastUS-SS-Networking",
+          "subscriptionId": "56f07e26-69d8-4592-af19-41ef9f797770",
+          "remoteVNetId": "/subscriptions/226b94b2-329b-4b42-a392-de0c8b78fa36/resourceGroups/RG-EastUS-NonProd-Networking/providers/Microsoft.Network/virtualNetworks/VNet-EastUS-NonProd",
+          "allowVirtualNetworkAccess": true,
+          "allowForwardedTraffic": false,
+          "allowGatewayTransit": false,
+          "useRemoteGateways": false
+        },
+        {
+          "peerName": "VNetPeer-EastUS-PascoNonProd",
+          "localVNetName": "VNet-EastUS-SS",
+          "resourceGroup": "RG-EastUS-SS-Networking",
+          "subscriptionId": "226b94b2-329b-4b42-a392-de0c8b78fa36",
+          "remoteVNetId": "/subscriptions/56f07e26-69d8-4592-af19-41ef9f797770/resourceGroups/Pasco-RG-EastUS-SS-Networking/providers/Microsoft.Network/virtualNetworks/Pasco-VNet-EastUS-NonProd",
+          "allowVirtualNetworkAccess": true,
+          "allowForwardedTraffic": false,
+          "allowGatewayTransit": true,
+          "useRemoteGateways": false
+        },
+        {
+          "peerName": "VNetPeer-EastUS-PascoNonProd",
+          "localVNetName": "VNet-EastUS-Prod",
+          "resourceGroup": "RG-EastUS-Prod-Networking",
+          "subscriptionId": "226b94b2-329b-4b42-a392-de0c8b78fa36",
+          "remoteVNetId": "/subscriptions/56f07e26-69d8-4592-af19-41ef9f797770/resourceGroups/Pasco-RG-EastUS-SS-Networking/providers/Microsoft.Network/virtualNetworks/Pasco-VNet-EastUS-NonProd",
+          "allowVirtualNetworkAccess": true,
+          "allowForwardedTraffic": false,
+          "allowGatewayTransit": false,
+          "useRemoteGateways": false
+        },
+        {
+          "peerName": "VNetPeer-EastUS-PascoNonProd",
+          "localVNetName": "VNet-EastUS-NonProd",
+          "resourceGroup": "RG-EastUS-NonProd-Networking",
+          "subscriptionId": "226b94b2-329b-4b42-a392-de0c8b78fa36",
+          "remoteVNetId": "/subscriptions/56f07e26-69d8-4592-af19-41ef9f797770/resourceGroups/Pasco-RG-EastUS-SS-Networking/providers/Microsoft.Network/virtualNetworks/Pasco-VNet-EastUS-NonProd",
+          "allowVirtualNetworkAccess": true,
+          "allowForwardedTraffic": false,
+          "allowGatewayTransit": false,
+          "useRemoteGateways": false
+        }
+      ]
+    }
+  }
+}

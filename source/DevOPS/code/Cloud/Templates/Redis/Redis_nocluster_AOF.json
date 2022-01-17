@@ -1,0 +1,202 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "skuName": {
+      "type": "string",
+      "defaultValue": "Premium",
+      "metadata": {
+        "description": "Tier of Redis Cache - Premium required for VNet Join"
+      },
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "skuFamily": {
+      "type": "string",
+      "defaultValue": "P",
+      "metadata": {
+        "description": "Standard / Basic is C, Premium is P"
+      },
+      "allowedValues": [
+        "C",
+        "P"
+      ]
+    },
+    "skuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Scale of cache sizes. P: 1-4, C: 0-6"
+      },
+      "allowedValues": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "existingVnet": {
+      "type": "string",
+      "defaultValue": "test-vnet02",
+      "metadata": {
+        "description": "Name of the existing Virtual Network"
+      }
+    },
+    "existingVnetRG": {
+      "type": "string",
+      "defaultValue": "test-vnet02",
+      "metadata": {
+        "description": "Resource Group of the existing Virtual Network"
+      }
+    },
+    "existingSubnet": {
+      "type": "string",
+      "defaultValue": "redis",
+      "metadata": {
+        "description": "Name of the subnet within the existing Virtual Network that CosmosDB will be deployed to"
+      }
+    },
+    "enableNonSslPort": {
+      "type": "string",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "Enable Non SSL Port - true::enabled false::disabled"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Premium_LRS",
+      "metadata": {
+        "description": "Storage account for Redis AOF backup"
+      },
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "staticIP": {
+      "type": "string",
+      "defaultValue": "15.15.4.10",
+      "metadata": {
+        "description": "Internal IP to be assigned to Redis within the existing subnet"
+      }
+    },
+    "iteration": {
+      "type": "string",
+      "defaultValue": "01",
+      "metadata": {
+        "description": "numeration of redis deployed"
+      }
+    },
+    "locationAbv": {
+      "type": "string",
+      "defaultValue": "eus",
+      "metadata": {
+        "description": "The shorter version of the deployment region. E.G. uksouth, seasia"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "Azure Region"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The application name"
+      }
+    },
+    "applicationAbv": {
+      "type": "string",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "Azure Region"
+      }
+    }
+  },
+  "variables": {
+    "baseNamingPrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "redisCacheName": "[concat('Redis-', variables('baseNamingPrefix'),'-',parameters('iteration'))]",
+    "storageAccountName": "[tolower(concat('sa', parameters('region'), parameters('locationAbv'), parameters('environment'), parameters('applicationAbv'), 'redis', parameters('iteration')))]",
+    "subnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('existingVNetRG'), '/providers/Microsoft.Network/virtualNetworks/', parameters('existingVNet'), '/subnets/', parameters('existingSubnet'))]",
+    "listKeys": "[concat('/subscriptions/',subscription().subscriptionid,'/resourceGroups/',resourcegroup().name,'/providers/Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]"
+  },
+
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "kind": "Storage",
+      "properties": {}
+    },
+    {
+      "apiVersion": "2017-10-01",
+      "type": "Microsoft.Cache/Redis",
+      "name": "[variables('redisCacheName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[variables('storageAccountName')]"
+      ],
+      "tags": {
+        "ApplicationName": "[parameters('applicationName')]",
+        "ApplicationOwner": "[parameters('applicationOwner')]",
+        "ApplicationDeveloper": "[parameters('applicationDeveloper')]",
+        "ApplicationID": "[parameters('applicationID')]",
+        "ApplicationDescription": "[parameters('applicationDescription')]",
+        "BusinessOwner": "[parameters('businessOwner')]",
+        "DepartmentOrBrand": "[parameters('departmentOrBrand')]",
+        "Environment": "[parameters('environmentTag')]",
+        "Location": "[parameters('location')]",
+        "ProjectID": "[parameters('projectID')]",
+        "Region": "[parameters('region')]",
+        "PrimaryFunction": "[parameters('primaryFunction')]",
+        "InstallDate": "[parameters('installDate')]",
+        "FiscalYear": "[parameters('fiscalYear')]",
+        "CostCenter": "[parameters('costCenter')]"
+      },
+      "properties": {
+        "sku": {
+          "name": "[parameters('skuName')]",
+          "family": "[parameters('skuFamily')]",
+          "capacity": "[parameters('skuCapacity')]"
+        },
+        "redisConfiguration": {
+          "aof-backup-enabled": "true",
+          "aof-storage-connection-string-0": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';BlobEndpoint=https://',variables('storageAccountName'),'.blob.core.windows.net/;AccountKey=', listKeys(variables('listKeys'), '2015-06-15').key1)]"
+        },
+        "enableNonSslPort": "[parameters('enableNonSslPort')]",
+        "subnetid": "[variables('subnetId')]",
+        "staticIP": "[parameters('staticIP')]"
+      }
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "logicAppName": {
+            "defaultValue": "10m-incident-manager-critical",
+            "type": "string"
+        },
+        "dynamicsConnectionName": {
+            "type": "string"
+        },
+        "teamsConnectionName": {
+            "type": "string"
+        },
+        "CustomerName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('logicAppName')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "LogicApp"
+            },
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_record_is_created": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 3
+                            },
+                            "splitOn": "@triggerBody()?['value']",
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['dynamicscrmonline']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent('orgb1b7c4c0.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_events'))}/items"
+                            }
+                        }
+                    },
+                    "actions": {
+                        "If_Event_is_Critical": {
+                            "actions": {
+                                "Does_the_Incident_exist": {
+                                    "actions": {
+                                        "For_each": {
+                                            "foreach": "@body('List_records')?['value']",
+                                            "actions": {
+                                                "Associate_Event_to_Incident": {
+                                                    "runAfter": {},
+                                                    "type": "ApiConnection",
+                                                    "inputs": {
+                                                        "body": {
+                                                            "_apitil_incidentid_value": "@items('For_each')?['apitil_incidentid']",
+                                                            "_statecode_label": "Inactive",
+                                                            "_statuscode_label": "Closed",
+                                                            "apitil_action": 809730000
+                                                        },
+                                                        "host": {
+                                                            "connection": {
+                                                                "name": "@parameters('$connections')['dynamicscrmonline']['connectionId']"
+                                                            }
+                                                        },
+                                                        "method": "patch",
+                                                        "path": "/datasets/@{encodeURIComponent(encodeURIComponent('orgb1b7c4c0.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_events'))}/items/@{encodeURIComponent(encodeURIComponent(triggerBody()?['apitil_eventid']))}"
+                                                    }
+                                                }
+                                            },
+                                            "runAfter": {},
+                                            "type": "Foreach"
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "List_records": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "else": {
+                                        "actions": {
+                                            "Create_New_Incident_from_Event": {
+                                                "runAfter": {},
+                                                "type": "ApiConnection",
+                                                "inputs": {
+                                                    "body": {
+                                                        "_apitil_action_label": "Create Incident",
+                                                        "_statecode_label": "Inactive",
+                                                        "_statuscode_label": "Closed - Incident Created",
+                                                        "apitil_acknowledged": true
+                                                    },
+                                                    "host": {
+                                                        "connection": {
+                                                            "name": "@parameters('$connections')['dynamicscrmonline']['connectionId']"
+                                                        }
+                                                    },
+                                                    "method": "patch",
+                                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('orgb1b7c4c0.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_events'))}/items/@{encodeURIComponent(encodeURIComponent(triggerBody()?['apitil_eventid']))}"
+                                                }
+                                            },
+                                            "Delay": {
+                                                "runAfter": {
+                                                    "Create_New_Incident_from_Event": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "Wait",
+                                                "inputs": {
+                                                    "interval": {
+                                                        "count": 7,
+                                                        "unit": "Second"
+                                                    }
+                                                }
+                                            },
+                                            "Get_record": {
+                                                "runAfter": {
+                                                    "Delay": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "ApiConnection",
+                                                "inputs": {
+                                                    "host": {
+                                                        "connection": {
+                                                            "name": "@parameters('$connections')['dynamicscrmonline']['connectionId']"
+                                                        }
+                                                    },
+                                                    "method": "get",
+                                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('orgb1b7c4c0.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_incidents'))}/items/@{encodeURIComponent(encodeURIComponent(triggerBody()?['apitil_name']))}"
+                                                }
+                                            },
+                                            "Post_a_message_(V3)": {
+                                                "runAfter": {
+                                                    "Get_record": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "ApiConnection",
+                                                "inputs": {
+                                                    "body": {
+                                                        "body": {
+                                                            "content": "[concat('<p><br>\nTicket Priority: @{body(''Get_record'')?[''apitil_priority'']}<br>\nCustomer Name: ', parameters('CustomerName') , '<br>\nDescription: @{body(''Get_record'')?[''apitil_incidentdescription'']}</p>')]",
+                                                            "contentType": "html"
+                                                        }
+                                                    },
+                                                    "host": {
+                                                        "connection": {
+                                                            "name": "@parameters('$connections')['teams']['connectionId']"
+                                                        }
+                                                    },
+                                                    "method": "post",
+                                                    "path": "/v3/beta/teams/@{encodeURIComponent('8d882c79-227d-42c4-b50b-3750f6d7c469')}/channels/@{encodeURIComponent('19:d7f684e92a604b3c9a33bd4e8787dd7b@thread.skype')}/messages"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expression": {
+                                        "and": [
+                                            {
+                                                "equals": [
+                                                    "@length(body('List_records')?['value'])",
+                                                    1
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "type": "If"
+                                },
+                                "List_records": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['dynamicscrmonline']['connectionId']"
+                                            }
+                                        },
+                                        "method": "get",
+                                        "path": "/datasets/@{encodeURIComponent(encodeURIComponent('orgb1b7c4c0.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_incidents'))}/items",
+                                        "queries": {
+                                            "$filter": "statecode eq 0 and apitil_title eq '@{triggerBody()?['apitil_name']}' and _apitil_account_value eq '@{triggerBody()?['_apitil_relatedaccount_value']}'",
+                                            "$top": 1
+                                        }
+                                    }
+                                }
+                            },
+                            "runAfter": {},
+                            "else": {
+                                "actions": {
+                                    "Record_Is_Not_Critical": {
+                                        "runAfter": {},
+                                        "type": "Terminate",
+                                        "inputs": {
+                                            "runStatus": "Succeeded"
+                                        }
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "equals": [
+                                            "@triggerBody()?['_apitil_impact_label']",
+                                            "1-Extensive"
+                                        ]
+                                    },
+                                    {
+                                        "equals": [
+                                            "@triggerBody()?['_apitil_urgency_label']",
+                                            "1-Critical"
+                                        ]
+                                    },
+                                    {
+                                        "equals": [
+                                            "@triggerBody()?['_apitil_level_label']",
+                                            "Critical"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "dynamicscrmonline": {
+                                "connectionId": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/connections', parameters('dynamicsConnectionName'))]",
+                                "connectionName": "[parameters('dynamicsConnectionName')]",
+                                "id":  "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/dynamicscrmonline')]"
+                            },
+                            "teams": {
+                                "connectionId": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/connections', parameters('teamsConnectionName'))]",
+                                "connectionName": "[parameters('teamsConnectionName')]",
+                                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/teams')]"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

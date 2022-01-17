@@ -1,0 +1,84 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "kind": {
+      "type": "string",
+      "defaultValue": "linux",
+      "allowedValues": [
+        "linux",
+        "app"
+      ],
+      "metadata": {
+        "description": "Windows or Linux app service plan - app = windows"
+      }
+    },
+    "ASEResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource Group of the existing ASE"
+      }
+    },
+    "ASEName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the ASE"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    }
+  },
+  "variables": {
+    "baseNamingPrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "srvPlanName": "[concat('SrvPln-',parameters('kind') , '-' , variables('baseNamingPrefix'))]",
+    "aseResourceID": "[concat(subscription().id, '/resourceGroups/', parameters('ASEResourceGroup'),'/providers/Microsoft.Web/hostingEnvironments/',parameters('ASEName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "name": "[variables('srvPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[parameters('Location')]",
+      "kind": "[parameters('kind')]",
+      "properties": {
+        "name": "[variables('srvPlanName')]",
+        "hostingEnvironmentProfile": {
+          "id": "[variables('ASEResourceID')]"
+        },
+        "reserved": true
+      },
+      "sku": {
+        "name": "I1",
+        "tier": "Isolated",
+        "size": "I1",
+        "family": "I"
+      }
+    }
+  ]
+}

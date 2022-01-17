@@ -1,0 +1,88 @@
+{
+    "name": "RedisCacheMisses",
+    "part": {
+        "position": {
+            "x": 14,
+            "y": 1,
+            "colSpan": 7,
+            "rowSpan": 4
+          },
+          "metadata": {
+            "inputs": [
+              {
+                "name": "ComponentId",
+                "value": "[variables('OMSWorkspace')]"
+              },
+              {
+                "name": "Query",
+                "value": "//Redis cache misses\nAzureMetrics\n| where TimeGenerated > now(-24h)\n| where ResourceProvider has \"microsoft.cache\" and MetricName contains \"cachemisses\"\n| summarize averageCacheMisses=avg(Count) by RedisCache=Resource, bin(TimeGenerated, 15m)\n| render timechart\n"
+              },
+              {
+                "name": "Dimensions",
+                "value": {
+                  "xAxis": {
+                    "name": "TimeGenerated",
+                    "type": "DateTime"
+                  },
+                  "yAxis": [
+                    {
+                      "name": "averageCacheMisses",
+                      "type": "Double"
+                    }
+                  ],
+                  "splitBy": [
+                    {
+                      "name": "RedisCache",
+                      "type": "String"
+                    }
+                  ],
+                  "aggregation": "Average"
+                }
+              },
+              {
+                "name": "Version",
+                "value": "1.0"
+              },
+              {
+                "name": "PartTitle",
+                "value": "Analytics"
+              },
+              {
+                "name": "PartSubTitle",
+                "value": "[parameters('OMSWorkspace')]"
+              },
+              {
+                "name": "resourceTypeMode",
+                "value": "workspace"
+              },
+              {
+                "name": "ControlType",
+                "value": "AnalyticsChart"
+              },
+              {
+                "name": "SpecificChart",
+                "value": "Line"
+              },
+              {
+                "name": "TimeRange",
+                "isOptional": true
+              },
+              {
+                "name": "DashboardId",
+                "isOptional": true
+              }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+              "content": {
+                "PartTitle": "Redis Cache Misses",
+                "PartSubTitle": "Last 24 Hours"
+              }
+            },
+            "asset": {
+              "idInputName": "ComponentId",
+              "type": "ApplicationInsights"
+            }
+          }
+    }
+}

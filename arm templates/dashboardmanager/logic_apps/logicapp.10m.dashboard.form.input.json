@@ -1,0 +1,381 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "logicAppLocation": {
+        "type": "string",
+        "metadata": {
+          "description": "Location of the Logic App."
+        }
+      },
+      "deploymentLogicApp": {
+        "type": "string",
+        "metadata": {
+            "description": "Name of the Deployment Logic App."
+        }
+      }
+    },
+    "variables": {
+        "deployment_dashboard": "[concat(subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Logic/workflows/',parameters('deploymentLogicApp'))]",
+        "connectionName": "10mDBMFormConnection"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Web/connections",
+        "apiVersion": "2016-06-01",
+        "name": "[variables('connectionName')]",
+        "location": "[parameters('logicAppLocation')]",
+        "properties": {
+            "displayName": "sa-msbot@10thmagnitude.com",
+            "customParameterValues": {},
+            "api": {
+                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/microsoftforms')]"
+            }
+        }
+      },
+      {
+        "name": "10m-dashboard-manager-form",
+        "type": "Microsoft.Logic/workflows",
+        "location": "[parameters('logicAppLocation')]",
+        "tags": {
+          "displayName": "LogicApp"
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/connections', variables('connectionName'))]"
+        ],
+        "apiVersion": "2016-06-01",
+        "properties": {
+          "definition": {
+            "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+                "$connections": {
+                    "defaultValue": {},
+                    "type": "Object"
+                }
+            },
+            "triggers": {
+                "When_a_new_form_response_is_submitted": {
+                    "splitOn": "@triggerBody()?['value']",
+                    "type": "ApiConnectionWebhook",
+                    "inputs": {
+                        "body": {
+                            "eventType": "responseAdded",
+                            "notificationUrl": "@{listCallbackUrl()}",
+                            "source": "ms-connector"
+                        },
+                        "host": {
+                            "connection": {
+                                "name": "@parameters('$connections')['10mDBMFormConnection']['connectionId']"
+                            }
+                        },
+                        "path": "/formapi/api/forms/@{encodeURIComponent('Z7RgZtOtnk2K2kixchlZ8zYnRcTRyuNMs0Rl8FKW0aVUQkFCSjZIUDhRM0QxVVAxQTI4RlBMNkZEWi4u')}/webhooks"
+                    }
+                }
+            },
+            "actions": {
+                "Build_graphResults_array": {
+                    "foreach": "@body('Parse_Resource_Type_Results')?['data']?['rows']",
+                    "actions": {
+                        "Append_value_to_graphResults_array": {
+                            "runAfter": {
+                                "Store_base_api_string": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "AppendToArrayVariable",
+                            "inputs": {
+                                "name": "graphResults",
+                                "value": "@outputs('Store_base_api_string')"
+                            }
+                        },
+                        "Split_api_type_string": {
+                            "runAfter": {},
+                            "type": "Compose",
+                            "inputs": "@split(items('Build_graphResults_array')?[0],'/')"
+                        },
+                        "Store_base_api_string": {
+                            "runAfter": {
+                                "Split_api_type_string": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Compose",
+                            "inputs": "@string(outputs('Split_api_type_string')?[0])"
+                        }
+                    },
+                    "runAfter": {
+                        "Parse_OMS_Results": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "Foreach"
+                },
+                "Create_Resource_Group_Array": {
+                    "runAfter": {
+                        "Initialize_graphResults_variable": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@array(split(body('Get_response_details')?['rd3d751e3e93348ce88a4684790a015f3'],','))"
+                },
+                "Get_OMS_Workspace_Id_Graph": {
+                    "runAfter": {
+                        "Get_Resource_Types_Graph": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "Http",
+                    "inputs": {
+                        "authentication": {
+                            "type": "ManagedServiceIdentity"
+                        },
+                        "body": {
+                            "query": "where name =~ '@{body('Get_response_details')?['r18dbbc295e384f7a8f859c1436a3b7ff']}' | project id",
+                            "subscriptions": [
+                                "@body('Get_response_details')?['r2e658c56cb744de2a8af3319381dd85a']"
+                            ]
+                        },
+                        "method": "POST",
+                        "uri": "https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2018-09-01-preview"
+                    }
+                },
+                "Get_response_details": {
+                    "runAfter": {},
+                    "type": "ApiConnection",
+                    "inputs": {
+                        "host": {
+                            "connection": {
+                                "name": "@parameters('$connections')['10mDBMFormConnection']['connectionId']"
+                            }
+                        },
+                        "method": "get",
+                        "path": "/formapi/api/forms('@{encodeURIComponent('Z7RgZtOtnk2K2kixchlZ8zYnRcTRyuNMs0Rl8FKW0aVUQkFCSjZIUDhRM0QxVVAxQTI4RlBMNkZEWi4u')}')/responses",
+                        "queries": {
+                            "response_id": "@triggerBody()?['resourceData']?['responseId']"
+                        }
+                    }
+                },
+                "Get_Resource_Types_Graph": {
+                    "runAfter": {
+                        "Create_Resource_Group_Array": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "Http",
+                    "inputs": {
+                        "authentication": {
+                            "type": "ManagedServiceIdentity"
+                        },
+                        "body": {
+                            "query": "where resourceGroup in (dynamic(@{outputs('Create_Resource_Group_Array')})) | project type | summarize by type",
+                            "subscriptions": [
+                                "@body('Get_response_details')?['r2e658c56cb744de2a8af3319381dd85a']"
+                            ]
+                        },
+                        "method": "POST",
+                        "uri": "https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2018-09-01-preview"
+                    }
+                },
+                "Initialize_graphResults_variable": {
+                    "runAfter": {
+                        "Get_response_details": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "InitializeVariable",
+                    "inputs": {
+                        "variables": [
+                            {
+                                "name": "graphResults",
+                                "type": "array"
+                            }
+                        ]
+                    }
+                },
+                "Format_OMS_workspace_RG": {
+                    "runAfter": {
+                        "Strip_Duplicate_Resource_Type_Entries": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@string(body('Parse_OMS_Results')?['data']?['rows']?[0]?[0])"
+                },
+                "Parse_Resource_Type_Results": {
+                    "runAfter": {
+                        "Get_OMS_Workspace_Id_Graph": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "ParseJson",
+                    "inputs": {
+                        "content": "@body('Get_Resource_Types_Graph')",
+                        "schema": {
+                            "properties": {
+                                "count": {
+                                    "type": "integer"
+                                },
+                                "data": {
+                                    "properties": {
+                                        "columns": {
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "name",
+                                                    "type"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "rows": {
+                                            "items": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "type": "array"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "facets": {
+                                    "type": "array"
+                                },
+                                "resultTruncated": {
+                                    "type": "string"
+                                },
+                                "totalRecords": {
+                                    "type": "integer"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "Parse_OMS_Results": {
+                    "runAfter": {
+                        "Parse_Resource_Type_Results": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "ParseJson",
+                    "inputs": {
+                        "content": "@body('Get_OMS_Workspace_Id_Graph')",
+                        "schema": {
+                            "properties": {
+                                "count": {
+                                    "type": "integer"
+                                },
+                                "data": {
+                                    "properties": {
+                                        "columns": {
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "name",
+                                                    "type"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "rows": {
+                                            "items": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "type": "array"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "facets": {
+                                    "type": "array"
+                                },
+                                "resultTruncated": {
+                                    "type": "string"
+                                },
+                                "totalRecords": {
+                                    "type": "integer"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "Strip_Duplicate_Resource_Type_Entries": {
+                    "runAfter": {
+                        "Build_graphResults_array": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "Compose",
+                    "inputs": "@union(variables('graphResults'),variables('graphResults'))"
+                },
+                "Push_Results_To_Deployment_Logic_App": {
+                    "runAfter": {
+                        "Format_OMS_workspace_RG": [
+                            "Succeeded"
+                        ]
+                    },
+                    "type": "Workflow",
+                    "inputs": {
+                        "body": {
+                            "ApplicationName": "@body('Get_response_details')?['re583bae426a447f6942e82ce8d8556e5']",
+                            "ApplicationResourceGroups": "@outputs('Create_Resource_Group_Array')",
+                            "DashboardResourceGroup": "@body('Get_response_details')?['r0f06dbf53a1b4f3292388b0e98a756e2']",
+                            "Environment": "@body('Get_response_details')?['rf84516cffdd44e148a086ffba88c5c74']",
+                            "OMSResourceGroup": "@{split(outputs('Format_OMS_workspace_RG'), '/')?[4]}",
+                            "OMSWorkspace": "@body('Get_response_details')?['r18dbbc295e384f7a8f859c1436a3b7ff']",
+                            "OMSWorkspaceId": "@{outputs('Format_OMS_workspace_RG')}",
+                            "ResourceTypes": "@outputs('Strip_Duplicate_Resource_Type_Entries')",
+                            "SubscriptionId": "@body('Get_response_details')?['r2e658c56cb744de2a8af3319381dd85a']"
+                        },
+                        "host": {
+                            "triggerName": "manual",
+                            "workflow": {
+                                "id": "[variables('deployment_dashboard')]"
+                            }
+                        }
+                    }
+                }
+            },
+            "outputs": {}
+          },
+          "parameters": {
+          "$connections": {
+            "type": "Object",
+            "value": {
+              "10mDBMFormConnection": {
+                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/microsoftforms')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', variables('connectionName'))]",
+                "connectionName": "[variables('connectionName')]"
+              }
+            }
+          }
+        }
+       }
+     }
+  ],
+  "outputs": {}
+}

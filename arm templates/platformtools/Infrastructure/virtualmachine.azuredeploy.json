@@ -1,0 +1,188 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "OperatingSystem": {
+            "type": "string",
+            "allowedValues": [
+                "Windows",
+                "Ubuntu"
+            ],
+            "metadata": {
+                "description": "Select which Operating System you would like to deploy."
+            }
+        },
+        "vmName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "vmSize": {
+            "type": "string",
+            "allowedValues": [
+                "Small",
+                "Medium",
+                "Large",
+                "X-Large"
+            ],
+            "defaultValue": "Small"
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "adminPasswordOrKey": {
+            "type": "securestring"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultValue": "default"
+        },
+        "authenticationType": {
+            "type": "string",
+            "allowedValues": [
+                "password",
+                "ssh"
+            ]
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "defaultValue": "witcher-tester-vnet"
+        },
+        "networkSecurityGroupName": {
+            "type": "string",
+            "defaultValue": "witcher-tester-nsg"
+        }
+    },
+    "variables": {
+        "vmSize": {
+            "Small": "Standard_DS1_v2",
+            "Medium": "Standard_DS2_v2",
+            "Large": "Standard_DS3_v2",
+            "X-Large": "Standard_D4S_v3"
+        },
+        "osProperties" : {
+            "Ubuntu" : {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')[parameters('vmSize')]]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        },
+                        "name": "[variables('osDiskName')]"
+                    },
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPasswordOrKey')]",
+                    "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+                }
+            },
+            "Windows" : {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')[parameters('vmSize')]]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPasswordOrKey')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        },
+                        "name": "[variables('osDiskName')]"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        "osDiskName": "[concat(parameters('vmName'), '_osdisk')]",
+        "nicName": "[concat(parameters('vmName'),'-', parameters('virtualNetworkName'),'nic-0')]",
+        "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
+        "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+                "publicKeys": [
+                    {
+                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                        "keyData": "[parameters('adminPasswordOrKey')]"
+                    }
+                ]
+            }
+        }
+    },
+    "resources": [
+        {
+            "name": "[variables('nicName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('nsgId')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[parameters('vmName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+            ],
+            "properties": "[variables('osProperties')[parameters('OperatingSystem')]]"
+        }
+    ],
+    "outputs": {
+        "VirtualMachines" : {
+            "type": "array",
+            "value": "[resourceId('Microsoft.Compute/virtualMachines', startsWith('witcherlinu'))]"
+        }
+    }
+}

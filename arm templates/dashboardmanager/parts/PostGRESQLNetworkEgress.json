@@ -1,0 +1,88 @@
+{
+  "name": "PostGRESQLNetworkEgress",
+  "part": {
+    "position": {
+      "x": 14,
+      "y": 5,
+      "colSpan": 7,
+      "rowSpan": 4
+    },
+    "metadata": {
+      "inputs": [
+        {
+          "name": "ComponentId",
+          "value": "[variables('OMSWorkspace')]"
+        },
+        {
+          "name": "Query",
+          "value": "[concat('AzureMetrics\r\n| where TimeGenerated > now(-24h) \r\n| where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ') and ResourceProvider has \"dbforpostgresql\"\r\n| where MetricName has \"egress\"\r\n| summarize averageNetworkEgress=avg(Total /1024) by Computer=Resource, bin(TimeGenerated, 15m)\r\n| render timechart')]"
+        },
+        {
+          "name": "Dimensions",
+          "value": {
+            "xAxis": {
+              "name": "TimeGenerated",
+              "type": "DateTime"
+            },
+            "yAxis": [
+              {
+                "name": "averageNetworkEgress",
+                "type": "Double"
+              }
+            ],
+            "splitBy": [
+              {
+                "name": "Computer",
+                "type": "String"
+              }
+            ],
+            "aggregation": "Average"
+          }
+        },
+        {
+          "name": "Version",
+          "value": "1.0"
+        },
+        {
+          "name": "PartTitle",
+          "value": "Analytics"
+        },
+        {
+          "name": "PartSubTitle",
+          "value": "[variables('OMSWorkspace')]"
+        },
+        {
+          "name": "resourceTypeMode",
+          "value": "workspace"
+        },
+        {
+          "name": "ControlType",
+          "value": "AnalyticsChart"
+        },
+        {
+          "name": "SpecificChart",
+          "value": "Line"
+        },
+        {
+          "name": "TimeRange",
+          "isOptional": true
+        },
+        {
+          "name": "DashboardId",
+          "isOptional": true
+        }
+      ],
+      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+      "settings": {
+        "content": {
+          "PartTitle": "PostGRESQL Network Egress",
+          "PartSubTitle": "Last 24 Hours"
+        }
+      },
+      "asset": {
+        "idInputName": "ComponentId",
+        "type": "ApplicationInsights"
+      }
+    }
+  }
+}

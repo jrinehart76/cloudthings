@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "diagStorageLocation": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "name": "[toLower(concat('savmdiag', uniqueString(resourceGroup().id, parameters('diagStorageLocation'))))]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2017-10-01",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "location": "[parameters('diagStorageLocation')]",
+      "properties": {}
+    }
+  ]
+}

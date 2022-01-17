@@ -1,0 +1,307 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logicAppEnv": {
+      "type": "string",
+      "defaultValue": "",
+      "allowedValues": [
+        "prod",
+        "dev"
+      ]
+    },
+    "logicAppLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the Logic App."
+      }
+    },
+    "dynamicsCrmOnlineConnectionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Dynamics 365 connection"
+      }
+    },
+    "relatedAccountGUID": {
+      "type": "string",
+      "metadata": {
+        "description": "GUID of the Customer Account in Dynamics"
+      }
+    },
+    "monitoringContactGUID": {
+      "type": "string",
+      "metadata": {
+        "description": "GUID of the Monitoring Contact on Event creation"
+      }
+    },
+    "integrationAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the integration account"
+      }
+    }
+  },
+  "variables": {
+    "prod": "/datasets/@{encodeURIComponent(encodeURIComponent('org9f436416.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_events'))}/items",
+    "dev": "/datasets/@{encodeURIComponent(encodeURIComponent('orgb1b7c4c0.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_events'))}/items"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Logic/integrationAccounts",
+      "apiVersion": "2016-06-01",
+      "location": "[parameters('logicAppLocation')]",
+      "name": "[parameters('integrationAccountName')]",
+      "properties": { },
+      "sku": {
+        "name": "Free"
+      }
+    },
+    {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2016-06-01",
+      "location": "[parameters('logicAppLocation')]",
+      "name": "[parameters('dynamicsCrmOnlineConnectionName')]",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/dynamicscrmonline')]"
+        },
+        "displayName": "[parameters('dynamicsCrmOnlineConnectionName')]"
+      }
+    },
+    {
+      "name": "10m-event-azure",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[parameters('logicAppLocation')]",
+      "tags": {
+        "displayName": "LogicApp"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', parameters('dynamicsCrmOnlineConnectionName'))]"
+      ],
+      "apiVersion": "2016-06-01",
+      "properties": {
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "properties": {
+                        "alertContext": {
+                          "properties": {},
+                          "type": "object"
+                        },
+                        "essentials": {
+                          "properties": {
+                            "alertContextVersion": {
+                              "type": "string"
+                            },
+                            "alertId": {
+                              "type": "string"
+                            },
+                            "alertRule": {
+                              "type": "string"
+                            },
+                            "alertTargetIDs": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "essentialsVersion": {
+                              "type": "string"
+                            },
+                            "firedDateTime": {
+                              "type": "string"
+                            },
+                            "monitorCondition": {
+                              "type": "string"
+                            },
+                            "monitoringService": {
+                              "type": "string"
+                            },
+                            "originAlertId": {
+                              "type": "string"
+                            },
+                            "resolvedDateTime": {
+                              "type": "string"
+                            },
+                            "severity": {
+                              "type": "string"
+                            },
+                            "signalType": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "schemaId": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "actions": {
+            "Create_a_new_record": {
+              "runAfter": {
+                "Parse_JSON": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "_apitil_action_label": "Notify Support",
+                  "_apitil_impact_label": "3-Moderate",
+                  "_apitil_level_label": "Exception",
+                  "_apitil_relatedaccount_value": "[parameters('relatedAccountGUID')]",
+                  "_mag_relatedcontact_value": "[parameters('monitoringContactGUID')]",
+                  "_apitil_source_label": "OMS",
+                  "_apitil_urgency_label": "3-Medium",
+                  "apitil_acknowledged": false,
+                  "apitil_description": "Title: @{body('Parse_JSON')?['properties']?['title']}\nService: @{body('Parse_JSON')?['properties']?['service']}\nRegion: @{body('Parse_JSON')?['properties']?['region']}\nCommunication: @{body('Parse_JSON')?['properties']?['communication']}\nTracking ID: @{body('Parse_JSON')?['properties']?['trackingId']}\nImpact Start Time: @{body('Parse_JSON')?['properties']?['impactStartTime']}",
+                  "apitil_level": 345550002,
+                  "apitil_name": "@{triggerBody()?['data']?['essentials']?['alertRule']} - @{body('Parse_JSON')?['properties']?['service']}",
+                  "apitil_raisedon": "@{formatDateTime(utcNow(),'MM/dd/yyyy hh:mm tt')}"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['dynamicscrmonline']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "[if(equals(parameters('logicAppEnv'), 'prod'), variables('prod'), variables('dev'))]"
+              }
+            },
+            "Parse_JSON": {
+              "runAfter": {},
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@triggerBody()?['data']?['alertContext']",
+                "schema": {
+                  "properties": {
+                    "ResourceType": {},
+                    "authorization": {},
+                    "caller": {},
+                    "channels": {},
+                    "claims": {},
+                    "correlationId": {
+                      "type": "string"
+                    },
+                    "eventDataId": {
+                      "type": "string"
+                    },
+                    "eventSource": {},
+                    "eventTimestamp": {
+                      "type": "string"
+                    },
+                    "httpRequest": {},
+                    "level": {},
+                    "operationId": {
+                      "type": "string"
+                    },
+                    "operationName": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "properties": {
+                        "communication": {
+                          "type": "string"
+                        },
+                        "communicationId": {
+                          "type": "string"
+                        },
+                        "defaultLanguageContent": {
+                          "type": "string"
+                        },
+                        "defaultLanguageTitle": {
+                          "type": "string"
+                        },
+                        "impactStartTime": {
+                          "type": "string"
+                        },
+                        "impactedServices": {
+                          "type": "string"
+                        },
+                        "impactedServicesTableRows": {
+                          "type": "string"
+                        },
+                        "incidentType": {
+                          "type": "string"
+                        },
+                        "isHIR": {
+                          "type": "string"
+                        },
+                        "region": {
+                          "type": "string"
+                        },
+                        "service": {
+                          "type": "string"
+                        },
+                        "stage": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "trackingId": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "subStatus": {},
+                    "submissionTimestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "type": "Object",
+            "value": {
+              "dynamicscrmonline": {
+                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/dynamicscrmonline')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('dynamicsCrmOnlineConnectionName'))]",
+                "connectionName": "[parameters('dynamicsCrmOnlineConnectionName')]"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

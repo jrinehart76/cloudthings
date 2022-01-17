@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.datafactory",
+    "priority": 7,
+    "height": 5,
+    "parts": "'DataFactoryOverview', 'DataFactoryIntegrationRuntimeMemory','DataFactoryIntegrationRuntimeCPU','DataFactoryFailedRuns'"
+}

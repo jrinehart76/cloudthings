@@ -1,0 +1,81 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ilbName": {
+            "value": "ILB-EastUS-NonProd-Web"
+        },
+        "virtualNetworkRGName": {
+            "value": "RG-EastUS-NonProd-Networking"
+        },
+        "virtualNetworkName": {
+            "value": "VNet-EastUS-NonProd"
+        },
+        "frontEndName": {
+            "value": "FrontEnd-EastUS-NonProd-Web"
+        },
+        "frontEndSubnetName": {
+            "value": "Subnet-EastUS-NonProd-Web"
+        },
+        "frontEndIp": {
+            "value": "192.168.4.70"
+        },
+        "backendPoolName": {
+            "value": "Backend-EastUS-NonProd-Web"
+        },
+        "lbRuleName": {
+            "value": "LBRule-EastUS-NonProd-Web"
+        },
+        "lbFrontEndPort": {
+            "value": 80
+        },
+        "lbBackEndPort": {
+            "value": 80
+        },
+        "lbProtocol": {
+            "value": "TCP"
+        },
+        "probeName": {
+            "value": "Probe-TCP-80"
+        },
+        "probeProtocol": {
+            "value": "Tcp"
+        },
+        "probePort": {
+            "value": 80
+        },
+        "virtualMachines": {
+            "value": [
+                {
+                    "name": "VM-EastUS-NonProd-Web01",
+                    "nic": {
+                        "name": "NIC-VM-EastUS-NonProd-Web01-01",
+                        "ipConfigurationName": "ipconfig1",
+                        "ipAddress": "192.168.4.68",
+                        "ipAllocationMethod": "Dynamic",
+                        "subnetName": "Subnet-EastUS-NonProd-Web",
+                        "enableAcceleratedNetworking": false,
+                        "enableIPForwarding": false,
+                        "primaryNIC": true
+                    }
+                },
+                {
+                    "name": "VM-EastUS-NonProd-Web02",
+                    "nic": {
+                        "name": "NIC-VM-EastUS-NonProd-Web02-01",
+                        "ipConfigurationName": "ipconfig1",
+                        "ipAddress": "192.168.4.69",
+                        "ipAllocationMethod": "Dynamic",
+                        "subnetName": "Subnet-EastUS-NonProd-Web",
+                        "enableAcceleratedNetworking": false,
+                        "enableIPForwarding": false,
+                        "primaryNIC": true
+                    }
+                }
+            ]
+        },
+        "tags": {
+            "value": {}
+        }
+    }
+}

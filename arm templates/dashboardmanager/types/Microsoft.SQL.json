@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.sql",
+    "priority": 8,
+    "height": 9,
+    "parts": "'SqlOverview', 'SQLAverageConnections', 'SQLFailedConnections','SQLCPUConsumption','SQLMemoryConsumption','SQLNetworkEgress','SQLStorageConsumption',''"
+}

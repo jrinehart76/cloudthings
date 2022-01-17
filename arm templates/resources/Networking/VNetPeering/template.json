@@ -1,0 +1,49 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vNetPeers": {"type": "array"}
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "[parameters('vNetPeers')[copyIndex()].peerName]",
+            "resourceGroup": "[parameters('vNetPeers')[copyIndex()].resourceGroup]",
+            "subscriptionId": "[parameters('vNetPeers')[copyIndex()].subscriptionId]",
+            "copy": {
+                "name": "vNetPeerLoop",
+                "count": "[length(parameters('vNetPeers'))]"
+            },
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                            "apiVersion": "2017-06-01",
+                            "name": "[concat(parameters('vNetPeers')[copyIndex()].localVNetName,'/',parameters('vNetPeers')[copyIndex()].peerName)]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "remoteVirtualNetwork": {
+                                    "id": "[parameters('vNetPeers')[copyIndex()].remoteVNetId]"
+                                },
+                                "allowVirtualNetworkAccess": "[parameters('vNetPeers')[copyIndex()].allowVirtualNetworkAccess]",
+                                "allowForwardedTraffic": "[parameters('vNetPeers')[copyIndex()].allowForwardedTraffic]",
+                                "allowGatewayTransit": "[parameters('vNetPeers')[copyIndex()].allowGatewayTransit]",
+                                "useRemoteGateways": "[parameters('vNetPeers')[copyIndex()].useRemoteGateways]"
+                            },
+                            "dependsOn": []
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

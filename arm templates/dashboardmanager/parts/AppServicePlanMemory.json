@@ -1,0 +1,88 @@
+{
+    "name" : "AppServicePlanMemory",
+    "part" : {
+        "position": {
+          "x": 7,
+          "y": 1,
+          "colSpan": 7,
+          "rowSpan": 4
+        },
+        "metadata": {
+          "inputs": [
+            {
+              "name": "ComponentId",
+              "value": "[variables('OMSWorkspace')]"
+            },
+            {
+              "name": "Query",
+              "value": "[concat('AzureMetrics\r\n| where TimeGenerated > now(-24h)\r\n//| where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')| where ResourceProvider has \".web\" and MetricName contains \"memorypercentage\"\r\n| summarize [\"Average % Memory\"]=avg(Average) by [\"App Service\"]=Resource, bin(TimeGenerated, 15m)\r\n| render timechart\r')]"
+            },
+            {
+              "name": "Dimensions",
+              "value": {
+                "xAxis": {
+                  "name": "TimeGenerated",
+                  "type": "datetime"
+                },
+                "yAxis": [
+                  {
+                    "name": "Average % Memory",
+                    "type": "real"
+                  }
+                ],
+                "splitBy": [
+                  {
+                    "name": "App Service",
+                    "type": "string"
+                  }
+                ],
+                "aggregation": "Sum"
+              }
+            },
+            {
+              "name": "Version",
+              "value": "1.0"
+            },
+            {
+              "name": "PartTitle",
+              "value": "Analytics"
+            },
+            {
+              "name": "PartSubTitle",
+              "value": "[parameters('OMSWorkspace')]"
+            },
+            {
+              "name": "resourceTypeMode",
+              "value": "workspace"
+            },
+            {
+              "name": "ControlType",
+              "value": "AnalyticsChart"
+            },
+            {
+              "name": "SpecificChart",
+              "value": "Line"
+            },
+            {
+              "name": "TimeRange",
+              "isOptional": true
+            },
+            {
+              "name": "DashboardId",
+              "isOptional": true
+            }
+          ],
+          "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+          "settings": {
+            "content": {
+              "PartTitle": "App Service % Memory",
+              "PartSubTitle": "Last 24 Hours"
+            }
+          },
+          "asset": {
+            "idInputName": "ComponentId",
+            "type": "ApplicationInsights"
+          }
+        }
+      }
+}

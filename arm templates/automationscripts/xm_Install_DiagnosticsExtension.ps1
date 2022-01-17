@@ -1,0 +1,108 @@
+<#
+    .DESCRIPTION
+        Enable diagnostic extension for each Windows VM
+
+        Runs from an Azure Automation account.
+
+    .PREREQUISITES
+        Existing AzureRunAsAccount in Automations account
+
+    .DEPENDENCIES
+        Az.Accounts
+        Az.Storage
+        Az.Compute
+
+    .TODO
+        Store extension configs in blob and retrieve at runtime
+        Add Linux support
+
+    .NOTES
+        
+    .CHANGELOG
+
+    .VERSION
+        1.0.0
+#>
+
+param (
+    [Parameter(Mandatory=$True)]
+    $StorageAccountName,
+
+    [Parameter(Mandatory=$True)]
+    $StorageAccountKey,
+
+    [Parameter(Mandatory=$False)]
+    $ResourceGroupName
+)
+
+$ExtensionName = 'Microsoft.Insights.VMDiagnosticsSettings'
+
+$ConnectionName = 'AzureRunAsConnection'
+$AutomationConnection = Get-AutomationConnection -Name $ConnectionName
+
+Try {
+    $Connection = Connect-AzAccount `
+        -CertificateThumbprint $AutomationConnection.CertificateThumbprint `
+        -ApplicationId $AutomationConnection.ApplicationId `
+        -Tenant $AutomationConnection.TenantId `
+        -ServicePrincipal
+} Catch {
+    if (!$Connection)
+    {
+        $ErrorMessage = "Connection $ConnectionName not found."
+        throw $ErrorMessage
+    } else{
+        Write-Error -Message $_.Exception
+        throw $_.Exception
+    }
+}
+
+$xmlCfg = "PFdhZENmZyB4bWxucz0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9TZXJ2aWNlSG9zdGluZy8yMDEwLzEwL0RpYWdub3N0aWNzQ29uZmlndXJhdGlvbiI+DQogIDxEaWFnbm9zdGljTW9uaXRvckNvbmZpZ3VyYXRpb24gb3ZlcmFsbFF1b3RhSW5NQj0iNDA5NiI+DQogICAgPERpYWdub3N0aWNJbmZyYXN0cnVjdHVyZUxvZ3Mgc2NoZWR1bGVkVHJhbnNmZXJMb2dMZXZlbEZpbHRlcj0iRXJyb3IiIC8+DQogICAgPFBlcmZvcm1hbmNlQ291bnRlcnMgc2NoZWR1bGVkVHJhbnNmZXJQZXJpb2Q9IlBUMU0iPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iUGVyY2VudCIgc2FtcGxlUmF0ZT0iUFQxNVMiIGNvdW50ZXJTcGVjaWZpZXI9IlxQcm9jZXNzb3IoX1RvdGFsKVwlIFByb2Nlc3NvciBUaW1lIj4NCiAgICAgICAgPGFubm90YXRpb24gbG9jYWxlPSJlbi11cyIgZGlzcGxheU5hbWU9IkNQVSB1dGlsaXphdGlvbiIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IlBlcmNlbnQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcUHJvY2Vzc29yKF9Ub3RhbClcJSBQcml2aWxlZ2VkIFRpbWUiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iQ1BVIHByaXZpbGVnZWQgdGltZSIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IlBlcmNlbnQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcUHJvY2Vzc29yKF9Ub3RhbClcJSBVc2VyIFRpbWUiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iQ1BVIHVzZXIgdGltZSIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkNvdW50IiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXFByb2Nlc3NvciBJbmZvcm1hdGlvbihfVG90YWwpXFByb2Nlc3NvciBGcmVxdWVuY3kiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iQ1BVIGZyZXF1ZW5jeSIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkNvdW50IiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXFN5c3RlbVxQcm9jZXNzZXMiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iUHJvY2Vzc2VzIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iQ291bnQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcUHJvY2VzcyhfVG90YWwpXFRocmVhZCBDb3VudCI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJUaHJlYWRzIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iQ291bnQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcUHJvY2VzcyhfVG90YWwpXEhhbmRsZSBDb3VudCI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJIYW5kbGVzIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iUGVyY2VudCIgc2FtcGxlUmF0ZT0iUFQxNVMiIGNvdW50ZXJTcGVjaWZpZXI9IlxNZW1vcnlcJSBDb21taXR0ZWQgQnl0ZXMgSW4gVXNlIj4NCiAgICAgICAgPGFubm90YXRpb24gbG9jYWxlPSJlbi11cyIgZGlzcGxheU5hbWU9Ik1lbW9yeSB1c2FnZSIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkJ5dGVzIiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXE1lbW9yeVxBdmFpbGFibGUgQnl0ZXMiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iTWVtb3J5IGF2YWlsYWJsZSIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkJ5dGVzIiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXE1lbW9yeVxDb21taXR0ZWQgQnl0ZXMiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iTWVtb3J5IGNvbW1pdHRlZCIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkJ5dGVzIiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXE1lbW9yeVxDb21taXQgTGltaXQiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iTWVtb3J5IGNvbW1pdCBsaW1pdCIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkJ5dGVzIiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXE1lbW9yeVxQb29sIFBhZ2VkIEJ5dGVzIj4NCiAgICAgICAgPGFubm90YXRpb24gbG9jYWxlPSJlbi11cyIgZGlzcGxheU5hbWU9Ik1lbW9yeSBwYWdlZCBwb29sIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iQnl0ZXMiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcTWVtb3J5XFBvb2wgTm9ucGFnZWQgQnl0ZXMiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iTWVtb3J5IG5vbi1wYWdlZCBwb29sIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iUGVyY2VudCIgc2FtcGxlUmF0ZT0iUFQxNVMiIGNvdW50ZXJTcGVjaWZpZXI9IlxQaHlzaWNhbERpc2soX1RvdGFsKVwlIERpc2sgVGltZSI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJEaXNrIGFjdGl2ZSB0aW1lIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iUGVyY2VudCIgc2FtcGxlUmF0ZT0iUFQxNVMiIGNvdW50ZXJTcGVjaWZpZXI9IlxQaHlzaWNhbERpc2soX1RvdGFsKVwlIERpc2sgUmVhZCBUaW1lIj4NCiAgICAgICAgPGFubm90YXRpb24gbG9jYWxlPSJlbi11cyIgZGlzcGxheU5hbWU9IkRpc2sgYWN0aXZlIHJlYWQgdGltZSIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IlBlcmNlbnQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcUGh5c2ljYWxEaXNrKF9Ub3RhbClcJSBEaXNrIFdyaXRlIFRpbWUiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iRGlzayBhY3RpdmUgd3JpdGUgdGltZSIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkNvdW50UGVyU2Vjb25kIiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXFBoeXNpY2FsRGlzayhfVG90YWwpXERpc2sgVHJhbnNmZXJzL3NlYyI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJEaXNrIG9wZXJhdGlvbnMiIC8+DQogICAgICA8L1BlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24+DQogICAgICA8UGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbiB1bml0PSJDb3VudFBlclNlY29uZCIgc2FtcGxlUmF0ZT0iUFQxNVMiIGNvdW50ZXJTcGVjaWZpZXI9IlxQaHlzaWNhbERpc2soX1RvdGFsKVxEaXNrIFJlYWRzL3NlYyI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJEaXNrIHJlYWQgb3BlcmF0aW9ucyIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkNvdW50UGVyU2Vjb25kIiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXFBoeXNpY2FsRGlzayhfVG90YWwpXERpc2sgV3JpdGVzL3NlYyI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJEaXNrIHdyaXRlIG9wZXJhdGlvbnMiIC8+DQogICAgICA8L1BlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24+DQogICAgICA8UGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbiB1bml0PSJCeXRlc1BlclNlY29uZCIgc2FtcGxlUmF0ZT0iUFQxNVMiIGNvdW50ZXJTcGVjaWZpZXI9IlxQaHlzaWNhbERpc2soX1RvdGFsKVxEaXNrIEJ5dGVzL3NlYyI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJEaXNrIHNwZWVkIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iQnl0ZXNQZXJTZWNvbmQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcUGh5c2ljYWxEaXNrKF9Ub3RhbClcRGlzayBSZWFkIEJ5dGVzL3NlYyI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJEaXNrIHJlYWQgc3BlZWQiIC8+DQogICAgICA8L1BlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24+DQogICAgICA8UGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbiB1bml0PSJCeXRlc1BlclNlY29uZCIgc2FtcGxlUmF0ZT0iUFQxNVMiIGNvdW50ZXJTcGVjaWZpZXI9IlxQaHlzaWNhbERpc2soX1RvdGFsKVxEaXNrIFdyaXRlIEJ5dGVzL3NlYyI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJEaXNrIHdyaXRlIHNwZWVkIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iQ291bnQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcUGh5c2ljYWxEaXNrKF9Ub3RhbClcQXZnLiBEaXNrIFF1ZXVlIExlbmd0aCI+DQogICAgICAgIDxhbm5vdGF0aW9uIGxvY2FsZT0iZW4tdXMiIGRpc3BsYXlOYW1lPSJEaXNrIGF2ZXJhZ2UgcXVldWUgbGVuZ3RoIiAvPg0KICAgICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uPg0KICAgICAgPFBlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24gdW5pdD0iQ291bnQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcUGh5c2ljYWxEaXNrKF9Ub3RhbClcQXZnLiBEaXNrIFJlYWQgUXVldWUgTGVuZ3RoIj4NCiAgICAgICAgPGFubm90YXRpb24gbG9jYWxlPSJlbi11cyIgZGlzcGxheU5hbWU9IkRpc2sgYXZlcmFnZSByZWFkIHF1ZXVlIGxlbmd0aCIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkNvdW50IiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXFBoeXNpY2FsRGlzayhfVG90YWwpXEF2Zy4gRGlzayBXcml0ZSBRdWV1ZSBMZW5ndGgiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iRGlzayBhdmVyYWdlIHdyaXRlIHF1ZXVlIGxlbmd0aCIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IlBlcmNlbnQiIHNhbXBsZVJhdGU9IlBUMTVTIiBjb3VudGVyU3BlY2lmaWVyPSJcTG9naWNhbERpc2soX1RvdGFsKVwlIEZyZWUgU3BhY2UiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iRGlzayBmcmVlIHNwYWNlIChwZXJjZW50YWdlKSIgLz4NCiAgICAgIDwvUGVyZm9ybWFuY2VDb3VudGVyQ29uZmlndXJhdGlvbj4NCiAgICAgIDxQZXJmb3JtYW5jZUNvdW50ZXJDb25maWd1cmF0aW9uIHVuaXQ9IkNvdW50IiBzYW1wbGVSYXRlPSJQVDE1UyIgY291bnRlclNwZWNpZmllcj0iXExvZ2ljYWxEaXNrKF9Ub3RhbClcRnJlZSBNZWdhYnl0ZXMiPg0KICAgICAgICA8YW5ub3RhdGlvbiBsb2NhbGU9ImVuLXVzIiBkaXNwbGF5TmFtZT0iRGlzayBmcmVlIHNwYWNlIChNQikiIC8+DQogICAgICA8L1BlcmZvcm1hbmNlQ291bnRlckNvbmZpZ3VyYXRpb24+DQogICAgPC9QZXJmb3JtYW5jZUNvdW50ZXJzPg0KICAgIDxNZXRyaWNzIHJlc291cmNlSWQ9Ii9zdWJzY3JpcHRpb25zL2Y2Y2M2MWZlLTFlZDItNDIyMy1iMTZkLWU1OWRiMmU1YjI0Mi9yZXNvdXJjZUdyb3Vwcy96anItY29tcHV0ZS9wcm92aWRlcnMvTWljcm9zb2Z0LkNvbXB1dGUvdmlydHVhbE1hY2hpbmVzL3pqci13aW4wMSI+DQogICAgICA8TWV0cmljQWdncmVnYXRpb24gc2NoZWR1bGVkVHJhbnNmZXJQZXJpb2Q9IlBUMUgiIC8+DQogICAgICA8TWV0cmljQWdncmVnYXRpb24gc2NoZWR1bGVkVHJhbnNmZXJQZXJpb2Q9IlBUMU0iIC8+DQogICAgPC9NZXRyaWNzPg0KICAgIDxXaW5kb3dzRXZlbnRMb2cgc2NoZWR1bGVkVHJhbnNmZXJQZXJpb2Q9IlBUMU0iPg0KICAgICAgPERhdGFTb3VyY2UgbmFtZT0iQXBwbGljYXRpb24hKltTeXN0ZW1bKExldmVsID0gMSBvciBMZXZlbCA9IDIpXV0iIC8+DQogICAgICA8RGF0YVNvdXJjZSBuYW1lPSJTZWN1cml0eSEqW1N5c3RlbVsoTGV2ZWwgPSAxIG9yIExldmVsID0gMildIiAvPg0KICAgICAgPERhdGFTb3VyY2UgbmFtZT0iU3lzdGVtISpbU3lzdGVtWyhMZXZlbCA9IDEgb3IgTGV2ZWwgPSAyKV1dIiAvPg0KICAgIDwvV2luZG93c0V2ZW50TG9nPg0KICA8L0RpYWdub3N0aWNNb25pdG9yQ29uZmlndXJhdGlvbj4NCjwvV2FkQ2ZnPg=="
+
+if (Get-AzStorageAccount | Where-Object {$_.StorageAccountName -eq $StorageAccountName}) {
+    Write-Output "${StorageAccountName} storage account exists. Proceeding..."
+} else {
+    Write-Error "${StorageAccountName} storage account doesn't exist. Please verify the storage account exists within your subscription."
+    return
+}
+
+$VMs = Get-AzVM -ResourceGroupName $ResourceGroupName -Status
+
+if (!$VMs) {
+    Write-Error "There was a problem retrieving VMs for ${ResourceGroupName}. Exception: $($Error[0])"
+    return
+}
+
+$Settings = @{
+    xmlCfg = $xmlCfg;
+    StorageAccount = $StorageAccountName
+}
+$ProtectedSettings = @{
+    storageAccountName = $StorageAccountName;
+    storageAccountKey = $StorageAccountKey
+}
+
+ForEach ($VM in $VMs) {
+    if ($VM.PowerState -eq 'VM running') {
+        if (!($VM.Extensions.Id -imatch $ExtensionName)) {
+            Switch ($VM.StorageProfile.OsDisk.OsType) {
+                'Windows' {
+                    Write-Output "[$($VM.Name)] ${ExtensionName} is not installed. Installing..."
+                    Set-AzVMExtension `
+                        -ResourceGroupName $VM.ResourceGroupName `
+                        -VMName $VM.Name `
+                        -Location $VM.Location `
+                        -Name 'IaaSDiagnostics' `
+                        -Publisher 'Microsoft.Azure.Diagnostics' `
+                        -ExtensionType 'IaaSDiagnostics' `
+                        -TypeHandlerVersion '1.5' `
+                        -Settings $Settings -ProtectedSettings $ProtectedSettings
+                }
+            }
+        } else {
+                Write-Output "[$($VM.Name)] Extension ${ExtensionName} is already installed. "
+        }
+    } else {
+        Write-Output "[$($VM.Name)] VM is not powered on."
+    }
+}

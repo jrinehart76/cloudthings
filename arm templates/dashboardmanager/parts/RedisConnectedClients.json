@@ -1,0 +1,88 @@
+{
+    "name": "RedisConnectedClients",
+    "part": {
+        "position": {
+            "x": 7,
+            "y": 1,
+            "colSpan": 7,
+            "rowSpan": 4
+          },
+          "metadata": {
+            "inputs": [
+              {
+                "name": "ComponentId",
+                "value": "[variables('OMSWorkspace')]"
+              },
+              {
+                "name": "Query",
+                "value": "//Redis connected clients\nAzureMetrics\n| where TimeGenerated > now(-24h)\n| where ResourceProvider has \"microsoft.cache\" and MetricName has \"connectedclients\"\n| summarize averageConnectedClient=avg(Count) by RedisCache=Resource, bin(TimeGenerated, 15m)\n| render timechart\n"
+              },
+              {
+                "name": "Dimensions",
+                "value": {
+                  "xAxis": {
+                    "name": "TimeGenerated",
+                    "type": "DateTime"
+                  },
+                  "yAxis": [
+                    {
+                      "name": "averageConnectedClient",
+                      "type": "Double"
+                    }
+                  ],
+                  "splitBy": [
+                    {
+                      "name": "RedisCache",
+                      "type": "String"
+                    }
+                  ],
+                  "aggregation": "Average"
+                }
+              },
+              {
+                "name": "Version",
+                "value": "1.0"
+              },
+              {
+                "name": "PartTitle",
+                "value": "Analytics"
+              },
+              {
+                "name": "PartSubTitle",
+                "value": "[parameters('OMSWorkspace')]"
+              },
+              {
+                "name": "resourceTypeMode",
+                "value": "workspace"
+              },
+              {
+                "name": "ControlType",
+                "value": "AnalyticsChart"
+              },
+              {
+                "name": "SpecificChart",
+                "value": "Line"
+              },
+              {
+                "name": "TimeRange",
+                "isOptional": true
+              },
+              {
+                "name": "DashboardId",
+                "isOptional": true
+              }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+              "content": {
+                "PartTitle": "Redis Connected Clients",
+                "PartSubTitle": "Last 24 Hours"
+              }
+            },
+            "asset": {
+              "idInputName": "ComponentId",
+              "type": "ApplicationInsights"
+            }
+          }
+    }
+}

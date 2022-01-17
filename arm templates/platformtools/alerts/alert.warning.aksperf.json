@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "warnAlertDetails": [
+                {
+                    "alertName": "10m-kubernetes-cpu-warning",
+                    "alertDescription": "Warning CPU Alert on Kubernetes. v1",
+                    "query": "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; let capacityCounterName = \"cpuCapacityNanoCores\"; let usageCounterName = \"cpuUsageNanoCores\"; KubeNodeInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | distinct ClusterName, Computer | join hint.strategy=shuffle (Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == \"K8SNode\" | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, CounterName, bin(TimeGenerated, trendBinSize) | project Computer, CapacityStartTime = TimeGenerated, CapacityEndTime = TimeGenerated + trendBinSize, LimitValue) on Computer | join kind=inner hint.strategy=shuffle (Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == \"K8SNode\" | where CounterName == usageCounterName | project Computer, UsageValue = CounterValue, TimeGenerated) on Computer | where TimeGenerated >= CapacityStartTime and TimeGenerated < CapacityEndTime | project ClusterName, Computer, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by  Computer=ClusterName | where AggregatedValue between (85 .. 94)",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 60,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-CPU-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 4
+                },
+                {
+                    "alertName": "10m-kubernetes-memory-warning",
+                    "alertDescription": "Warning Memory Alert on Kubernetes. v1",
+                    "query": "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; let capacityCounterName = \"memoryCapacityBytes\"; let usageCounterName = \"memoryRssBytes\"; KubeNodeInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | distinct ClusterName, Computer | join hint.strategy=shuffle (Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == \"K8SNode\" | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, CounterName, bin(TimeGenerated, trendBinSize) | project Computer, CapacityStartTime = TimeGenerated, CapacityEndTime = TimeGenerated + trendBinSize, LimitValue) on Computer | join kind=inner hint.strategy=shuffle (Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == \"K8SNode\" | where CounterName == usageCounterName | project Computer, UsageValue = CounterValue, TimeGenerated) on Computer | where TimeGenerated >= CapacityStartTime and TimeGenerated < CapacityEndTime | project ClusterName, Computer, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by Computer=ClusterName | where AggregatedValue between (85 .. 94)",
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 60,
+                    "emailSubject": "[concat(parameters('customerId'), '-AKS-Warning-Memory-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 4
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').warnAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').warnAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').warnAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').warnAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').warnAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').warnAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').warnAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 60,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').warnAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').warnAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').warnAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

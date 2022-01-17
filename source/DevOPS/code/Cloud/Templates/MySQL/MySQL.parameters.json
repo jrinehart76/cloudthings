@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "mySqlAdminLogin": {
+      "value": "mysqladmin"
+    },
+    "existingSubnet": {
+      "value": "mysql"
+    },
+    "mySqlAdminLoginPassword": {
+      "value": "Hello123!"
+    },
+    "existingVnetRG": {
+      "value": "test-vnet02"
+    },
+    "existingVnet": {
+      "value": "test-vnet02"
+    },
+    "sharedServiceSubnetResourceID": {
+      "value": "/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/mysql"
+    },
+    "skuSizeMB": {
+      "value": 256000
+    },
+    "application": {
+      "value": "10m"
+    },
+    "installDate": {
+      "value": "2019.01.18"
+    },
+    "fiscalYear": {
+      "value": "FY19"
+    },
+    "skuName": {
+      "value": "MO_Gen5_4"
+    }
+  }
+}

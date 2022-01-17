@@ -1,0 +1,46 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "routeTables": {"type": "array"},
+        "routes": {"type": "array"},
+        "disableBgpRoutePropagation": {"type": "bool"}
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "[parameters('routeTables')[copyIndex()].routeTableName]",
+            "resourceGroup": "[parameters('routeTables')[copyIndex()].resourceGroup]",
+            "subscriptionId": "[parameters('routeTables')[copyIndex()].subscriptionId]",
+            "copy":{
+                "name": "routeTableLoop",
+                "count": "[length(parameters('routeTables'))]"
+            },
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/routeTables",
+                            "apiVersion": "2018-01-01",
+                            "name": "[parameters('routeTables')[copyIndex()].routeTableName]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "disableBgpRoutePropagation": "[parameters('disableBgpRoutePropagation')]",
+                                "routes": "[parameters('routes')]"
+                            },
+                            "dependsOn": []
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

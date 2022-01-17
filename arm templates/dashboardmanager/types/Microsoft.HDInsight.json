@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.hdinsight",
+    "priority": 2,
+    "height": 9,
+    "parts": "'HDInsightOverview', 'HDInsightsJavaMemory', 'HDInsightsIncomingMessages', 'SparkPendingMemory','SparkAvailableMemory','SparkAllocatedMemory'"
+}

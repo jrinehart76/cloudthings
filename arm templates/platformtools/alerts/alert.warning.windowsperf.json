@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "warnAlertDetails": [
+                {
+                    "alertName": "10m-windows-vm-warning-cpu",
+                    "alertDescription": "Warning CPU Alert on Windows. v1",
+                    "query": "Perf | where TimeGenerated > now(-15m) | where ObjectName == 'Processor' and CounterName == '% Processor Time' and InstanceName == '_Total' and Computer in ((Heartbeat | where OSType has 'Windows' | distinct Computer)) | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks' | where (Computer !has 'k8s' and Computer !has 'aks') | summarize averagePercentCPU = avg(CounterValue) by Computer | where averagePercentCPU between (95 .. 98)",
+                    "frequencyInMinutes": 15,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'),'-Warning-CPU-Windows')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 4
+                },
+                {
+                    "alertName": "10m-windows-vm-warning-mem",
+                    "alertDescription": "Warning Memory Alert on Windows. v1",
+                    "query": "Perf | where TimeGenerated > now(-15m) | where ObjectName has 'Memory' and CounterName has 'Available MBytes' | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks' | where (Computer !has 'k8s' and Computer !has 'aks') | summarize availableMemory=avg(CounterValue) by Computer | where availableMemory between (513 .. 1024)",
+                    "frequencyInMinutes": 15,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'),'-Warning-Memory-Windows')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 4
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').warnAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').warnAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').warnAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').warnAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').warnAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').warnAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').warnAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').warnAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').warnAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').warnAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

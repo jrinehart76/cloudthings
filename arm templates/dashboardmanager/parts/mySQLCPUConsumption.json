@@ -1,0 +1,88 @@
+{
+    "name": "mySQLCPUConsumption",
+    "part": {
+        "position": {
+          "x": 0,
+          "y": 1,
+          "colSpan": 7,
+          "rowSpan": 4
+        },
+        "metadata": {
+          "inputs": [
+            {
+              "name": "ComponentId",
+              "value": "[variables('OMSWorkspace')]"
+            },
+            {
+              "name": "Query",
+              "value": "[concat('nAzureMetrics\r\n| where TimeGenerated > now(-24h) \r\n| where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')\r\n and ResourceProvider has \"dbformysql\"\r\n| where MetricName has \"cpu\"\r\n| summarize averageUsedCPU=sum(Total) by Computer=Resource, bin(TimeGenerated, 15m)\r\n| render timechart')]"
+            },
+            {
+              "name": "Dimensions",
+              "value": {
+                "xAxis": {
+                  "name": "TimeGenerated",
+                  "type": "DateTime"
+                },
+                "yAxis": [
+                  {
+                    "name": "averageUsedCPU",
+                    "type": "Double"
+                  }
+                ],
+                "splitBy": [
+                  {
+                    "name": "Computer",
+                    "type": "String"
+                  }
+                ],
+                "aggregation": "Sum"
+              }
+            },
+            {
+              "name": "Version",
+              "value": "1.0"
+            },
+            {
+              "name": "PartTitle",
+              "value": "Analytics"
+            },
+            {
+              "name": "PartSubTitle",
+              "value": "[variables('OMSWorkspace')]"
+            },
+            {
+              "name": "resourceTypeMode",
+              "value": "workspace"
+            },
+            {
+              "name": "ControlType",
+              "value": "AnalyticsChart"
+            },
+            {
+              "name": "SpecificChart",
+              "value": "Line"
+            },
+            {
+              "name": "TimeRange",
+              "isOptional": true
+            },
+            {
+              "name": "DashboardId",
+              "isOptional": true
+            }
+          ],
+          "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+          "settings": {
+            "content": {
+              "PartTitle": "MySQL CPU Consumption",
+              "PartSubTitle": "Last 24 Hours"
+            }
+          },
+          "asset": {
+            "idInputName": "ComponentId",
+            "type": "ApplicationInsights"
+          }
+        }
+      }
+}

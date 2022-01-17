@@ -1,0 +1,103 @@
+#
+# ansible-playbook -i /usr/local/scripts/LDAP_Setup/inventory /usr/local/scripts/LDAP_Setup/client_config.yml
+---
+- hosts: all
+  remote_user: root
+  gather_facts: yes
+  tasks:
+
+    - name: Refreshing apt repo
+      apt: state=latest
+
+    - name: Installting Require Packges (18.04LTS)
+      apt: name='sssd,ldap-auth-config,krb5-user,samba,chrony,autofs,sssd-ldap' state=present
+      when: ansible_os_family == "Debian" and ansible_distribution_major_version == "18"
+
+    - name: Installting Require Packges (16.04LTS)
+      apt: name='realmd,samba-common,krb5-user,samba-common-bin,packagekit,samba-libs,adcli,ntp,nscd,ldap-utils,libpam-ldap,libnss-ldap' state=present
+      when: ansible_os_family == "Debian" and ansible_distribution_major_version == "16"      
+        
+    - name: Copying required file(s)  to Destination servers
+      copy: src={{ item.src }} dest={{ item.dest }} backup=yes force=yes
+      with_items:
+        - { src: ./config/password-auth-ac, dest: /etc/pam.d/}
+        - { src: ./config/sssd.conf, dest: /etc/sssd/}     
+        - { src: ./config/auto.master, dest: /etc/}
+        - { src: ./config/krb5.conf, dest: /etc/ }
+        - { src: ./config/smb.conf, dest: /etc/samba/ }
+        - { src: ./config/resolv.conf, dest: /etc/ }
+
+    - name: Copying files to Destination servers (16.04LTS only)
+      copy: src={{ item.src }} dest={{ item.dest }} backup=yes force=yes
+      when: ansible_os_family == "Debian" and ansible_distribution_major_version == "16"
+      with_items:
+        - { src: ./config/realmd.conf, dest: /etc/ }
+        - { src: ./config/ntp.conf, dest: /etc/ }
+
+    - name: Copying files to Destination servers (18.04LTS only)
+      copy: src={{ item.src }} dest={{ item.dest }} backup=yes force=yes
+      when: ansible_os_family == "Debian" and ansible_distribution_major_version == "18"
+      with_items:
+        - { src: ./config/chrony.conf, dest: /etc/ }
+    
+    #- name: Take the backup copy of authconfig and pasword-auth-ac
+    #  shell: authconfig --savebackup=/root/authconfig-bk-$(date +%F)
+
+    #- name: Enable mkhomedir sssdauth sssd  
+    #  shell: authconfig --enablesssd --enablesssdauth --enablemkhomedir --update
+
+    - name: Take the backup copy of password-auth-ac
+      shell: cp -pv /etc/pam.d/password-auth-ac /etc/pam.d/password-auth-ac.bak-$(date +%F)
+
+    - name: Changing sssd.conf permission
+      file: path=/etc/sssd/sssd.conf mode=0600
+
+    - name: Touch /etc/auto.direct if not exist
+      file:
+        path: /etc/auto.direct
+        state: touch
+
+    - name: Updating chrony.conf file
+      when: ansible_os_family == "Debian" and ansible_distribution_major_version == "18"
+      lineinfile:
+        path: /etc/chrony/chrony.conf
+        state: present
+        line: 'server dc.am.elcompanies.net'
+        
+    - name: Restart chrony service
+      when: ansible_os_family == "Debian" and ansible_distribution_major_version == "18"
+      shell: invoke-rc.d chrony restart
+
+    - name: Updating auto.direct file
+      lineinfile:
+        path: /etc/auto.direct
+        state: present
+        line: '/usr/home/ -rw,soft,timeo=5,intr us-smy-nas2:/Linux_home'
+
+
+    - name: Updating sudoers file
+      lineinfile: 
+        path: /etc/sudoers
+        state: present
+        line: '%u-elc\ am-unix\ admins  ALL=(ALL) NOPASSWD: ALL' 
+        validate: '/usr/sbin/visudo -cf %s'
+
+    - name: "Restarting SMBD "
+      systemd: name=smbd state=restarted enabled=yes
+    
+    - name: "Restarting NMBD "
+      systemd: name=nmbd state=restarted enabled=yes
+    
+    - name: "Restarting SSSD "
+      systemd: name=sssd state=restarted enabled=yes
+    
+    - name: "Restarting autofs "
+      systemd: name=autofs state=restarted enabled=yes
+    
+    - name: Establish kerberos session and domain join (18.04LTS)
+      when: ansible_os_family == "Debian" and ansible_distribution_major_version == "18"
+      shell: kinit Administrator && klist && net ads join -k
+
+    - name: Establish kerberos session and domain join (16.04LTS)
+      when: ansible_os_family == "Debian" and ansible_distribution_major_version == "16"
+      shell: kinit Administrator && klist && realm --verbose join am.elcompanies.net

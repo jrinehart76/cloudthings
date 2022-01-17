@@ -1,0 +1,88 @@
+{
+  "name": "SQLFailedConnections",
+  "part": {
+    "position": {
+      "x": 7,
+      "y": 5,
+      "colSpan": 7,
+      "rowSpan": 4
+    },
+    "metadata": {
+      "inputs": [
+        {
+          "name": "ComponentId",
+          "value": "[variables('OMSWorkspace')]"
+        },
+        {
+          "name": "Query",
+          "value": "[concat('AzureMetrics\r\n| where TimeGenerated > now(-24h) \r\n| where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')\r\n and ResourceProvider has \"microsoft.sql\"\r\n| where MetricName has \"failed\"\r\n| summarize averageFailedConnections=avg(Total) by Computer=Resource, bin(TimeGenerated, 15m)\r\n| render timechart')]"
+        },
+        {
+          "name": "Dimensions",
+          "value": {
+            "xAxis": {
+              "name": "TimeGenerated",
+              "type": "DateTime"
+            },
+            "yAxis": [
+              {
+                "name": "averageFailedConnections",
+                "type": "Double"
+              }
+            ],
+            "splitBy": [
+              {
+                "name": "Computer",
+                "type": "String"
+              }
+            ],
+            "aggregation": "Average"
+          }
+        },
+        {
+          "name": "Version",
+          "value": "1.0"
+        },
+        {
+          "name": "PartTitle",
+          "value": "Analytics"
+        },
+        {
+          "name": "PartSubTitle",
+          "value": "[variables('OMSWorkspace')]"
+        },
+        {
+          "name": "resourceTypeMode",
+          "value": "workspace"
+        },
+        {
+          "name": "ControlType",
+          "value": "AnalyticsChart"
+        },
+        {
+          "name": "SpecificChart",
+          "value": "Line"
+        },
+        {
+          "name": "TimeRange",
+          "isOptional": true
+        },
+        {
+          "name": "DashboardId",
+          "isOptional": true
+        }
+      ],
+      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+      "settings": {
+        "content": {
+          "PartTitle": "SQL Failed Connections",
+          "PartSubTitle": "Last 24 Hours"
+        }
+      },
+      "asset": {
+        "idInputName": "ComponentId",
+        "type": "ApplicationInsights"
+      }
+    }
+  }
+}

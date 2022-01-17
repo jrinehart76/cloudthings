@@ -1,0 +1,40 @@
+{
+    "headers": {
+        "Connection": "Keep-Alive",
+        "Expect": "100-continue",
+        "Host": "prod-06.eastus.logic.azure.com",
+        "User-Agent": "IcMBroadcaster/1.0",
+        "X-CorrelationContext": "RkkKACgAAAACAAAAEADuSs5Jzq16Qrz7wE3PafBZAQAQAOIUgvZYOV1PtGQBWU3uzrM=",
+        "Content-Length": "1009",
+        "Content-Type": "application/json; charset=utf-8"
+    },
+    "body": {
+        "schemaId": "azureMonitorCommonAlertSchema",
+        "data": {
+            "essentials": {
+                "alertId": "/subscriptions/7db5d31d-9662-466e-abad-1feba79ff2af/providers/Microsoft.AlertsManagement/alerts/f68214e2-3958-4f5d-b464-01594deeceb3",
+                "alertRule": "rmd-site-availability-rookmcdonald",
+                "severity": "Sev0",
+                "signalType": "Metric",
+                "monitorCondition": "Fired",
+                "monitoringService": "Platform",
+                "alertTargetIDs": [
+                    "/subscriptions/7db5d31d-9662-466e-abad-1feba79ff2af/resourcegroups/rg-web/providers/microsoft.insights/webtests/rmd-site-availability-rookmcdonald"
+                ],
+                "originAlertId": "7db5d31d-9662-466e-abad-1feba79ff2af_rg-web_microsoft.insights_metricalerts_rmd-site-availability-rookmcdonald_1488742787",
+                "firedDateTime": "2019-12-20T18:58:18.9171899Z",
+                "description": "Automatically created alert rule for availability test \"rmd-site-availability-rookmcdonald\"",
+                "essentialsVersion": "1.0",
+                "alertContextVersion": "1.0"
+            },
+            "alertContext": {
+                "properties": null,
+                "conditionType": "WebtestLocationAvailabilityCriteria",
+                "condition": {
+                    "windowSize": "",
+                    "allOf": []
+                }
+            }
+        }
+    }
+}

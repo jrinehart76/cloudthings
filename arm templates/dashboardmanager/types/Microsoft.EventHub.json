@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.eventhub",
+    "priority": 6,
+    "height": 5,
+    "parts": "'EventHubOverview', 'EventHubIncomingMessages','EventHubOutgoingMessages','EventHubRequestsByType'"
+}

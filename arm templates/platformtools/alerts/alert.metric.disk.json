@@ -1,0 +1,82 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "type": "string"
+        },
+        "alertSeverity": {
+            "type": "string"
+        },
+        "alertFrequencyInMinutes": {
+            "type": "int"
+        },
+        "alertWindowInMinutes": {
+            "type": "int"
+        },
+        "alertThreshold": {
+            "type":  "int"
+        },
+        "alertTriggerThreshold": {
+            "type": "int"
+        },
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "microsoft.insights/scheduledqueryrules",
+            "apiVersion": "2018-04-16",
+            "name": "[parameters('alertName')]",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": {
+                "ManagedBy": "10th Magnitude"
+            },
+            "properties": {
+                "description": "[concat('Metric Disk Usage Alert - ', parameters('alertSeverity'))]",
+                "enabled": "true",
+                "source": {
+                    "query": "InsightsMetrics\n| where TimeGenerated > now(-60m)\n| where isnotempty(_ResourceId)\n| where Namespace has 'logicaldisk' and Name has 'freespacepercentage'\n| extend MountValue=parse_json(Tags)\n| extend Mount=MountValue.['vm.azm.ms/mountId']\n| project Computer, Mount, Val, TimeGenerated | where Mount !contains '/mnt/resource'\n| summarize PercentFree=round(avg(Val),0) by Computer, tostring(Mount), bin(TimeGenerated, 60m) | where PercentFree <= 20\n| join hint.strategy=shuffle (InsightsMetrics\n| where TimeGenerated > now(-60m)\n| where Namespace has 'logicaldisk' and Name has 'freespacemb'\n| extend MountValue=parse_json(Tags)\n| extend Mount=MountValue.['vm.azm.ms/mountId'] | where Mount !contains '/mnt/resource'\n| project Computer, tostring(Mount), FreeMB=round(Val), TimeGenerated) on Computer, Mount\n| project Computer=tolower(tostring(split(Computer, '.')[0])), Mount, PercentFree, FreeMB, TimeGenerated\n| summarize AggregatedValue=round((avg(FreeMB)/1024),2) by Computer, Mount, PercentFree, bin(TimeGenerated, 60m)",
+                    "authorizedResources": [],
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[parameters('alertFrequencyInMinutes')]",
+                    "timeWindowInMinutes": "[parameters('alertWindowInMinutes')]"
+                },
+                "action": {
+                    "severity": "3",
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[concat(parameters('customerId'),'-',parameters('alertSeverity'),'-DiskUsage')]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": "[parameters('alertThreshold')]",
+                        "metricTrigger": {
+                            "thresholdOperator": "GreaterThan",
+                            "threshold": "[parameters('alertTriggerThreshold')]",
+                            "metricTriggerType": "Consecutive",
+                            "metricColumn": "Computer"
+                        }
+                    },
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"
+                }
+            }
+        }
+    ]
+}

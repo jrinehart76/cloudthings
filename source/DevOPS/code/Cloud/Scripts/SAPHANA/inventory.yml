@@ -1,0 +1,13 @@
+all:
+  hosts:
+    UK-AZR-DLGRAD01:
+      ansible_connection: ssh
+      ansible_host: 10.252.56.27
+    UK-AZR-DLGRDD01:
+      ansible_connection: ssh
+      ansible_host: 10.252.56.10
+  vars:
+    ansible_ssh_user: sapinstall
+    ansible_ssh_pass: {{ sapAdminPassword }}
+    ansible_sudo_pass: {{ sapAdminPassword }}
+

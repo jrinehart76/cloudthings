@@ -1,0 +1,91 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "critAlertDetails": [
+                {
+                    "alertName": "10m-linux-vm-critical-cpu",
+                    "alertDescription": "[concat('Critical CPU Alert on Linux. ', parameters('version'))]",
+                    "query": "//critical cpu usage on linux\r\n Perf\r\n | where Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where isnotempty(_ResourceId)\r\n | where ObjectName has 'processor' and CounterName has '% processor time' and InstanceName has '_total'\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average % CPU\"]=avg(CounterValue) by Computer\r\n | where [\"Average % CPU\"] > 98",
+                    "frequencyInMinutes": 15,
+                    "timeWindowInMinutes": 60,
+                    "emailSubject": "[concat(parameters('customerId'),'-Critical-CPU-Linux')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                },
+                {
+                    "alertName": "10m-linux-vm-critical-mem",
+                    "alertDescription": "[concat('Critical Memory Alert on Linux. ', parameters('version'))]",
+                    "query": "//critical memory usage on linux\r\n Perf\r\n | where Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where ObjectName has 'memory' and CounterName has '% used memory'\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average % Used Memory\"] = avg(CounterValue) by Computer\r\n | where [\"Average % Used Memory\"] > 95",
+                    "frequencyInMinutes": 15,
+                    "timeWindowInMinutes": 60,
+                    "emailSubject": "[concat(parameters('customerId'),'-Critical-Memory-Linux')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').critAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').critAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').critAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').critAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').critAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').critAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').critAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').critAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

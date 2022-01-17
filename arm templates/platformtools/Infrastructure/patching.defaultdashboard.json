@@ -1,0 +1,490 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceResourceGroup": {
+      "type": "string"
+    },
+    "workspaceName": {
+      "type": "string"
+    },
+    "subscriptionId": {
+      "type": "string"
+    },
+    "dashboardName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "workspaceId": "[concat(subscription().id,'/resourcegroups/',parameters('workspaceResourceGroup'),'/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspaceName'))]"
+  },
+  "resources": [
+    {
+      "properties": {
+        "lenses": {
+          "0": {
+            "order": 0,
+            "parts": {
+              "0": {
+                "position": {
+                  "x": 0,
+                  "y": 0,
+                  "colSpan": 6,
+                  "rowSpan": 2
+                },
+                "metadata": {
+                  "inputs": [],
+                  "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                  "settings": {
+                    "content": {
+                      "settings": {
+                        "content": "__Patching Dashboard__\n\nEmail: \nsupport@10thmagnitude.com\n\nPriority 1: https://support.10thmagnitude.com",
+                        "title": "10th Magnitude",
+                        "subtitle": "Managed Services"
+                      }
+                    }
+                  }
+                }
+              },
+              "1": {
+                "position": {
+                  "x": 6,
+                  "y": 0,
+                  "colSpan": 15,
+                  "rowSpan": 2
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "ComponentId",
+                      "value": {
+                        "SubscriptionId": "[parameters('subscriptionId')]",
+                        "ResourceGroup": "[parameters('workspaceResourceGroup')]",
+                        "Name": "[parameters('workspaceName')]",
+                        "ResourceId": "[variables('workspaceId')]"
+                      }
+                    },
+                    {
+                      "name": "Query",
+                      "value": "\t\tHeartbeat\r\n\t\t| where TimeGenerated>ago(12h) and OSType=~\"Windows\" and notempty(Computer)\r\n\t\t| summarize arg_max(TimeGenerated, Solutions) by SourceComputerId\r\n\t\t| where Solutions has \"updates\"\r\n\t\t| distinct SourceComputerId\r\n\t\t| join kind=leftouter\r\n\t\t(\r\n\t\t\tUpdate\r\n\t\t\t| where TimeGenerated>ago(14h) and OSType!=\"Linux\"\r\n\t\t\t| summarize hint.strategy=partitioned arg_max(TimeGenerated, UpdateState, Approved, Optional, Classification) by SourceComputerId, UpdateID\r\n\t\t\t| distinct SourceComputerId, Classification, UpdateState, Approved, Optional\r\n\t\t\t| summarize WorstMissingUpdateSeverity=max(iff(UpdateState=~\"Needed\" and (Optional==false or Classification has \"Critical\" or Classification has \"Security\") and Approved!=false, iff(Classification has \"Critical\", 4, iff(Classification has \"Security\", 2, 1)), 0)) by SourceComputerId\r\n\t\t)\r\n\t\ton SourceComputerId\r\n\t\t| extend WorstMissingUpdateSeverity=coalesce(WorstMissingUpdateSeverity, -1)\r\n\t\t| summarize computersBySeverity=count() by WorstMissingUpdateSeverity\r\n\t\t| union (Heartbeat\r\n\t\t| where TimeGenerated>ago(12h) and OSType==\"Linux\" and notempty(Computer)\r\n\t\t| summarize arg_max(TimeGenerated, Solutions) by SourceComputerId\r\n\t\t| where Solutions has \"updates\"\r\n\t\t| distinct SourceComputerId\r\n\t\t| join kind=leftouter\r\n\t\t(\r\n\t\t\tUpdate\r\n\t\t\t| where TimeGenerated>ago(5h) and OSType==\"Linux\"\r\n\t\t\t| summarize hint.strategy=partitioned arg_max(TimeGenerated, UpdateState, Classification) by SourceComputerId, Product, ProductArch\r\n\t\t\t| distinct SourceComputerId, Classification, UpdateState\r\n\t\t\t| summarize WorstMissingUpdateSeverity=max(iff(UpdateState=~\"Needed\", iff(Classification has \"Critical\", 4, iff(Classification has \"Security\", 2, 1)), 0)) by SourceComputerId\r\n\t\t)\r\n\t\ton SourceComputerId\r\n\t\t| extend WorstMissingUpdateSeverity=coalesce(WorstMissingUpdateSeverity, -1)\r\n\t\t| summarize computersBySeverity=count() by WorstMissingUpdateSeverity)\r\n\t\t| summarize ComputersAssessed=sumif(computersBySeverity, WorstMissingUpdateSeverity>-1), ComputersNotAssessed=sumif(computersBySeverity, WorstMissingUpdateSeverity==-1), CriticalUpdateCount=sumif(computersBySeverity, WorstMissingUpdateSeverity==4), NeedCriticalUpdates=sumif(computersBySeverity, WorstMissingUpdateSeverity==2), NeedOtherUpdates=sumif(computersBySeverity, WorstMissingUpdateSeverity==1), ComputersUpToDate=sumif(computersBySeverity, WorstMissingUpdateSeverity==0)\r\n\t\t| summarize ComputersAssessed=sum(ComputersAssessed), CriticalUpdateCount=sum(CriticalUpdateCount), NeedCriticalUpdates=sum(NeedCriticalUpdates), NeedOtherUpdates=sum(NeedOtherUpdates), ComputersUpToDate=sum(ComputersUpToDate), ComputersNotAssessed=sum(ComputersNotAssessed)\r\n| extend ComputerTotal=ComputersAssessed+ComputersNotAssessed\n"
+                    },
+                    {
+                      "name": "Version",
+                      "value": "1.0"
+                    },
+                    {
+                      "name": "DashboardId",
+                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/baa63ec0-0d57-4cbc-9b4b-4916640bfac4')]"
+                    },
+                    {
+                      "name": "PartId",
+                      "value": "aed53bf1-cb32-4b03-9138-a81c3d50037c"
+                    },
+                    {
+                      "name": "PartTitle",
+                      "value": "Analytics"
+                    },
+                    {
+                      "name": "PartSubTitle",
+                      "value": "[parameters('workspaceName')]"
+                    },
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "workspace"
+                    },
+                    {
+                      "name": "ControlType",
+                      "value": "AnalyticsGrid"
+                    },
+                    {
+                      "name": "Dimensions",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "TimeRange",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "SpecificChart",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Assessment",
+                      "PartSubTitle": "Patched Computers"
+                    }
+                  },
+                  "asset": {
+                    "idInputName": "ComponentId",
+                    "type": "ApplicationInsights"
+                  }
+                }
+              },
+              "2": {
+                "position": {
+                  "x": 0,
+                  "y": 2,
+                  "colSpan": 3,
+                  "rowSpan": 1
+                },
+                "metadata": {
+                  "inputs": [],
+                  "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                  "settings": {
+                    "content": {
+                      "settings": {
+                        "content": "",
+                        "title": "LINUX",
+                        "subtitle": ""
+                      }
+                    }
+                  }
+                }
+              },
+              "3": {
+                "position": {
+                  "x": 3,
+                  "y": 2,
+                  "colSpan": 3,
+                  "rowSpan": 1
+                },
+                "metadata": {
+                  "inputs": [],
+                  "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                  "settings": {
+                    "content": {
+                      "settings": {
+                        "content": "\n",
+                        "title": "WINDOWS",
+                        "subtitle": ""
+                      }
+                    }
+                  }
+                }
+              },
+              "4": {
+                "position": {
+                  "x": 6,
+                  "y": 2,
+                  "colSpan": 15,
+                  "rowSpan": 1
+                },
+                "metadata": {
+                  "inputs": [],
+                  "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                  "settings": {
+                    "content": {
+                      "settings": {
+                        "content": "\n",
+                        "title": "LIST OF PATCHES",
+                        "subtitle": "By Machine"
+                      }
+                    }
+                  }
+                }
+              },
+              "5": {
+                "position": {
+                  "x": 0,
+                  "y": 3,
+                  "colSpan": 3,
+                  "rowSpan": 8
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "ComponentId",
+                      "value": {
+                        "SubscriptionId": "[parameters('subscriptionId')]",
+                        "ResourceGroup": "[parameters('workspaceResourceGroup')]",
+                        "Name": "[parameters('workspaceName')]",
+                        "ResourceId": "[variables('workspaceId')]"
+                      }
+                    },
+                    {
+                      "name": "Query",
+                      "value": "Heartbeat\r\n| where OSType has 'linux' //filter on linux servers\r\n| project Computer, SourceComputerId, TimeGenerated, _ResourceId //create table only with data we need\r\n| where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'aks' //filter out hdi, aks machines\r\n| summarize arg_max(TimeGenerated, *) by SourceComputerId //summarize the table with last timegenerated\r\n| distinct Computer //we only want distinct computer names, no duplicates\n"
+                    },
+                    {
+                      "name": "TimeRange",
+                      "value": "P1D"
+                    },
+                    {
+                      "name": "Version",
+                      "value": "1.0"
+                    },
+                    {
+                      "name": "DashboardId",
+                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/baa63ec0-0d57-4cbc-9b4b-4916640bfac4')]"
+                    },
+                    {
+                      "name": "PartId",
+                      "value": "94a7ab1e-c7d1-46c0-b09d-62c0fbbedc52"
+                    },
+                    {
+                      "name": "PartTitle",
+                      "value": "Analytics"
+                    },
+                    {
+                      "name": "PartSubTitle",
+                      "value": "[parameters('workspaceName')]"
+                    },
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "workspace"
+                    },
+                    {
+                      "name": "ControlType",
+                      "value": "AnalyticsGrid"
+                    },
+                    {
+                      "name": "Dimensions",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "SpecificChart",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Patch List",
+                      "PartSubTitle": "Latest Run"
+                    }
+                  },
+                  "asset": {
+                    "idInputName": "ComponentId",
+                    "type": "ApplicationInsights"
+                  }
+                }
+              },
+              "6": {
+                "position": {
+                  "x": 3,
+                  "y": 3,
+                  "colSpan": 3,
+                  "rowSpan": 8
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "ComponentId",
+                      "value": {
+                        "SubscriptionId": "[parameters('subscriptionId')]",
+                        "ResourceGroup": "[parameters('workspaceResourceGroup')]",
+                        "Name": "[parameters('workspaceName')]",
+                        "ResourceId": "[variables('workspaceId')]"
+                      }
+                    },
+                    {
+                      "name": "Query",
+                      "value": "Heartbeat\r\n| where OSType has 'windows'\r\n//filter on windows servers\r\n| project Computer, SourceComputerId, TimeGenerated, _ResourceId //create table only with data we need\r\n| where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'aks' //filter out hdi, aks machines\r\n| summarize arg_max(TimeGenerated, *) by SourceComputerId //summarize the table with last timegenerated\r\n| distinct Computer //we only want distinct computer names, no duplicates\r\n"
+                    },
+                    {
+                      "name": "TimeRange",
+                      "value": "P1D"
+                    },
+                    {
+                      "name": "Version",
+                      "value": "1.0"
+                    },
+                    {
+                      "name": "DashboardId",
+                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/baa63ec0-0d57-4cbc-9b4b-4916640bfac4')]"
+                    },
+                    {
+                      "name": "PartId",
+                      "value": "7d533091-1815-41d2-872d-18d0495c29da"
+                    },
+                    {
+                      "name": "PartTitle",
+                      "value": "Analytics"
+                    },
+                    {
+                      "name": "PartSubTitle",
+                      "value": "[parameters('workspaceName')]"
+                    },
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "workspace"
+                    },
+                    {
+                      "name": "ControlType",
+                      "value": "AnalyticsGrid"
+                    },
+                    {
+                      "name": "Dimensions",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "SpecificChart",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Patch List",
+                      "PartSubTitle": "Latest Run"
+                    }
+                  },
+                  "asset": {
+                    "idInputName": "ComponentId",
+                    "type": "ApplicationInsights"
+                  }
+                }
+              },
+              "7": {
+                "position": {
+                  "x": 6,
+                  "y": 3,
+                  "colSpan": 15,
+                  "rowSpan": 8
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "ComponentId",
+                      "value": {
+                        "SubscriptionId": "[parameters('subscriptionId')]",
+                        "ResourceGroup": "[parameters('workspaceResourceGroup')]",
+                        "Name": "[parameters('workspaceName')]",
+                        "ResourceId": "[variables('workspaceId')]"
+                      }
+                    },
+                    {
+                      "name": "Query",
+                      "value": "Update\n| where UpdateState !has 'notneeded' and Classification !has 'others' and UpdateState !has 'installaed'\n| where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'aks'\n| summarize by Computer, KBID, Title, Optional, Approved, Type\n"
+                    },
+                    {
+                      "name": "TimeRange",
+                      "value": "P1D"
+                    },
+                    {
+                      "name": "Version",
+                      "value": "1.0"
+                    },
+                    {
+                      "name": "DashboardId",
+                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/baa63ec0-0d57-4cbc-9b4b-4916640bfac4')]"
+                    },
+                    {
+                      "name": "PartId",
+                      "value": "e3e1689f-bcd8-44e7-876a-2d0567d6b971"
+                    },
+                    {
+                      "name": "PartTitle",
+                      "value": "Analytics"
+                    },
+                    {
+                      "name": "PartSubTitle",
+                      "value": "[parameters('workspaceName')]"
+                    },
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "workspace"
+                    },
+                    {
+                      "name": "ControlType",
+                      "value": "AnalyticsGrid"
+                    },
+                    {
+                      "name": "Dimensions",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "SpecificChart",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Latest",
+                      "PartSubTitle": "All OS Types",
+                      "Query": "Update | where UpdateState !has 'notneeded' and Classification !has 'others' and UpdateState !has 'installed' | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'aks' | project Computer, _ResourceId, KBID, Title, Optional, Approved, Type | summarize by Computer, KBID, Title, Optional, Approved, Type\n",
+                      "GridColumnsWidth": {
+                        "Computer": "215px",
+                        "KBID": "81px",
+                        "Title": "599px",
+                        "Optional": "101px",
+                        "Approved": "95px",
+                        "Type": "266px"
+                      }
+                    }
+                  },
+                  "asset": {
+                    "idInputName": "ComponentId",
+                    "type": "ApplicationInsights"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "metadata": {
+          "model": {
+            "timeRange": {
+              "value": {
+                "relative": {
+                  "duration": 24,
+                  "timeUnit": 1
+                }
+              },
+              "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+            },
+            "filterLocale": {
+              "value": "en-us"
+            },
+            "filters": {
+              "value": {
+                "MsPortalFx_TimeRange": {
+                  "model": {
+                    "format": "utc",
+                    "granularity": "auto",
+                    "relative": "24h"
+                  },
+                  "displayCache": {
+                    "name": "UTC Time",
+                    "value": "Past 24 hours"
+                  },
+                  "filteredPartIds": [
+                    "StartboardPart-AnalyticsPart-306e4f84-6f53-4cec-bcc6-fac168333005",
+                    "StartboardPart-AnalyticsPart-306e4f84-6f53-4cec-bcc6-fac168333007",
+                    "StartboardPart-AnalyticsPart-a4d4c71a-dcf8-4955-894f-d783eb22400f",
+                    "StartboardPart-AnalyticsPart-a4d4c71a-dcf8-4955-894f-d783eb224011",
+                    "StartboardPart-AnalyticsPart-c8481095-ab7e-45b5-9a94-50e4a0db100f",
+                    "StartboardPart-AnalyticsPart-c8481095-ab7e-45b5-9a94-50e4a0db1011",
+                    "StartboardPart-AnalyticsPart-c8481095-ab7e-45b5-9a94-50e4a0db1013",
+                    "StartboardPart-AnalyticsPart-efbe6a6d-cef0-4051-81ed-a9ae9efa2007",
+                    "StartboardPart-AnalyticsPart-efbe6a6d-cef0-4051-81ed-a9ae9efa200f",
+                    "StartboardPart-AnalyticsPart-efbe6a6d-cef0-4051-81ed-a9ae9efa2011",
+                    "StartboardPart-AnalyticsPart-efbe6a6d-cef0-4051-81ed-a9ae9efa2015",
+                    "StartboardPart-AnalyticsPart-57bedfff-c89c-4991-9ffa-879009eed007",
+                    "StartboardPart-AnalyticsPart-57bedfff-c89c-4991-9ffa-879009eed00f",
+                    "StartboardPart-AnalyticsPart-57bedfff-c89c-4991-9ffa-879009eed011",
+                    "StartboardPart-AnalyticsPart-57bedfff-c89c-4991-9ffa-879009eed013",
+                    "StartboardPart-AnalyticsPart-1ca1ad97-dbe4-463a-a220-8075d2512007",
+                    "StartboardPart-AnalyticsPart-1ca1ad97-dbe4-463a-a220-8075d251200f",
+                    "StartboardPart-AnalyticsPart-1ca1ad97-dbe4-463a-a220-8075d2512011",
+                    "StartboardPart-AnalyticsPart-1ca1ad97-dbe4-463a-a220-8075d2512013"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "name": "[parameters('dashboardName')]",
+      "type": "Microsoft.Portal/dashboards",
+      "location": "East US",
+      "tags": {
+        "hidden-title": "[parameters('dashboardName')]" 
+      },
+      "apiVersion": "2015-08-01-preview"
+    }
+  ]
+}

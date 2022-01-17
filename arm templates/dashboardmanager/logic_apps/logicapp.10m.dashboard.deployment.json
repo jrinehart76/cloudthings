@@ -1,0 +1,690 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "logicAppName" : {
+            "type": "string",
+            "defaultValue": "10m-dashboard-deployment"
+        },
+        "logicAppLocation" : {
+            "type": "string"
+        },
+        "integrationAccountName" : {
+            "type": "string"
+        },
+        "deploymentConnectionName": {
+            "type" : "string"
+        },
+        "cosmosDbConnectionName": {
+            "type": "string"
+        } 
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('logicAppName')]",
+            "location": "[parameters('logicAppLocation')]",
+            "properties": {
+                "state": "Enabled",
+                "integrationAccount": {
+                    "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Logic/integrationAccounts', parameters('integrationAccountName'))]" 
+                },
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        },
+                        "ApplicationName": {
+                            "defaultValue": "Enter Subscription Id",
+                            "type": "String"
+                        },
+                        "ApplicationResourceGroups": {
+                            "defaultValue": [],
+                            "type": "Array"
+                        },
+                        "DashboardResourceGroup": {
+                            "defaultValue": "Resource of Where to Deploy Dashboard",
+                            "type": "String"
+                        },
+                        "Environment": {
+                            "defaultValue": "Enter Environment",
+                            "type": "String"
+                        },
+                        "ResourceTypes": {
+                            "defaultValue": [],
+                            "type": "Array"
+                        },
+                        "SubscriptionId": {
+                            "defaultValue": "Enter Subscription Id",
+                            "type": "String"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "properties": {
+                                        "ApplicationName": {
+                                            "type": "string"
+                                        },
+                                        "ApplicationResourceGroups": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "DashboardResourceGroup": {
+                                            "type": "string"
+                                        },
+                                        "Environment": {
+                                            "type": "string"
+                                        },
+                                        "OMSResourceGroup": {
+                                            "type": "string"
+                                        },
+                                        "OMSWorkspace": {
+                                            "type": "string"
+                                        },
+                                        "OMSWorkspaceId": {
+                                            "type": "string"
+                                        },
+                                        "ResourceTypes": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "SubscriptionId": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "All_Parts": {
+                            "runAfter": {
+                                "For_each": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Compose",
+                            "inputs": "@variables('Parts')"
+                        },
+                        "Application_Name": {
+                            "runAfter": {
+                                "Subscription_Id": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "ApplicationName",
+                                        "type": "string",
+                                        "value": "@triggerBody()?['ApplicationName']"
+                                    }
+                                ]
+                            }
+                        },
+                        "Build_Template": {
+                            "runAfter": {
+                                "All_Parts": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "JavaScriptCode",
+                            "inputs": {
+                                "code": "var template = workflowContext.actions.Get_Template.outputs.body.Documents[0];\r\n\r\ntemplate.resources[0].properties.lenses[0].parts = workflowContext.actions.All_Parts.outputs\r\n\r\ndelete template[\"id\"];\r\ndelete template[\"_rid\"];\r\ndelete template[\"_self\"];\r\ndelete template[\"_etag\"];\r\ndelete template[\"_attachments\"];\r\ndelete template[\"_ts\"];\r\n\r\nreturn template;"
+                            }
+                        },
+                        "Current_Y": {
+                            "runAfter": {
+                                "ResourceTypes": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "CurrentY",
+                                        "type": "integer",
+                                        "value": 2
+                                    }
+                                ]
+                            }
+                        },
+                        "Deploy_Dashboard": {
+                            "runAfter": {
+                                "Build_Template": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "properties": {
+                                        "mode": "Incremental",
+                                        "parameters": "@variables('Parameters')",
+                                        "template": "@outputs('Build_Template')?['body']"
+                                    }
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['arm']['connectionId']"
+                                    }
+                                },
+                                "method": "put",
+                                "path": "/subscriptions/@{encodeURIComponent(variables('SubscriptionId'))}/resourcegroups/@{encodeURIComponent(triggerBody()?['DashboardResourceGroup'])}/providers/Microsoft.Resources/deployments/@{encodeURIComponent(replace(replace(concat(triggerBody()?['ApplicationName'],'_', utcNow()),':',''),' ', ''))}",
+                                "queries": {
+                                    "wait": true,
+                                    "x-ms-api-version": "2016-06-01"
+                                }
+                            }
+                        },
+                        "DeploymentTemplate": {
+                            "runAfter": {
+                                "Application_Name": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "template",
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        },
+                        "For_each": {
+                            "foreach": "@outputs('Sorted_Types')",
+                            "actions": {
+                                "Assemble_Parts": {
+                                    "runAfter": {
+                                        "Get_Parts_By_Type": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "JavaScriptCode",
+                                    "inputs": {
+                                        "code": "var index = workflowContext.actions.Current_Parts_Index.outputs;\r\n\r\nvar partsDocuments = workflowContext.actions.Get_Parts_By_Type.outputs.body.Documents;\r\nvar parts = workflowContext.actions.Current_Parts.outputs;\r\n\r\npartsDocuments.forEach(document => {\r\n    document.part.position.y = document.part.position.y + workflowContext.actions.Current_Y_Compose.outputs;\r\n    parts[index] = document.part;\r\n    index++;\r\n});\r\n\r\nvar output = {\r\n    \"index\": index,\r\n    \"parts\": parts\r\n};\r\n\r\nreturn output;"
+                                    }
+                                },
+                                "Current_Parts": {
+                                    "runAfter": {
+                                        "Current_Parts_Index": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Compose",
+                                    "inputs": "@variables('Parts')"
+                                },
+                                "Current_Parts_Index": {
+                                    "runAfter": {},
+                                    "type": "Compose",
+                                    "inputs": "@variables('PartsIndex')"
+                                },
+                                "Current_Y_Compose": {
+                                    "runAfter": {
+                                        "Parse_Current": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Compose",
+                                    "inputs": "@variables('CurrentY')"
+                                },
+                                "Get_Parts_By_Type": {
+                                    "runAfter": {
+                                        "Current_Y_Compose": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "QueryText": "SELECT * FROM c where c.name in  (@{replace(replace(replace(string(body('Parse_Current')?['parts']), '\"',''), '[',''), ']', '')})"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/v2/dbs/@{encodeURIComponent('PartLibrary')}/colls/@{encodeURIComponent('parts')}/query"
+                                    }
+                                },
+                                "Parse_Current": {
+                                    "runAfter": {
+                                        "Current_Parts": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@items('For_each')",
+                                        "schema": {
+                                            "properties": {
+                                                "_attachments": {
+                                                    "type": "string"
+                                                },
+                                                "_etag": {
+                                                    "type": "string"
+                                                },
+                                                "_rid": {
+                                                    "type": "string"
+                                                },
+                                                "_self": {
+                                                    "type": "string"
+                                                },
+                                                "_ts": {
+                                                    "type": "integer"
+                                                },
+                                                "height": {
+                                                    "type": "integer"
+                                                },
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "parts": {
+                                                    "type": "string"
+                                                },
+                                                "priority": {
+                                                    "type": "integer"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "Set_Current_Y_value": {
+                                    "runAfter": {
+                                        "Set_Parts": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "SetVariable",
+                                    "inputs": {
+                                        "name": "CurrentY",
+                                        "value": "@add(body('Parse_Current')?['height'], outputs('Current_Y_Compose'))"
+                                    }
+                                },
+                                "Set_Parts": {
+                                    "runAfter": {
+                                        "Set_Parts_Index_Loop": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "SetVariable",
+                                    "inputs": {
+                                        "name": "Parts",
+                                        "value": "@outputs('Assemble_Parts')?['body'].parts"
+                                    }
+                                },
+                                "Set_Parts_Index_Loop": {
+                                    "runAfter": {
+                                        "Assemble_Parts": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "SetVariable",
+                                    "inputs": {
+                                        "name": "PartsIndex",
+                                        "value": "@outputs('Assemble_Parts')?['body'].index"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Set_Parameters": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach",
+                            "runtimeConfiguration": {
+                                "concurrency": {
+                                    "repetitions": 1
+                                }
+                            }
+                        },
+                        "Format_Resource_Groups": {
+                            "runAfter": {
+                                "Sorted_Types": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "JavaScriptCode",
+                            "inputs": {
+                                "code": "var groups = workflowContext.trigger.outputs.body.ApplicationResourceGroups;\r\nvar output = [];\r\ngroups.forEach(group => {\r\n    var item = '\"' + '[' + '\\\\' + '\"' +  group + '\\\\'+ '\"' + ']' + '\"';\r\n    output.push(item);\r\n    \r\n   \r\n});\r\nreturn output.toString();"
+                            }
+                        },
+                        "Get_Current_Parts": {
+                            "runAfter": {
+                                "Get_Template": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "JavaScriptCode",
+                            "inputs": {
+                                "code": "var template = workflowContext.actions.Get_Template.outputs.body.Documents[0];\r\n\r\nvar parts = template.resources[0].properties.lenses[0].parts;\r\n\r\nvar output = {\r\n    \"index\": Object.keys(parts).length,\r\n    \"parts\": parts\r\n}\r\n\r\nreturn output;"
+                            }
+                        },
+                        "Get_Template": {
+                            "runAfter": {
+                                "Parts": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "QueryText": "SELECT * FROM c\nwhere c.metadata.name = \"BaseTemplate\""
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/dbs/@{encodeURIComponent('PartLibrary')}/colls/@{encodeURIComponent('templates')}/query"
+                            }
+                        },
+                        "Get_Type": {
+                            "runAfter": {
+                                "Set_Initial_Parts": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "QueryText": "SELECT * FROM c\nWHERE c.type in (@{replace(replace(variables('ResourceTypes'), '[', ''), ']' ,'')})"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/dbs/@{encodeURIComponent('PartLibrary')}/colls/@{encodeURIComponent('DashboardType')}/query"
+                            }
+                        },
+                        "Initialize_variable": {
+                            "runAfter": {
+                                "Initialize_variable_2": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "TemplateName",
+                                        "type": "string",
+                                        "value": "BaseTemplate"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_2": {
+                            "runAfter": {
+                                "DeploymentTemplate": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "Parameters",
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        },
+                        "Parts": {
+                            "runAfter": {
+                                "Parts_Index": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "Parts",
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        },
+                        "Parts_Index": {
+                            "runAfter": {
+                                "Current_Y": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "PartsIndex",
+                                        "type": "integer",
+                                        "value": 0
+                                    }
+                                ]
+                            }
+                        },
+                        "ResourceGroups": {
+                            "runAfter": {
+                                "partsQuery": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "ResourceGroups",
+                                        "type": "string",
+                                        "value": "@{string(triggerBody()?['ApplicationResourceGroups'])}"
+                                    }
+                                ]
+                            }
+                        },
+                        "ResourceTypes": {
+                            "runAfter": {
+                                "ResourceGroups": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "ResourceTypes",
+                                        "type": "string",
+                                        "value": "@{string(triggerBody()?['ResourceTypes'])}"
+                                    }
+                                ]
+                            }
+                        },
+                        "Response": {
+                            "runAfter": {},
+                            "type": "Response",
+                            "kind": "Http",
+                            "inputs": {
+                                "body": {
+                                    "Message": "Succesful",
+                                    "Results": {
+                                        "ApplicationName": "@triggerBody()?['ApplicationName']",
+                                        "ApplicationResourceGroups": "@triggerBody()?['ApplicationResourceGroups']",
+                                        "DashboardResourceGroup": "@triggerBody()?['DashboardResourceGroup']",
+                                        "Environment": "@triggerBody()?['Environment']",
+                                        "ResourceTypes": "@triggerBody()?['ResourceTypes']",
+                                        "SubscriptionId": "@triggerBody()?['SubscriptionId']"
+                                    }
+                                },
+                                "statusCode": 200
+                            }
+                        },
+                        "Set_Initial_Parts": {
+                            "runAfter": {
+                                "Set_Parts_Index": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                                "name": "Parts",
+                                "value": "@outputs('Get_Current_Parts')?['body'].parts"
+                            }
+                        },
+                        "Set_Parameters": {
+                            "runAfter": {
+                                "Set_ResourceGroups": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                                "name": "Parameters",
+                                "value": {
+                                    "ApplicationName": {
+                                        "value": "@triggerBody()?['ApplicationName']"
+                                    },
+                                    "Environment": {
+                                        "value": "@triggerBody()?['Environment']"
+                                    },
+                                    "OMSResourceGroup": {
+                                        "value": "@triggerBody()?['OMSResourceGroup']"
+                                    },
+                                    "OMSWorkspace": {
+                                        "value": "@triggerBody()?['OMSWorkspace']"
+                                    },
+                                    "OMSWorkspaceId": {
+                                        "value": "@triggerBody()?['OMSWorkspaceId']"
+                                    },
+                                    "ResourceGroups": {
+                                        "value": "@variables('ResourceGroups')"
+                                    },
+                                    "SubscriptionId": {
+                                        "value": "@triggerBody()?['SubscriptionId']"
+                                    }
+                                }
+                            }
+                        },
+                        "Set_Parts_Index": {
+                            "runAfter": {
+                                "Get_Current_Parts": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                                "name": "PartsIndex",
+                                "value": "@outputs('Get_Current_Parts')?['body'].index"
+                            }
+                        },
+                        "Set_ResourceGroups": {
+                            "runAfter": {
+                                "Format_Resource_Groups": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                                "name": "ResourceGroups",
+                                "value": "@outputs('Format_Resource_Groups')?['body']"
+                            }
+                        },
+                        "Sort_Resource_Types": {
+                            "runAfter": {
+                                "Get_Type": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "JavaScriptCode",
+                            "inputs": {
+                                "code": "function priority(current_type, next_type) {\r\n  let comparison = 0;\r\n  if (current_type.priority > next_type.priority) {\r\n    comparison = 1;\r\n  } else if (current_type.priority < next_type.priority) {\r\n    comparison = -1;\r\n  }\r\n  return comparison;\r\n}\r\n\r\nvar  types = workflowContext.actions.Get_Type.outputs.body.Documents\r\nreturn types.sort(priority);\r\nvar results = [];\r\n\r\ntypes.forEach(type => {\r\n    results.push(type.parts);\r\n});\r\n\r\nreturn results;"
+                            }
+                        },
+                        "Sorted_Types": {
+                            "runAfter": {
+                                "Sort_Resource_Types": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Compose",
+                            "inputs": "@outputs('Sort_Resource_Types')?['body']"
+                        },
+                        "Subscription_Id": {
+                            "runAfter": {
+                                "Response": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "SubscriptionId",
+                                        "type": "string",
+                                        "value": "@triggerBody()?['SubscriptionId']"
+                                    }
+                                ]
+                            }
+                        },
+                        "partsQuery": {
+                            "runAfter": {
+                                "Initialize_variable": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "partsToQuery",
+                                        "type": "string"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "arm": {
+                                "connectionId": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/connections', parameters('deploymentConnectionName'))]",
+                                "connectionName": "[parameters('deploymentConnectionName')]",
+                                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/arm')]"
+                            },
+                            "documentdb": {
+                                "connectionId": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/connections', parameters('cosmosDbConnectionName'))]",
+                                "connectionName": "[parameters('cosmosDbConnectionName')]",
+                                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/documentdb')]"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,62 @@
+{
+    "headers": {
+        "Connection": "Keep-Alive",
+        "Expect": "100-continue",
+        "Host": "prod-39.eastus.logic.azure.com",
+        "User-Agent": "IcMBroadcaster/1.0",
+        "X-CorrelationContext": "RkkKACgAAAACAAAAEAAF9JekFUzKTYDjJP7gEOyXAQAQADX8CArWKwNEuaS9e118QtA=",
+        "Content-Length": "1369",
+        "Content-Type": "application/json; charset=utf-8"
+    },
+    "body": {
+        "schemaId": "azureMonitorCommonAlertSchema",
+        "data": {
+            "essentials": {
+                "alertId": "/subscriptions/b843d1ef-73c6-48b8-907e-099f9d9d8032/providers/Microsoft.AlertsManagement/alerts/0a08fc35-2bd6-4403-b9a4-bd7b5d7c42d0",
+                "alertRule": "10m-test-alert-[pgo-prod-asp-300]-cpu-alert",
+                "severity": "Sev3",
+                "signalType": "Metric",
+                "monitorCondition": "Fired",
+                "monitoringService": "Platform",
+                "alertTargetIDs": [
+                    "/subscriptions/b843d1ef-73c6-48b8-907e-099f9d9d8032/resourcegroups/prod-pg-px-ds-service/providers/microsoft.web/serverfarms/pgo-prod-asp-300"
+                ],
+                "originAlertId": "b843d1ef-73c6-48b8-907e-099f9d9d8032_prod-pg-px-ds-service_microsoft.insights_metricAlerts_10m-test-alert-[pgo-prod-asp-300]-cpu-alert_1406773819",
+                "firedDateTime": "2020-03-20T20:23:28.2510171Z",
+                "description": "FOR TESTING ONLY",
+                "essentialsVersion": "1.0",
+                "alertContextVersion": "1.0"
+            },
+            "alertContext": {
+                "properties": null,
+                "conditionType": "SingleResourceMultipleMetricCriteria",
+                "condition": {
+                    "windowSize": "PT15M",
+                    "allOf": [
+                        {
+                            "metricName": "CpuPercentage",
+                            "metricNamespace": "Microsoft.Web/serverFarms",
+                            "operator": "GreaterThan",
+                            "threshold": "0",
+                            "timeAggregation": "Average",
+                            "dimensions": [
+                                {
+                                    "name": "ResourceId",
+                                    "value": "waws-prod-bn1-17dfe1cf_15"
+                                },
+                                {
+                                    "name": "ServerName",
+                                    "value": "RD0004FFA5DDF3"
+                                }
+                            ],
+                            "metricValue": 6.46666666666667,
+                            "webTestName": null
+                        }
+                    ],
+                    "windowStartTime": "2020-03-20T20:05:15.563Z",
+                    "windowEndTime": "2020-03-20T20:20:15.563Z"
+                }
+            }
+        }
+    }
+}

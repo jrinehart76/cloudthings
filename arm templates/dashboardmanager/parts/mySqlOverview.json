@@ -1,0 +1,24 @@
+{
+    "name": "mySqlOverview",
+    "part": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "colSpan": 21,
+          "rowSpan": 1
+        },
+        "metadata": {
+          "inputs": [],
+          "type": "Extension/HubsExtension/PartType/MarkdownPart",
+          "settings": {
+            "content": {
+              "settings": {
+                "content": "<div style=\"font-size:300%;\">mySQL Overview</div>\n",
+                "title": "",
+                "subtitle": ""
+              }
+            }
+          }
+        }
+      }
+}

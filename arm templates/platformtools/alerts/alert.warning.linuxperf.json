@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "warnAlertDetails": [
+                {
+                    "alertName": "10m-linux-vm-warning-cpu",
+                    "alertDescription": "Warning CPU Alert on Linux. v1",
+                    "query": "Perf\r\n | where ObjectName has 'processor' and CounterName has '% processor time' and InstanceName has '_total'\r\n | where isnotempty(_ResourceId)\r\n | where Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average % CPU\"]=avg(CounterValue) by Computer\r\n | where [\"Average % CPU\"] between (95 .. 98)",
+                    "frequencyInMinutes": 15,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'),'-Warning-CPU-Linux')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 4
+                },
+                {
+                    "alertName": "10m-linux-vm-warning-mem",
+                    "alertDescription": "Warning Memory Alert on Linux. v1",
+                    "query": "Perf\r\n | where ObjectName has 'processor' and CounterName has '% processor time' and InstanceName has '_total'\r\n | where isnotempty(_ResourceId)\r\n | where Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average % CPU\"]=avg(CounterValue) by Computer\r\n | where [\"Average % CPU\"] between (85 .. 95)",
+                    "frequencyInMinutes": 15,
+                    "timeWindowInMinutes": 30,
+                    "emailSubject": "[concat(parameters('customerId'),'-Warning-Memory-Linux')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 4
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').warnAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').warnAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').warnAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').warnAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').warnAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').warnAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').warnAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').warnAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').warnAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').warnAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

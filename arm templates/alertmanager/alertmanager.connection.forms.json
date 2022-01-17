@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "logicAppLocation": {
+        "type": "string",
+        "metadata": {
+          "description": "Location of the Logic App."
+        }
+      },
+      "connections_microsoftforms_name": {
+        "defaultValue": "microsoftforms",
+        "type": "String"
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Web/connections",
+        "apiVersion": "2016-06-01",
+        "name": "[parameters('connections_microsoftforms_name')]",
+        "location": "[parameters('logicAppLocation')]",
+        "properties": {
+            "displayName": "dnite@10thmagnitude.com",
+            "customParameterValues": {},
+            "api": {
+                "id": "[concat('/subscriptions/7db5d31d-9662-466e-abad-1feba79ff2af/providers/Microsoft.Web/locations/southcentralus/managedApis/', parameters('connections_microsoftforms_name'))]"
+            }
+        }
+      }
+    ],
+    "outputs": {}
+}

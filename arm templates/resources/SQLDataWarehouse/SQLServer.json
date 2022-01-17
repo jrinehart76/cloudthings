@@ -1,0 +1,90 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminLogin": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16
+    },
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "vnetRuleName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "defaultValue": "VNET-AM-EastUS-Prod-SS"
+    },
+    "sharedServiceSubnetResourceID": {
+      "type": "string",
+      "defaultValue": "/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust",
+      "metadata": {
+        "description": "Range of allowed IPs to access cosmosdb"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "Azure Region"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "Azure Region"
+      }
+    }
+  },
+  "variables": {
+    "baseNamingPrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "enabledForDeployment": "True",
+    "enabledForTemplateDeployment": "True",
+    "tenantId": "[subscription().subscriptionId]",
+    "sqlServerName": "[tolower(concat('sql', '-',variables('baseNamingPrefix'), '-01'))]",
+    "keysName": "[concat('keys', variables('sqlServerName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Sql/servers",
+      "kind": "v12.0",
+      "name": "[variables('sqlServerName')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[resourceGroup().location]",
+      "scale": null,
+      "properties": {
+        "administratorLogin": "[parameters('adminLogin')]",
+        "administratorLoginPassword": "[parameters('adminPassword')]",
+        "version": "12.0"
+      }
+    },
+    {
+      "type": "Microsoft.Sql/servers/virtualNetworkRules",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+      ],
+      "name": "[concat(variables('sqlServerName'), '/', parameters('vnetRuleName'))]",
+      "properties": {
+        "ignoreMissingVnetServiceEndpoint": true,
+        "virtualNetworkSubnetId": "[parameters('sharedServiceSubnetResourceID')]"
+      }
+    }
+  ]
+}

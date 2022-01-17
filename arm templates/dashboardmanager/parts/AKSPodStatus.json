@@ -1,0 +1,95 @@
+{
+    "name": "AKSPodStatus",
+    "part": {
+        "position": {
+            "x": 14,
+            "y": 5,
+            "colSpan": 7,
+            "rowSpan": 4
+        },
+        "metadata": {
+            "inputs": [
+                {
+                    "name": "ComponentId",
+                    "value": "[variables('OMSWorkspace')]"
+                },
+                {
+                    "name": "Query",
+                    "value": "[concat('KubePodInventory | where TimeGenerated > now(-24h) | where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')\r\n| distinct ClusterName, TimeGenerated\r\n| summarize ClusterSnapshotCount = count() by bin(TimeGenerated, 15m), ClusterName\r\n| join hint.strategy=broadcast (\r\nKubePodInventory\r\n| where TimeGenerated > now(-24h) \r\n| distinct ClusterName, Computer, PodUid, TimeGenerated, PodStatus\r\n| summarize TotalCount = count(),\r\nPendingCount = sumif(1, PodStatus =~ \"Pending\"),\r\nRunningCount = sumif(1, PodStatus =~ \"Running\"),\r\nSucceededCount = sumif(1, PodStatus =~ \"Succeeded\"),\r\nFailedCount = sumif(1, PodStatus =~ \"Failed\")\r\nby ClusterName, bin(TimeGenerated, 15m)\r\n) on ClusterName, TimeGenerated\r\n| extend UnknownCount = TotalCount - PendingCount - RunningCount - SucceededCount - FailedCount\r\n| project ClusterName, TimeGenerated,\r\nTotalCount = todouble(TotalCount) / ClusterSnapshotCount,\r\nPendingCount = todouble(PendingCount) / ClusterSnapshotCount,\r\nRunningCount = todouble(RunningCount) / ClusterSnapshotCount,\r\nSucceededCount = todouble(SucceededCount) / ClusterSnapshotCount,\r\nFailedCount = todouble(FailedCount) / ClusterSnapshotCount,\r\nUnknownCount = todouble(UnknownCount) / ClusterSnapshotCount\r\n| summarize by Pending=PendingCount, Failed=FailedCount, Unknown=UnknownCount, Succeeded=SucceededCount, bin(TimeGenerated, 15m)\r\n| render timechart\r\n')]"
+                },
+                {
+                    "name": "Dimensions",
+                    "value": {
+                        "xAxis": {
+                            "name": "TimeGenerated",
+                            "type": "DateTime"
+                        },
+                        "yAxis": [
+                            {
+                                "name": "Pending",
+                                "type": "Double"
+                            },
+                            {
+                                "name": "Failed",
+                                "type": "Double"
+                            },
+                            {
+                                "name": "Unknown",
+                                "type": "Double"
+                            },
+                            {
+                                "name": "Succeeded",
+                                "type": "Double"
+                            }
+                        ],
+                        "splitBy": [],
+                        "aggregation": "Average"
+                    }
+                },
+                {
+                    "name": "Version",
+                    "value": "1.0"
+                },
+                {
+                    "name": "PartTitle",
+                    "value": "Analytics"
+                },
+                {
+                    "name": "PartSubTitle",
+                    "value": "[parameters('OMSWorkspace')]"
+                },
+                {
+                    "name": "resourceTypeMode",
+                    "value": "workspace"
+                },
+                {
+                    "name": "ControlType",
+                    "value": "AnalyticsChart"
+                },
+                {
+                    "name": "SpecificChart",
+                    "value": "Line"
+                },
+                {
+                    "name": "TimeRange",
+                    "isOptional": true
+                },
+                {
+                    "name": "DashboardId",
+                    "isOptional": true
+                }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+                "content": {
+                    "PartTitle": "POD Status",
+                    "PartSubTitle": "Last 24 Hours"
+                }
+            },
+            "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+            }
+        }
+    }
+}

@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "defaultValue": "",
+            "type": "string"
+        },
+        "workspaceResourceGroupName": {
+            "defaultValue": "",
+            "type": "string"
+        },
+        "workspaceSubscriptionId": {
+            "defaultValue": "",
+            "type": "string"
+        },
+        "workspaceName": {
+            "defaultValue": "",
+            "type": "string"
+        },
+        "solutionTypeArray": {
+            "defaultValue": [],
+            "type": "array"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.OperationsManagement/solutions",
+            "name": "[Concat(parameters('solutionTypeArray')[copyIndex()], '(', parameters('workspaceName'), ')')]",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('workspaceLocation')]",
+            "copy": {
+                "name": "solutionsCopy",
+                "count": "[length(parameters('solutionTypeArray'))]"
+            },
+            "plan": {
+                "name": "[Concat(parameters('solutionTypeArray')[copyIndex()], '(', parameters('workspaceName'), ')')]",
+                "product": "[Concat('OMSGallery/', parameters('solutionTypeArray')[copyIndex()])]",
+                "promotionCode": "",
+                "publisher": "Microsoft"
+            },
+            "properties": {
+                "workspaceResourceId": "[Concat('/subscriptions/', parameters('workspaceSubscriptionId'), '/resourceGroups/', parameters('workspaceResourceGroupName'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            }
+        }
+    ]
+}

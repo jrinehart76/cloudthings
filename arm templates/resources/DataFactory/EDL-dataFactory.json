@@ -1,0 +1,65 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "locationAbv": {
+      "type": "string",
+      "defaultValue": "eus",
+      "metadata": {
+        "description": "The shorter version of the deployment region. E.G. uksouth, seasia"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    },
+    "purpose": {
+      "type": "string",
+      "defaultValue": "Fin",
+      "metadata": {
+        "description": "Purpose for the vault"
+      }
+    }
+  },
+  "variables": {
+    "name": "[tolower(concat('df', '-', parameters('region'), '-', parameters('locationAbv'), '-', parameters('environment'), '-', parameters('application'), '-', parameters('purpose')))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('name')]",
+      "type": "Microsoft.DataFactory/factories",
+      "apiVersion": "2017-09-01-preview",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {},
+      "resources": [
+      ]
+    }
+  ]
+}

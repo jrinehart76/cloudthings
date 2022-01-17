@@ -1,0 +1,24 @@
+{
+    "name": "SqlOverview",
+    "part": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "colSpan": 21,
+          "rowSpan": 1
+        },
+        "metadata": {
+          "inputs": [],
+          "type": "Extension/HubsExtension/PartType/MarkdownPart",
+          "settings": {
+            "content": {
+              "settings": {
+                "content": "<div style=\"font-size:300%;\">SQL Overview</div>\n",
+                "title": "",
+                "subtitle": ""
+              }
+            }
+          }
+        }
+      }
+}

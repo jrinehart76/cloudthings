@@ -1,0 +1,415 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logicAppEnv": {
+      "type": "string",
+      "defaultValue": "dev",
+      "allowedValues": [
+        "prod",
+        "dev"
+      ]
+    },
+    "logicAppLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the Logic App."
+      }
+    },
+    "dynamicsCrmOnlineConnectionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Dynamics 365 connection"
+      }
+    },
+    "relatedAccountGUID": {
+      "type": "string",
+      "metadata": {
+        "description": "GUID of the Customer Account in Dynamics"
+      }
+    },
+    "monitoringContactGUID": {
+      "type": "string",
+      "metadata": {
+        "description": "GUID of the Monitoring Contact on Event creation"
+      }
+    },
+    "integrationAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the integration account"
+      }
+    }
+  },
+  "variables": {
+    "prod": "/datasets/@{encodeURIComponent(encodeURIComponent('org9f436416.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_events'))}/items",
+    "dev": "/datasets/@{encodeURIComponent(encodeURIComponent('orgb1b7c4c0.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('apitil_events'))}/items"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Logic/integrationAccounts",
+      "apiVersion": "2016-06-01",
+      "location": "[parameters('logicAppLocation')]",
+      "name": "[parameters('integrationAccountName')]",
+      "properties": { },
+      "sku": {
+        "name": "Free"
+      }
+    },
+    {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2016-06-01",
+      "location": "[parameters('logicAppLocation')]",
+      "name": "[parameters('dynamicsCrmOnlineConnectionName')]",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/dynamicscrmonline')]"
+        },
+        "displayName": "[parameters('dynamicsCrmOnlineConnectionName')]"
+      }
+    },
+    {
+      "name": "10m-event-sev-3",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[parameters('logicAppLocation')]",
+      "tags": {
+        "displayName": "LogicApp"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', parameters('dynamicsCrmOnlineConnectionName'))]",
+        "[resourceId('Microsoft.Logic/integrationAccounts', parameters('integrationAccountName'))]"
+      ],
+      "apiVersion": "2016-06-01",
+      "properties": {
+        "integrationAccount": {
+          "id": "[resourceId('Microsoft.Logic/integrationAccounts', parameters('integrationAccountName'))]"
+        },
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "actions": {
+            "Execute_JavaScript_Code": {
+                "inputs": {
+                    "code": "var SearchResults = workflowContext.trigger.outputs.body.data.alertContext.SearchResults\r\n\r\nvar tables = SearchResults.tables;\r\nvar select_table = function (tables) {\r\n    var result;\r\n\r\n    tables.map(table => {\r\n\r\n        if (table.name == 'PrimaryResult') {\r\n            result = table;\r\n        }\r\n    })\r\n    return result;\r\n}\r\n\r\nvar table = select_table(tables);\r\nvar headers = table.columns;\r\nvar output = {};\r\noutput[\"SevDescription\"] = workflowContext.trigger.outputs.body.data.alertContext.SeverityDescription;\r\noutput[\"LinkToSearchResults\"] = workflowContext.trigger.outputs.body.data.alertContext.LinkToSearchResults\r\noutput[\"WorkspaceId\"] = workflowContext.trigger.outputs.body.data.alertContext.WorkspaceId;\r\noutput[\"Items\"] = [];\r\nvar numberOfHeaders = headers.length;\r\ntable.rows.forEach(row => {\r\n    var currentItem = {};\r\n    for (var index = 0; index < numberOfHeaders; index++) {\r\n        currentItem[headers[index].name] = row[index];\r\n    }\r\n    output.Items.push(currentItem);\r\n});\r\nreturn output;"
+                },
+                "runAfter": {},
+                "type": "JavaScriptCode"
+            },
+            "For_each": {
+                "actions": {
+                    "Create_a_new_record": {
+                        "inputs": {
+                            "body": {
+                                "_apitil_action_label": "Notify Support",
+                                "_apitil_impact_label": "3-Moderate",
+                                "_apitil_level_label": "Exception",
+                                "_apitil_relatedaccount_value": "[parameters('relatedAccountGUID')]",
+                                "_mag_relatedcontact_value": "[parameters('monitoringContactGUID')]",
+                                "_apitil_source_label": "OMS",
+                                "_apitil_urgency_label": "3-Medium",
+                                "apitil_acknowledged": false,
+                                "apitil_description": "Description: @{triggerBody()?['data']?['essentials']?['alertRule']}\n\nAffectedConfigurationItem: {\n @{body('Parse_current_item')?['Computer']}\n}\n\nSearch Results:\n@{items('For_each')}\n\nSearch Query:\n@{triggerBody()?['data']?['alertContext']?['SearchQuery']}\n\nLink to Results:\n@{body('Parse_JSON')?['LinkToSearchResults']}",
+                                "apitil_device": "@body('Parse_current_item')?['Computer']",
+                                "apitil_eventidexternal": "@body('Parse_JSON')?['WorkspaceId']",
+                                "apitil_level": 345550002,
+                                "apitil_name": "@{triggerBody()?['data']?['essentials']?['alertRule']} - ( @{body('Parse_current_item')?['Computer']} )",
+                                "apitil_raisedon": "@{formatDateTime(utcNow(),'MM/dd/yyyy hh:mm tt')}"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['dynamicscrmonline']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "[if(equals(parameters('logicAppEnv'), 'prod'), variables('prod'), variables('dev'))]"
+                        },
+                        "runAfter": {
+                            "Parse_current_item": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    },
+                    "Parse_current_item": {
+                        "inputs": {
+                            "content": "@items('For_each')",
+                            "schema": {
+                                "properties": {
+                                    "Computer": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "runAfter": {},
+                        "type": "ParseJson"
+                    }
+                },
+                "foreach": "@body('Parse_JSON')?['Items']",
+                "runAfter": {
+                    "Parse_JSON": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "concurrency": {
+                        "repetitions": 1
+                    }
+                },
+                "type": "Foreach"
+            },
+            "Parse_JSON": {
+                "inputs": {
+                    "content": "@outputs('Execute_JavaScript_Code')?['body']",
+                    "schema": {
+                        "properties": {
+                            "Items": {
+                                "items": {
+                                    "properties": {
+                                        "Impacted_Resource": {
+                                            "type": "string"
+                                        },
+                                        "Type": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "required": [],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            },
+                            "LinkToSearchResults": {
+                                "type": "string"
+                            },
+                            "SevDescription": {
+                                "type": "string"
+                            },
+                            "WorkspaceId": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Execute_JavaScript_Code": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            }
+        },
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "manual": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "data": {
+                                "properties": {
+                                    "alertContext": {
+                                        "properties": {
+                                            "AffectedConfigurationItems": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "AlertType": {
+                                                "type": "string"
+                                            },
+                                            "IncludeSearchResults": {
+                                                "type": "boolean"
+                                            },
+                                            "IncludedSearchResults": {
+                                                "type": "string"
+                                            },
+                                            "LinkToSearchResults": {
+                                                "type": "string"
+                                            },
+                                            "Operator": {
+                                                "type": "string"
+                                            },
+                                            "ResultCount": {
+                                                "type": "integer"
+                                            },
+                                            "SearchIntervalDurationMin": {
+                                                "type": "string"
+                                            },
+                                            "SearchIntervalEndtimeUtc": {
+                                                "type": "string"
+                                            },
+                                            "SearchIntervalInMinutes": {
+                                                "type": "string"
+                                            },
+                                            "SearchIntervalStartTimeUtc": {
+                                                "type": "string"
+                                            },
+                                            "SearchQuery": {
+                                                "type": "string"
+                                            },
+                                            "SearchResults": {
+                                                "properties": {
+                                                    "dataSources": {
+                                                        "items": {
+                                                            "properties": {
+                                                                "region": {
+                                                                    "type": "string"
+                                                                },
+                                                                "resourceId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "tables": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": "array"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "resourceId",
+                                                                "region",
+                                                                "tables"
+                                                            ],
+                                                            "type": "object"
+                                                        },
+                                                        "type": "array"
+                                                    },
+                                                    "tables": {
+                                                        "items": {
+                                                            "properties": {
+                                                                "columns": {
+                                                                    "items": {
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                        "required": [
+                                                                            "name",
+                                                                            "type"
+                                                                        ],
+                                                                        "type": "object"
+                                                                    },
+                                                                    "type": "array"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "rows": {
+                                                                    "items": {
+                                                                        "type": "array"
+                                                                    },
+                                                                    "type": "array"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "columns",
+                                                                "rows"
+                                                            ],
+                                                            "type": "object"
+                                                        },
+                                                        "type": "array"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "SeverityDescription": {
+                                                "type": "string"
+                                            },
+                                            "Threshold": {
+                                                "type": "integer"
+                                            },
+                                            "WorkspaceId": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "essentials": {
+                                        "properties": {
+                                            "alertContextVersion": {
+                                                "type": "string"
+                                            },
+                                            "alertId": {
+                                                "type": "string"
+                                            },
+                                            "alertRule": {
+                                                "type": "string"
+                                            },
+                                            "alertTargetIDs": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "essentialsVersion": {
+                                                "type": "string"
+                                            },
+                                            "firedDateTime": {
+                                                "type": "string"
+                                            },
+                                            "monitorCondition": {
+                                                "type": "string"
+                                            },
+                                            "monitoringService": {
+                                                "type": "string"
+                                            },
+                                            "originAlertId": {
+                                                "type": "string"
+                                            },
+                                            "severity": {
+                                                "type": "string"
+                                            },
+                                            "signalType": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "schemaId": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        },
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "type": "Object",
+            "value": {
+              "dynamicscrmonline": {
+                "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/dynamicscrmonline')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('dynamicsCrmOnlineConnectionName'))]",
+                "connectionName": "[parameters('dynamicsCrmOnlineConnectionName')]"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

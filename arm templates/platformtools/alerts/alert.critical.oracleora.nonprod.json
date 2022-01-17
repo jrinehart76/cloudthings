@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/20160-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "critAlertDetails": [
+                {
+                    "alertName": "10m-oracle-dblog-nonprod-critical-alert",
+                    "alertDescription": "[concat('NONPROD Oracle Database Log Error Alert. ', parameters('version'))]",
+                    "query": "//nonprod oracle dblog query\r\n Oracle_CL\r\n | where TimeGenerated > now(-1h)\r\n | where _ResourceId contains 'fea13a4d-60f74-44cc-8611-0cbc3602360413'\r\n | where RawData contains 'ORA-'\r\n | summarize by Error=RawData, Computer, TimeGenerated",
+                    "frequencyInMinutes": 60,
+                    "timeWindowInMinutes": 60,
+                    "emailSubject": "[concat(parameters('customerId'),'-NONPROD-Critical-ORADB-Alert')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 1
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').critAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters('workspaceLocation')]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').critAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').critAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').critAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').critAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 60,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').critAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').critAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').critAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

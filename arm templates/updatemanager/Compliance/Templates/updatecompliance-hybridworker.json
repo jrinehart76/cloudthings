@@ -1,0 +1,206 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "count": {
+        "type": "int",
+        "defaultValue": 1,
+        "metadata": {
+          "description": "Number of workers to deploy"
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "metadata": {
+          "description": "Username for the Virtual Machine."
+        }
+      },
+      "adminPassword": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password for the Virtual Machine."
+        }
+      },
+      "windowsOSVersion": {
+        "type": "string",
+        "defaultValue": "2019-Datacenter",
+        "metadata": {
+          "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
+        }
+      },
+      "vmSize": {
+        "type": "string",
+        "defaultValue": "Standard_D2_v3",
+        "metadata": {
+          "description": "Size of the virtual machine."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Location for all resources."
+        }
+      }
+    },
+    "variables": {
+      "storageAccountName": "sawinvmplatformhybrid",
+      "addressPrefix": "10.0.0.0/24",
+      "subnetName": "hybridWorker",
+      "subnetPrefix": "10.0.0.0/28",
+      "vmName": "platform-hybridWorker-",
+      "diskName": "platform-hybridWorker-osDisk-",
+      "nicName": "platform-hybridWorker-nic-",
+      "virtualNetworkName": "10m-ms-platform-vnet",
+      "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
+      "networkSecurityGroupName": "platform-hybridWorker-nsg"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2018-11-01",
+        "name": "[variables('storageAccountName')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "Storage",
+        "properties": {}
+      },
+      {
+        "comments":  "Default Network Security Group for template",
+        "type":  "Microsoft.Network/networkSecurityGroups",
+        "apiVersion":  "2019-08-01",
+        "name":  "[variables('networkSecurityGroupName')]",
+        "location":  "[parameters('location')]",
+        "properties": {
+          "securityRules": [
+            {
+              "name":  "default-allow-3389",
+              "properties": {
+                "priority":  200,
+                "access":  "Allow",
+                "direction":  "Inbound",
+                "destinationPortRange":  "3389",
+                "protocol":  "Tcp",
+                "sourcePortRange":  "*",
+                "sourceAddressPrefix":  "207.237.249.106",
+                "destinationAddressPrefix":  "*"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2018-11-01",
+        "name": "[variables('virtualNetworkName')]",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+        ],
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "[variables('addressPrefix')]"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "[variables('subnetName')]",
+              "properties": {
+                "addressPrefix": "[variables('subnetPrefix')]",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "apiVersion": "2018-11-01",
+        "name": "[concat(variables('nicName'), padLeft(copyIndex('nicCopy'), 2, '0'))]",
+        "location": "[parameters('location')]",
+        "copy": {
+            "name": "nicCopy",
+            "count": "[parameters('count')]"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        ],
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "subnet": {
+                  "id": "[variables('subnetRef')]"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "apiVersion": "2018-10-01",
+        "name": "[concat(variables('vmname'), padLeft(copyIndex('vmCopy'), 2, '0'))]",
+        "location": "[parameters('location')]",
+        "copy": {
+            "name": "vmCopy",
+            "count": "[parameters('count')]"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+          "[concat(resourceId('Microsoft.Network/networkInterfaces/', variables('nicName')), padLeft(copyIndex('vmCopy'), 2, '0'))]"
+        ],
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[parameters('vmSize')]"
+          },
+          "osProfile": {
+            "computerName": "[concat('hybridWorker', padLeft(copyIndex('vmCopy'), 2, '0'))]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "MicrosoftWindowsServer",
+              "offer": "WindowsServer",
+              "sku": "[parameters('windowsOSVersion')]",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage",
+              "name": "[concat(variables('diskName'), padLeft(copyIndex('vmCopy'), 2, '0'))]"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[concat(resourceId('Microsoft.Network/networkInterfaces',variables('nicName')), padLeft(copyIndex('vmCopy'), 2, '0'))]"
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+            "bootDiagnostics": {
+              "enabled": true,
+              "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
+            }
+          }
+        }
+      }
+    ],
+    "outputs": {
+      "vmNames": {
+        "type": "array",
+        "copy": {
+          "count": "[parameters('count')]",
+          "input": "[concat(variables('vmname'), padLeft(copyIndex(), 2, '0'))]"
+        }
+      }
+    }
+  }

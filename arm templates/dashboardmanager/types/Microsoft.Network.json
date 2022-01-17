@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.network",
+    "priority": 3,
+    "height": 5,
+    "parts": "'NetworkOverview', 'AppGatewayThroughput', 'AppGatewayRequests','AppGatewayLatency'"
+}

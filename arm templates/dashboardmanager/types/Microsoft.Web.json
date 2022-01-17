@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.web",
+    "priority": 4,
+    "height": 5,
+    "parts": "'AppServicePlanOverview', 'AppServicePlanMemory','AppServicePlanCPU','AppServicePlanHttpResponses'"
+}

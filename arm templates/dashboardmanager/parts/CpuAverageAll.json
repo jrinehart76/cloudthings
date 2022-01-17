@@ -1,0 +1,88 @@
+{
+    "name": "CpuAverageAll",
+    "part": {
+        "position": {
+            "x": 0,
+            "y": 1,
+            "colSpan": 7,
+            "rowSpan": 4
+        },
+        "metadata": {
+            "inputs": [
+                {
+                    "name": "ComponentId",
+                    "value": "[variables('OMSWorkspace')]"
+                },
+                {
+                    "name": "Query",
+                    "value": "[concat('Perf | where TimeGenerated > now(-24h) | where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')\r\n| where ObjectName has \"processor\"  and CounterName has \"processor time\" and InstanceName has \"_total\"\r\n| summarize averageCPU=avg(CounterValue) by Computer, bin(TimeGenerated, 15m)\r\n| render timechart\n')]"
+                },
+                {
+                    "name": "Dimensions",
+                    "value": {
+                        "xAxis": {
+                            "name": "TimeGenerated",
+                            "type": "datetime"
+                        },
+                        "yAxis": [
+                            {
+                                "name": "averageCPU",
+                                "type": "real"
+                            }
+                        ],
+                        "splitBy": [
+                            {
+                                "name": "Computer",
+                                "type": "string"
+                            }
+                        ],
+                        "aggregation": "Sum"
+                    }
+                },
+                {
+                    "name": "Version",
+                    "value": "1.0"
+                },
+                {
+                    "name": "PartTitle",
+                    "value": "Analytics"
+                },
+                {
+                    "name": "PartSubTitle",
+                    "value": "[parameters('OMSWorkspace')]"
+                },
+                {
+                    "name": "resourceTypeMode",
+                    "value": "workspace"
+                },
+                {
+                    "name": "ControlType",
+                    "value": "AnalyticsChart"
+                },
+                {
+                    "name": "SpecificChart",
+                    "value": "Line"
+                },
+                {
+                    "name": "TimeRange",
+                    "isOptional": true
+                },
+                {
+                    "name": "DashboardId",
+                    "isOptional": true
+                }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+                "content": {
+                    "PartTitle": "Average CPU - All",
+                    "PartSubTitle": "Last 24 Hours"
+                }
+            },
+            "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+            }
+        }
+    }
+}

@@ -1,0 +1,91 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "workspaceResourceId": {
+            "type": "string"
+        },
+        "actionGroupId": {
+            "type": "string"
+        },
+        "customerId": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('workspaceResourceId'), '\": \"Resource\"}' ) )]",
+        "alertCopy": {
+            "critAlertDetails": [
+                {
+                    "alertName": "10m-windows-vm-critical-datadisk",
+                    "alertDescription": "[concat('Critical Disk Alert on Windows. ', parameters('version'))]",
+                    "query": "//critical data disk on windows\r\n Perf\r\n | where CounterName has '% free space' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName !has 'C:'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize PercentFree=avg(CounterValue) by Computer, InstanceName\r\n | project Computer, InstanceName, PercentFree\r\n | where PercentFree < 10\r\n | join (Perf\r\n | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n ) on InstanceName, Computer\r\n | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName !has 'C:'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize averageMegabytesFree=avg(CounterValue) by Computer, InstanceName\r\n | project Computer, InstanceName, averageMegabytesFree\r\n | where averageMegabytesFree < 10210",
+                    "frequencyInMinutes": 15,
+                    "timeWindowInMinutes": 15,
+                    "emailSubject": "[concat(parameters('customerId'),'-Critical-DataDisk-Windows')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                },
+                {
+                    "alertName": "10m-windows-vm-critical-osdisk",
+                    "alertDescription": "[concat('Critical OS Disk Alert on Windows. ', parameters('version'))]",
+                    "query": "//critical os disk on windows\r\n Perf\r\n | where CounterName has '% free space' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName has 'C:'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize PercentFree=avg(CounterValue) by Computer, InstanceName\r\n | project Computer, InstanceName, PercentFree\r\n | where PercentFree < 10\r\n | join (Perf\r\n | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n ) on InstanceName, Computer\r\n | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName has 'C:'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize averageMegabytesFree=avg(CounterValue) by Computer, InstanceName\r\n | project Computer, InstanceName, averageMegabytesFree\r\n | where averageMegabytesFree < 1024",
+                    "frequencyInMinutes": 15,
+                    "timeWindowInMinutes": 15,
+                    "emailSubject": "[concat(parameters('customerId'),'-Critical-OSDisk-Windows')]",
+                    "thresholdOperator": "GreaterThan",
+                    "threshold": 0,
+                    "severity": 3
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "[variables('alertCopy').critAlertDetails[copyIndex()].alertName]",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'workspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "copy": {
+                "count": "[length(variables('alertCopy').critAlertDetails)]",
+                "name": "alertCopy"
+            },
+            "properties": {
+                "description": "[variables('alertCopy').critAlertDetails[copyIndex()].alertDescription]",
+                "enabled": "true",
+                "source": {
+                    "query": "[variables('alertCopy').critAlertDetails[copyIndex()].query]",
+                    "dataSourceId": "[parameters('workspaceResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].frequencyInMinutes]",
+                    "timeWindowInMinutes": "[variables('alertCopy').critAlertDetails[copyIndex()].timeWindowInMinutes]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertCopy').critAlertDetails[copyIndex()].severity]",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "[variables('alertCopy').critAlertDetails[copyIndex()].emailSubject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertCopy').critAlertDetails[copyIndex()].thresholdOperator]",
+                        "threshold": "[variables('alertCopy').critAlertDetails[copyIndex()].threshold]"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,114 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "locationAbv": {
+      "type": "string",
+      "defaultValue": "eus",
+      "metadata": {
+        "description": "The shorter version of the deployment region. E.G. uksouth, seasia"
+      }
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Free",
+        "Standard"
+      ],
+      "metadata": {
+        "description": "The sku of the Data Catalog"
+      }
+    },
+    "adminUPN": {
+      "type": "string",
+      "metadata": {
+        "description": "The UPN for the admin of the Data Catalog"
+      }
+    },
+    "adminObjectID": {
+      "type": "string",
+      "metadata": {
+        "description": "The ObjectID for the admin of the Data Catalog"
+      }
+    },
+    "userUPN": {
+      "type": "string",
+      "metadata": {
+        "description": "The UPN for the user of the Data Catalog"
+      }
+    },
+    "userObjectID": {
+      "type": "string",
+      "metadata": {
+        "description": "The ObjectID for the user of the Data Catalog"
+      }
+    },
+    "numberOfInstances": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "The number of instances per plan"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    }
+  },
+  "variables": {
+    "name": "[tolower(concat('dcat', parameters('region'), parameters('locationAbv'), parameters('environment'), parameters('application')))]"
+  },
+  "resources": [
+    {
+      "name": "[concat(variables('name'), padleft(copyIndex(1), 4, '0'))]",
+      "type": "Microsoft.DataCatalog/catalogs",
+      "apiVersion": "2016-03-30",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": "[parameters('sku')]",
+        "admins": [
+          {
+            "upn": "[parameters('adminUPN')]",
+            "objectId": "[parameters('adminObjectID')]"
+          }
+        ],
+        "users": [
+          {
+            "upn": "[parameters('userUPN')]",
+            "objectId": "[parameters('userObjectID')]"
+          }
+        ]
+      },
+      "copy": {
+        "name": "dcatCopy",
+        "count": "[parameters('numberOfInstances')]"
+      }
+
+    }
+  ]
+}

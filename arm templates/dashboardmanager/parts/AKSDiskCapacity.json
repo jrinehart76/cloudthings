@@ -1,0 +1,88 @@
+{
+    "name": "AKSDiskCapacity",
+    "part": {
+        "position": {
+            "x": 14,
+            "y": 1,
+            "colSpan": 7,
+            "rowSpan": 4
+        },
+        "metadata": {
+            "inputs": [
+                {
+                    "name": "ComponentId",
+                    "value": "[variables('OMSWorkspace')]"
+                },
+                {
+                    "name": "Query",
+                    "value": "[concat('InsightsMetrics | where TimeGenerated > now(-24h) | where Origin == \"container.azm.ms/telegraf\"\r\n| where Namespace has \"container.azm.ms/disk\"\r\n| where split(_ResourceId, \"/\", 4) in (', parameters('ResourceGroups'), ')\r\n| extend ClusterName = tostring(parse_json(Tags).[\"container.azm.ms/clusterName\"])\r\n| extend Tags = todynamic(Tags)\r\n| project TimeGenerated, _ResourceId, Device = tostring(Tags.device), Path = tostring(Tags.path), DiskMetricName = Name, DiskMetricValue = Val, ClusterName\r\n| where DiskMetricName has \"used_percent\"\r\n| summarize diskUsed = max(DiskMetricValue) by ClusterName, bin(TimeGenerated, 15m)\r\n| render timechart\r\n')]"
+                },
+                {
+                    "name": "Dimensions",
+                    "value": {
+                        "xAxis": {
+                            "name": "TimeGenerated",
+                            "type": "DateTime"
+                        },
+                        "yAxis": [
+                            {
+                                "name": "diskUsed",
+                                "type": "Double"
+                            }
+                        ],
+                        "splitBy": [
+                            {
+                                "name": "ClusterName",
+                                "type": "String"
+                            }
+                        ],
+                        "aggregation": "Average"
+                    }
+                },
+                {
+                    "name": "Version",
+                    "value": "1.0"
+                },
+                {
+                    "name": "PartTitle",
+                    "value": "Analytics"
+                },
+                {
+                    "name": "PartSubTitle",
+                    "value": "[parameters('OMSWorkspace')]"
+                },
+                {
+                    "name": "resourceTypeMode",
+                    "value": "workspace"
+                },
+                {
+                    "name": "ControlType",
+                    "value": "AnalyticsChart"
+                },
+                {
+                    "name": "SpecificChart",
+                    "value": "Line"
+                },
+                {
+                    "name": "TimeRange",
+                    "isOptional": true
+                },
+                {
+                    "name": "DashboardId",
+                    "isOptional": true
+                }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+                "content": {
+                    "PartTitle": "AKS Cluster Disk Capacity",
+                    "PartSubTitle": "Last 24 Hours"
+                }
+            },
+            "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+            }
+        }
+    }
+}

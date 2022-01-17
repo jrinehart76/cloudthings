@@ -1,0 +1,88 @@
+{
+    "name": "HDInsightsJavaMemory",
+    "part": {
+        "position": {
+            "x": 0,
+            "y": 1,
+            "colSpan": 14,
+            "rowSpan": 4
+          },
+          "metadata": {
+            "inputs": [
+              {
+                "name": "ComponentId",
+                "value": "[variables('OMSWorkspace')]"
+              },
+              {
+                "name": "Query",
+                "value": "//hdinsights java memory usage\r\nmetrics_kafka_CL\r\n| where TimeGenerated > now(-24h)\r\n| where InstanceName_s has \"jvm_memory-heap\"\r\n| where ClusterName_s contains \"C2M\" \r\n| summarize averageJavaMemory = avg((((jvm_memory_heap_used_value_d /1024)/1024)/1024)) by ClusterName_s, HostName_s  , bin(TimeGenerated, 15m)\r\n| render timechart \r\n"
+              },
+              {
+                "name": "Dimensions",
+                "value": {
+                  "xAxis": {
+                    "name": "TimeGenerated",
+                    "type": "DateTime"
+                  },
+                  "yAxis": [
+                    {
+                      "name": "averageJavaMemory",
+                      "type": "Double"
+                    }
+                  ],
+                  "splitBy": [
+                    {
+                      "name": "HostName_s",
+                      "type": "String"
+                    }
+                  ],
+                  "aggregation": "Average"
+                }
+              },
+              {
+                "name": "Version",
+                "value": "1.0"
+              },
+              {
+                "name": "PartTitle",
+                "value": "Analytics"
+              },
+              {
+                "name": "PartSubTitle",
+                "value": "[parameters('OMSWorkspace')]"
+              },
+              {
+                "name": "resourceTypeMode",
+                "value": "workspace"
+              },
+              {
+                "name": "ControlType",
+                "value": "AnalyticsChart"
+              },
+              {
+                "name": "SpecificChart",
+                "value": "Line"
+              },
+              {
+                "name": "TimeRange",
+                "isOptional": true
+              },
+              {
+                "name": "DashboardId",
+                "isOptional": true
+              }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+              "content": {
+                "PartTitle": "HDInsights Java Memory",
+                "PartSubTitle": "Last 24 Hours"
+              }
+            },
+            "asset": {
+              "idInputName": "ComponentId",
+              "type": "ApplicationInsights"
+            }
+          }
+    }
+}

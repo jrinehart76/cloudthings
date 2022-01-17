@@ -1,0 +1,6 @@
+{
+    "type": "microsoft.containerservice",
+    "priority" : 0,
+    "height": 9,
+    "parts": "'AKSCoreUtilization', 'AKSOverview', 'AKSContainerCpuUsage','AKSMemoryUsage','AKSDiskCapacity','AKSContainerMemoryUsage','AKSPodStatus'"
+}

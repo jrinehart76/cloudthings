@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroupName": {
+            "type": "string"
+        },
+        "resourceGroupLocation": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "name": "[parameters('ResourceGroupName')]",
+            "properties": {}
+        }
+    ],
+    "outputs": {}
+}

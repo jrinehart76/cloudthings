@@ -1,0 +1,20 @@
+CREATE TABLE updateManagement (
+    vmname varchar(255) NOT NULL PRIMARY KEY,
+    rgname varchar(255) NOT NULL,
+    ostype varchar(255),
+    oscheck varchar(255),
+    agentstatus varchar(255),
+    powerstate varchar(255),
+    lastrun varchar(255),
+    errorstate varchar(255),
+    dotnetver varchar(255),
+    wmfver varchar(255),
+    agenterrors varchar(255),
+    permissionstatus varchar(255),
+    tlsstatus varchar(255),
+    workspaceid varchar(255),
+    wuenabled varchar(255),
+    wulocation varchar(255),
+    wuoption varchar(255),
+    subscription varchar(255)
+);

@@ -1,0 +1,111 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "routeTableName": {
+      "defaultValue": "RouteTable-AM-EastUS-Prod-PaaS-ASE",
+      "type": "String"
+    },
+    "Location": {
+      "defaultValue": "EastUS",
+      "type": "String"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Network/routeTables",
+      "apiVersion": "2019-11-01",
+      "name": "[parameters('routeTableName')]",
+      "location": "[parameters('Location')]",
+      "tags": {
+        "ManagedBy": "10th Magnitude"
+      },
+      "properties": {
+        "disableBgpRoutePropagation": true,
+        "routes": [
+          {
+            "name": "VNet-AM-EastUS-Prod-PaaS",
+            "properties": {
+              "addressPrefix": "10.252.48.0/21",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          },
+          {
+            "name": "UDR-VNet-AM-EastUS-Prod-PaaS-Range2",
+            "properties": {
+              "addressPrefix": "10.252.120.0/22",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          },
+          {
+            "name": "UDR-VNet-AM-EastUS-Prod-PaaS-Range3",
+            "properties": {
+              "addressPrefix": "10.251.80.0/22",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          },
+          {
+            "name": "UDR-VNet-AM-EastUS-Prod-PaaS-Range4",
+            "properties": {
+              "addressPrefix": "10.251.96.0/21",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          },
+          {
+            "name": "UDR-VNet-AM-EastUS-Prod-PaaS-Range5",
+            "properties": {
+              "addressPrefix": "10.251.104.0/21",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          },
+          {
+            "name": "UDR-IPv4-Slash0",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.102"
+            }
+          },
+          {
+            "name": "UDR-IPv4-10Slash8",
+            "properties": {
+              "addressPrefix": "10.0.0.0/8",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          },
+          {
+            "name": "UDR-IPv4-172Slash12",
+            "properties": {
+              "addressPrefix": "172.16.0.0/12",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          },
+          {
+            "name": "UDR-IPv4-192Slash16",
+            "properties": {
+              "addressPrefix": "192.168.0.0/16",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          },
+          {
+            "name": "UDR-VNET-AM-EastUS-SS-CoreSubnet",
+            "properties": {
+              "addressPrefix": "10.252.126.0/24",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "10.252.127.134"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

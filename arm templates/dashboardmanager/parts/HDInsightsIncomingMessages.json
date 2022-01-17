@@ -1,0 +1,88 @@
+{
+    "name": "HDInsightsIncomingMessages",
+    "part": {
+        "position": {
+            "x": 14,
+            "y": 1,
+            "colSpan": 7,
+            "rowSpan": 4
+          },
+          "metadata": {
+            "inputs": [
+              {
+                "name": "ComponentId",
+                "value": "[variables('OMSWorkspace')]"
+              },
+              {
+                "name": "Query",
+                "value": "//hdinsights incoming messages\r\nmetrics_kafka_CL\r\n| where TimeGenerated > now(-24h) \r\n| where ClusterName_s contains \"c2m\" and InstanceName_s == \"kafka-BrokerTopicMetrics-MessagesInPerSec-Count\"\r\n| summarize averageMessagesPerSecond = avg(kafka_BrokerTopicMetrics_MessagesInPerSec_Count_value_d) by HostName_s, bin(TimeGenerated, 15m)\r\n| render timechart \r\n"
+              },
+              {
+                "name": "Dimensions",
+                "value": {
+                  "xAxis": {
+                    "name": "TimeGenerated",
+                    "type": "DateTime"
+                  },
+                  "yAxis": [
+                    {
+                      "name": "averageMessagesPerSecond",
+                      "type": "Double"
+                    }
+                  ],
+                  "splitBy": [
+                    {
+                      "name": "HostName_s",
+                      "type": "String"
+                    }
+                  ],
+                  "aggregation": "Average"
+                }
+              },
+              {
+                "name": "Version",
+                "value": "1.0"
+              },
+              {
+                "name": "PartTitle",
+                "value": "Analytics"
+              },
+              {
+                "name": "PartSubTitle",
+                "value": "[parameters('OMSWorkspace')]"
+              },
+              {
+                "name": "resourceTypeMode",
+                "value": "workspace"
+              },
+              {
+                "name": "ControlType",
+                "value": "AnalyticsChart"
+              },
+              {
+                "name": "SpecificChart",
+                "value": "Line"
+              },
+              {
+                "name": "TimeRange",
+                "isOptional": true
+              },
+              {
+                "name": "DashboardId",
+                "isOptional": true
+              }
+            ],
+            "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+            "settings": {
+              "content": {
+                "PartTitle": "HDInsights Incoming Messages",
+                "PartSubTitle": "Last 24 Hours"
+              }
+            },
+            "asset": {
+              "idInputName": "ComponentId",
+              "type": "ApplicationInsights"
+            }
+          }
+    }
+}

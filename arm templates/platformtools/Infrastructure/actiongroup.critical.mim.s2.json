@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {},
+  "resources": [
+    {
+      "type": "Microsoft.Insights/actionGroups",
+      "apiVersion": "2018-03-01",
+      "name": "10m-alert-critmim-s2",
+      "location": "Global",
+      "properties": {
+        "groupShortName": "10mCMIMS2",
+        "enabled": true,
+        "logicAppReceivers": [],
+        "emailReceivers": [
+          {
+            "name": "10M Support Alert Shadow",
+            "emailAddress": "supportalerts@10thmagnitude.com",
+            "useCommonAlertSchema": true
+          }
+        ]
+      }
+    }
+  ],
+  "outputs":{}
+}
