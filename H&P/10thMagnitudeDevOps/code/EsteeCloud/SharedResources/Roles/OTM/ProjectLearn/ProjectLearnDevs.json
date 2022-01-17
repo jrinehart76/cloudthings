@@ -1,0 +1,20 @@
+﻿{
+  "Name": "Project LEARN Developer",
+  "IsCustom": true,
+  "Description": "Developers on the NALX/LEARN project",
+  "Actions": [
+    "Microsoft.ApiManagement/service/*",
+    "Microsoft.Resources/subscriptions/read",
+    "Microsoft.Authorization/*/read",
+    "Microsoft.Insights/alertRules/*",
+    "Microsoft.ResourceHealth/availabilityStatuses/read",
+    "Microsoft.Resources/deployments/*",
+    "Microsoft.Resources/subscriptions/resourceGroups/read",
+    "Microsoft.Support/*"
+  ],
+  "DataActions": [
+  ],
+  "NotDataActions": [
+  ],
+  "AssignableScopes": [ "/" ]
+}

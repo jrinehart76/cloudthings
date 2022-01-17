@@ -1,0 +1,123 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "isAutoInflateEnabled": {
+      "type": "string",
+      "defaultValue": "True",
+      "allowedValues": [
+        "True",
+        "False"
+      ],
+      "metadata": {
+        "description": "Enable or disable AutoInflate"
+      }
+    },
+    "maximumThroughputUnits": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 0,
+      "maxValue": 20,
+      "metadata": {
+        "description": "maximum throughput units"
+      }
+    },
+    "messageRetentionInDays": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 7,
+      "metadata": {
+        "description": "Days to retain the data in Event Hub"
+      }
+    },
+    "partitionCount": {
+      "type": "int",
+      "defaultValue": 4,
+      "minValue": 2,
+      "maxValue": 32,
+      "metadata": {
+        "description": "Number of partitions, ie how many consumers will process messages.  2-32 default 4"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    }
+  },
+  "variables": {
+    "defaultSASKeyName": "RootManageSharedAccessKey",
+    "authRuleResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('namespaceName'), variables('defaultSASKeyName'))]",
+    "location": "[resourceGroup().location]",
+    "baseNamingPrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "enabledForDeployment": "True",
+    "enabledForTemplateDeployment": "True",
+    "tenantId": "[subscription().subscriptionId]",
+    "namespaceName": "[tolower(concat('eh-', variables('baseNamingPrefix'), '-01'))]",
+    "eventHubName": "[tolower(concat(variables('namespaceName'),parameters('application')))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[variables('namespaceName')]",
+      "type": "Microsoft.EventHub/Namespaces",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {
+        "isAutoInflateEnabled": "[parameters('isAutoInflateEnabled')]",
+        "maximumThroughputUnits": "[parameters('maximumThroughputUnits')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "name": "[variables('eventHubName')]",
+          "type": "EventHubs",
+          "dependsOn": [
+            "[concat('Microsoft.EventHub/namespaces/', variables('namespaceName'))]"
+          ],
+          "properties": {
+            "messageRetentionInDays": "[parameters('messageRetentionInDays')]",
+            "partitionCount": "[parameters('partitionCount')]"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "NamespaceConnectionString": {
+      "type": "string",
+      "value": "[listkeys(variables('authRuleResourceId'), '2017-04-01').primaryConnectionString]"
+    },
+    "SharedAccessPolicyPrimaryKey": {
+      "type": "string",
+      "value": "[listkeys(variables('authRuleResourceId'), '2017-04-01').primaryKey]"
+    }
+  }
+}

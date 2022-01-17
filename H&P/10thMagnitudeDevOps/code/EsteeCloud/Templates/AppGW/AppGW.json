@@ -1,0 +1,200 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "tier": {
+      "type": "string",
+      "defaultValue": "WAF"
+    },
+    "skuSize": {
+      "type": "string",
+      "defaultValue": "WAF_Medium"
+    },
+    "capacity": {
+      "type": "int",
+      "defaultValue": 2
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "Subnet-AM-EastUS-Dev-CEPLATAM-AppGW"
+    },
+    "virtualNetworkRGName": { "type": "string" },
+    "virtualNetworkName": { "type": "string" },
+    "privateIPAddress": {
+      "type": "string",
+      "defaultValue": "0.0.0.0",
+      "metadata": {
+        "description": "The private IP Address for the application gateway"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    }
+  },
+  "variables": {
+    "baseNamingPrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "appGwName": "[concat('AppGw-', variables('baseNamingPrefix'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways', variables('appGwName'))]",
+    "vnetId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('appGwName')]",
+      "type": "Microsoft.Network/applicationGateways",
+      "apiVersion": "2018-02-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "sku": {
+          "name": "[parameters('skuSize')]",
+          "tier": "[parameters('tier')]",
+          "capacity": "[parameters('capacity')]"
+        },
+        "gatewayIPConfigurations": [
+          {
+            "name": "appGatewayIpConfig",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "frontendIPConfigurations": [
+          {
+            "name": "appGatewayFrontendIP",
+            "properties": {
+              "privateIPAddress": "[parameters('privateIPAddress')]",
+              "privateIPAllocationMethod": "Static",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "appGatewayFrontendPort",
+            "properties": {
+              "Port": 80
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "appGatewayDefaultBackendPool",
+            "properties": {
+              "backendAddresses": [
+                {
+                  "fqdn": "10.252.12.66"
+                }
+              ]
+            }
+          }
+        ],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "appGatewayBackendHttpSettings",
+            "properties": {
+              "Port": 8080,
+              "Protocol": "Http",
+              "CookieBasedAffinity": "Disabled",
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGwName')), '/probes/appGatewayHealthProbe')]"
+              }
+            },
+            "type": "Microsoft.Network/applicationGateways/backendHttpSettingsCollection"
+          }
+        ],
+        "httpListeners": [
+          {
+            "name": "appGatewayHttpListener",
+            "properties": {
+              "FrontendIPConfiguration": {
+                "Id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+              },
+              "FrontendPort": {
+                "id": "[concat(variables('applicationGatewayID'), '/frontendPorts/appGatewayFrontendPort')]"
+              },
+              "Protocol": "Http",
+              "SslCertificate": null
+            }
+          }
+        ],
+        "requestRoutingRules": [
+          {
+            "Name": "rule1",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/appGatewayHttpListener')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(variables('applicationGatewayID'), '/backendAddressPools/appGatewayDefaultBackendPool')]"
+              },
+              "backendHttpSettings": {
+                "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/appGatewayBackendHttpSettings')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "appGatewayHealthProbe",
+            "properties": {
+              "protocol": "Http",
+              "host": "127.0.0.1",
+              "path": "/probe",
+              "interval": 30,
+              "timeout": 30,
+              "unhealthyThreshold": 3,
+              "pickHostNameFromBackendHttpSettings": false,
+              "minServers": 0,
+              "match": {
+                "body": "",
+                "statusCodes": [
+                  "200-399"
+                ]
+              }
+            },
+            "type": "Microsoft.Network/applicationGateways/probes"
+          }
+        ],
+        "sslCertificates": [],
+        "webApplicationFirewallConfiguration": {
+          "enabled": true,
+          "firewallMode": "Prevention",
+          "ruleSetType": "OWASP",
+          "ruleSetVersion": "3.0"
+        }
+
+      }
+    }
+  ]
+}

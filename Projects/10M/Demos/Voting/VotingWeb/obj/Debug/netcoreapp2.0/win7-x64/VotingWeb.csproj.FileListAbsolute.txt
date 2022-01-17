@@ -1,0 +1,8 @@
+C:\Projects\10M\Demos\Voting\VotingWeb\obj\Debug\netcoreapp2.0\win7-x64\VotingWeb.csproj.CoreCompileInputs.cache
+C:\Projects\10M\Demos\Voting\VotingWeb\obj\Debug\netcoreapp2.0\win7-x64\VotingWeb.AssemblyInfoInputs.cache
+C:\Projects\10M\Demos\Voting\VotingWeb\obj\Debug\netcoreapp2.0\win7-x64\VotingWeb.AssemblyInfo.cs
+C:\Projects\10M\Demos\Voting\VotingWeb\obj\Debug\netcoreapp2.0\win7-x64\VotingWeb.csprojResolveAssemblyReference.cache
+Z:\OneDrive\Projects\10M\Demos\Voting\VotingWeb\obj\Debug\netcoreapp2.0\win7-x64\VotingWeb.csprojResolveAssemblyReference.cache
+Z:\OneDrive\Projects\10M\Demos\Voting\VotingWeb\obj\Debug\netcoreapp2.0\win7-x64\VotingWeb.csproj.CoreCompileInputs.cache
+Z:\OneDrive\Projects\10M\Demos\Voting\VotingWeb\obj\Debug\netcoreapp2.0\win7-x64\VotingWeb.AssemblyInfoInputs.cache
+Z:\OneDrive\Projects\10M\Demos\Voting\VotingWeb\obj\Debug\netcoreapp2.0\win7-x64\VotingWeb.AssemblyInfo.cs

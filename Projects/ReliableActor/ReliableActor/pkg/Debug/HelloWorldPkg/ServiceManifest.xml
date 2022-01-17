@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="HelloWorldPkg" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric" ManifestId="badd3b6f-558a-4b94-83d9-276f072063c2">
+  <ServiceTypes>
+    <StatefulServiceType ServiceTypeName="HelloWorldActorServiceType" HasPersistedState="true">
+      <Extensions>
+        <Extension Name="__GeneratedServiceType__" GeneratedId="0726d159-9430-4710-82b8-c93d8f76af5b|Persisted">
+          <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
+            <DefaultService Name="HelloWorldActorService" />
+            <ReplicatorEndpoint Name="HelloWorldActorServiceReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="HelloWorldActorServiceReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="HelloWorldActorServiceReplicatorSecurityConfig" />
+            <StoreConfigSection Name="HelloWorldActorServiceLocalStoreConfig" />
+            <ServiceEndpointV2 Name="HelloWorldActorServiceEndpointV2" />
+          </GeneratedNames>
+        </Extension>
+      </Extensions>
+    </StatefulServiceType>
+  </ServiceTypes>
+  <CodePackage Name="Code" Version="1.0.0">
+    <EntryPoint>
+      <ExeHost>
+        <Program>HelloWorld.exe</Program>
+      </ExeHost>
+    </EntryPoint>
+  </CodePackage>
+  <ConfigPackage Name="Config" Version="1.0.0" />
+  <Resources>
+    <Endpoints>
+      <Endpoint Name="HelloWorldActorServiceEndpointV2" />
+      <Endpoint Name="HelloWorldActorServiceReplicatorEndpoint" />
+    </Endpoints>
+  </Resources>
+  <!-- The content will be generated during build -->
+</ServiceManifest>

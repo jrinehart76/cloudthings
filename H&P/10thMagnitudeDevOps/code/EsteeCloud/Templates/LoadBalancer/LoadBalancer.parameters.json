@@ -1,0 +1,21 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "dnsNameforLBIP": {
+      "value": "ilbameastusprodvto"
+    },
+    "loadBalancerName": {
+      "value": "PLB-AM-EastUS-Prod-MACTVO-FE"
+    },
+    "publicIPAddressName": {
+      "value": "PIP-AM-EastUS-Prod-MACVTO"
+    },
+    "existingVirtualNetworkName": {
+      "value": "macvto"
+    },
+    "existingSubnetName": {
+      "value": "default"
+    }
+  }
+}

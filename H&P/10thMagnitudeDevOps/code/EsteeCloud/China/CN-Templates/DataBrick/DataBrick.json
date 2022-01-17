@@ -1,0 +1,232 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "pricingTier": {
+      "defaultValue": "premium",
+      "allowedValues": [
+        "trial",
+        "standard",
+        "premium"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "The pricing tier of workspace."
+      }
+    },
+    "customPublicSubnetName": {
+      "type": "string",
+      "defaultValue": "Subnet-AM-EastUS-Dev-EDLNA-DataBrick-Public",
+      "metadata": {
+        "description": "The name of the public subnet in the custom VNet."
+      }
+    },
+    "customPrivateSubnetName": {
+      "type": "string",
+      "defaultValue": "Subnet-AM-EastUS-Dev-EDLNA-DataBrick-Private",
+      "metadata": {
+        "description": "The name of the private subnet in the custom VNet."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    },
+    "existingVnetRG": {
+      "type": "string",
+      "defaultValue": "testvnet03",
+      "metadata": {
+        "description": "Resource Group of the existing Virtual Network"
+      }
+    },
+    "existingVnet": {
+      "type": "string",
+      "defaultValue": "testvnet03",
+      "metadata": {
+        "description": "Name of the existing Virtual Network"
+      }
+    },
+    "settingName": {
+      "type": "string",
+      "defaultValue": "logAnalyticsService",
+      "metadata": {
+        "description": "Name of the setting. Name for the diagnostic setting resource. Eg. 'archiveToStorage' or 'forSecurityTeam'."
+      }
+    },
+    "workspaceName": {
+      "type": "string",
+      "allowedValues": [
+        "la-cn-chinaeast2-nonprod",
+        "la-cn-chinaeast2-prod"
+      ],
+      "metadata": {
+        "description": "Log Analytics workspace ID for the Log Analytics workspace to which logs will be sent."
+      }
+    },
+    "laResourceGroup": {
+      "type": "string",
+      "allowedValues": [
+        "rg-am-chinaeast2-nonprod-mgmt",
+        "rg-am-chinaeast2-prod-mgmt"
+      ],
+      "metadata": {
+        "description": "The Resource Group where the Log Analytics workspace resides to which logs will be sent."
+      }
+    }
+  },
+  "variables": {
+    "managedResourceGroupId": "[concat(subscription().id, '/resourceGroups/', variables('managedResourceGroupName'))]",
+    "managedResourceGroupName": "[concat('RG-', Parameters('Region'), '-', Parameters('location'), '-', parameters('environment'),'-', parameters('application'),'-DataBrick-Managed')]",
+    "baseNamingPrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "workspacename": "[tolower(concat('DataBrick', '-',variables('baseNamingPrefix')))]",
+    "vNetId": "[concat('/subscriptions/', variables('tenantId'), '/resourceGroups/', parameters('existingVnetRG'), '/providers/Microsoft.Network/virtualNetworks/' , parameters('existingVnet'))]",
+    "tenantId": "[subscription().subscriptionId]",
+    "workspaceId": "[resourceId(parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-04-01",
+      "location": "[parameters('location')]",
+      "name": "[variables('workspaceName')]",
+      "type": "Microsoft.Databricks/workspaces",
+      "sku": {
+        "name": "[parameters('pricingTier')]"
+      },
+      "comments": "The resource group specified will be locked after deployment.",
+      "properties": {
+        "ManagedResourceGroupId": "[variables('managedResourceGroupId')]",
+        "parameters": {
+          "customVirtualNetworkId": {
+            "value": "[variables('vNetId')]"
+          },
+          "customPublicSubnetName": {
+            "value": "[parameters('customPublicSubnetName')]"
+          },
+          "customPrivateSubnetName": {
+            "value": "[parameters('customPrivateSubnetName')]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "type": "providers/diagnosticSettings",
+          "name": "Microsoft.Insights/diagnostics",
+          "dependsOn": [
+            "[variables('workspaceName')]"
+          ],
+          "apiVersion": "2017-05-01-preview",
+          "properties": {
+            "name": "[parameters('settingName')]",
+            "workspaceId": "[variables('workspaceId')]",
+            "logs":[
+              {
+                "category": "dbfs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "clusters",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "accounts",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "jobs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "ssh",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "workspace",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "secrets",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "sqlPermissions",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+                }
+              },
+              {
+                "category": "instancePools",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 90,
+                  "enabled": true
+              }
+            },
+            {
+              "category": "notebook",
+              "enabled": true,
+              "retentionPolicy": {
+                "days": 90,
+                "enabled": true
+            }
+          }
+          ]
+          }
+        }
+      ]
+    }
+  ]
+}

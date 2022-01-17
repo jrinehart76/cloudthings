@@ -1,0 +1,111 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkRGName": {
+      "value": "RG-EastUS-SS-Networking"
+    },
+    "virtualNetworkName": {
+      "value": "VNet-EastUS-SS"
+    },
+    "trustSubnetName": {
+      "value": "Subnet-EastUS-SS-NVATrust"
+    },
+    "untrustSubnetName": {
+      "value": "Subnet-EastUS-SS-NVAUnTrust"
+    },
+    "virtualMachines": {
+      "value": [
+        {
+          "name": "VM-EastUS-SS-Palo01",
+          "trustNIC": {
+            "name": "NIC-VM-EastUS-SS-Palo01-Trust",
+            "ipConfigurationName": "ipconfig-trust",
+            "ipAddress": "192.168.0.87"
+          },
+          "untrustNIC": {
+            "name": "NIC-VM-EastUS-SS-Palo01-Untrust",
+            "ipConfigurationName": "ipconfig-untrust",
+            "ipAddress": "192.168.0.70"
+          }
+        },
+        {
+          "name": "VM-EastUS-SS-Palo02",
+          "trustNIC": {
+            "name": "NIC-VM-EastUS-SS-Palo02-Trust",
+            "ipConfigurationName": "ipconfig-trust",
+            "ipAddress": "192.168.0.88"
+          },
+          "untrustNIC": {
+            "name": "NIC-VM-EastUS-SS-Palo02-Untrust",
+            "ipConfigurationName": "ipconfig-untrust",
+            "ipAddress": "192.168.0.71"
+          }
+        }
+      ]
+    },
+    "ilbName": {
+      "value": "ILB-AS-EastUS-SS-PaloAlto-Trust"
+    },
+    "ilbFrontEndName": {
+      "value": "FrontEnd-AS-EastUS-SS-PaloAlto-Trust"
+    },
+    "ilbFrontEndSubnetName": {
+      "value": "Subnet-EastUS-SS-NVATrust"
+    },
+    "ilbFrontEndIp": {
+      "value": "192.168.0.89"
+    },
+    "ilbBackendPoolName": {
+      "value": "Backend-AS-EastUS-SS-PaloAlto-Trust"
+    },
+    "ilbHAPortLBRuleName": {
+      "value": "LBRule-AS-EastUS-SS-PaloAlto-Trust"
+    },
+    "ilbProbeName": {
+      "value": "Probe-TCP-22"
+    },
+    "ilbProbeProtocol": {
+      "value": "TCP"
+    },
+    "ilbProbePort": {
+      "value": 22
+    },
+    "publbPIPName": {
+      "value": "PIP-PLB-AS-EastUS-SS-PaloAlto-Untrust"
+    },
+    "publbName": {
+      "value": "PLB-AS-EastUS-SS-PaloAlto-Untrust"
+    },
+    "publbFrontEndName": {
+      "value": "FrontEnd-AS-EastUS-SS-PaloAlto-Untrust"
+    },
+    "publbBackendPoolName": {
+      "value": "Backend-AS-EastUS-SS-PaloAlto-Untrust"
+    },
+    "publbRuleName": {
+      "value": "LBRule-AS-EastUS-SS-PaloAlto-Untrust"
+    },
+    "publbFrontEndPort": {
+      "value": 50000
+    },
+    "publbBackEndPort": {
+      "value": 50000
+    },
+    "publbProbeName": {
+      "value": "Probe-TCP-50000"
+    },
+    "publbProbeProtocol": {
+      "value": "TCP"
+    },
+    "publbProbePort": {
+      "value": 50000
+    },
+    "tags": {
+      "value": {
+        "CostCenter": "cc12345",
+        "Environment": "SS"
+      }
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachineSize": {
+      "value": "Standard_F1"
+    },
+    "osDiskStorageType": {
+      "value": "Standard_LRS"
+    },
+    "dataDisks": {
+      "value": [
+        {
+          "lun": 0,
+          "diskSizeGB": 32,
+          "managedDisk": {
+            "storageAccountType": "Standard_LRS"
+          },
+          "createOption": "empty",
+          "caching": "None"
+        }
+      ]
+    },
+    "adminUsername": {
+      "value": "cloudadmin"
+    },
+    "adminPassword": {
+      "value": "Hello123!!!!!"
+    },
+    "virtualNetworkRGName": {
+      "value": "test-vnet"
+    },
+    "virtualNetworkName": {
+      "value": "test-vnet"
+    },
+    "subnetName": {
+      "value": "vms"
+    },
+    "availabilitySetName": {
+      "value": "test-vm7"
+    },
+    "availabilitySetUpdateDomainCount": {
+      "value": 5
+    },
+    "availabilitySetFaultDomainCount": {
+      "value": 3
+    },
+    "numberOfInstances": {
+      "value": 1
+    },
+    "startNumber": {
+      "value": 1
+    },
+    "applicationNameAbv": {
+      "value": "test7"
+    },
+    "applicationName": {
+      "value": "test"
+    },
+    "environmentAbv": {
+      "value": "t"
+    },
+    "sharedImageVersion": {
+      "value": "2019.01.18"
+    },
+    "sharedImage": {
+      "value": "SharedImage-AM-EastUS-SS-Ubuntu-1604"
+    }
+  }
+}

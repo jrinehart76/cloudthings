@@ -1,0 +1,807 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "components_sfinsights_name": {
+            "defaultValue": "sfinsights",
+            "type": "String"
+        },
+        "vaults_msdnfabricvault_name": {
+            "defaultValue": "msdnfabricvault",
+            "type": "String"
+        },
+        "clusters_mdsnfabric01_name": {
+            "defaultValue": "mdsnfabric01",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_node01_name": {
+            "defaultValue": "node01",
+            "type": "String"
+        },
+        "virtualNetworks_VNet_mdsnfabric01_name": {
+            "defaultValue": "VNet-mdsnfabric01",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_name": {
+            "defaultValue": "LB-mdsnfabric01-node01",
+            "type": "String"
+        },
+        "storageAccounts_sfdgmdsnfabric011093_name": {
+            "defaultValue": "sfdgmdsnfabric011093",
+            "type": "String"
+        },
+        "publicIPAddresses_LBIP_mdsnfabric01_0_name": {
+            "defaultValue": "LBIP-mdsnfabric01-0",
+            "type": "String"
+        },
+        "storageAccounts_sflogsmdsnfabric011223_name": {
+            "defaultValue": "sflogsmdsnfabric011223",
+            "type": "String"
+        },
+        "subnets_Subnet_0_name": {
+            "defaultValue": "Subnet-0",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/frontendIPConfigurations/LoadBalancerIPConfig",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_1": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/backendAddressPools/LoadBalancerBEAddressPool",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_2": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/probes/FabricGatewayProbe",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_3": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/frontendIPConfigurations/LoadBalancerIPConfig",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_4": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/backendAddressPools/LoadBalancerBEAddressPool",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_5": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/probes/FabricHttpGatewayProbe",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_6": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/frontendIPConfigurations/LoadBalancerIPConfig",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_7": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/frontendIPConfigurations/LoadBalancerIPConfig",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_8": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/frontendIPConfigurations/LoadBalancerIPConfig",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_9": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/frontendIPConfigurations/LoadBalancerIPConfig",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_10": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/frontendIPConfigurations/LoadBalancerIPConfig",
+            "type": "String"
+        },
+        "loadBalancers_LB_mdsnfabric01_node01_id_11": {
+            "defaultValue": "/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01/frontendIPConfigurations/LoadBalancerIPConfig",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Compute/virtualMachineScaleSets/node01'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_B2ms",
+                "tier": "Standard",
+                "capacity": 5
+            },
+            "name": "[parameters('virtualMachineScaleSets_node01_name')]",
+            "apiVersion": "2017-03-30",
+            "location": "southcentralus",
+            "tags": {
+                "resourceType": "Service Fabric",
+                "clusterName": "mdsnfabric01"
+            },
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Automatic"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_node01_name')]",
+                        "adminUsername": "sfadmin",
+                        "windowsConfiguration": {
+                            "provisionVMAgent": true,
+                            "enableAutomaticUpdates": true
+                        },
+                        "secrets": [
+                            {
+                                "sourceVault": {
+                                    "id": "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_msdnfabricvault_name'))]"
+                                },
+                                "vaultCertificates": [
+                                    {
+                                        "certificateUrl": "https://msdnfabricvault.vault.azure.net/secrets/cert-sf-cluster/0d4a72163ef8476b8661cd8c7ca1037c",
+                                        "certificateStore": "My"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "MicrosoftWindowsServer",
+                            "offer": "WindowsServer",
+                            "sku": "2016-Datacenter-with-Containers",
+                            "version": "latest"
+                        }
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "NIC-mdsnfabric01-0",
+                                "properties": {
+                                    "primary": true,
+                                    "enableAcceleratedNetworking": false,
+                                    "dnsSettings": {
+                                        "dnsServers": []
+                                    },
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "NIC-mdsnfabric01-0",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet_mdsnfabric01_name'), parameters('subnets_Subnet_0_name'))]"
+                                                },
+                                                "privateIPAddressVersion": "IPv4",
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_mdsnfabric01_node01_name')), '/backendAddressPools/LoadBalancerBEAddressPool')]"
+                                                    }
+                                                ],
+                                                "loadBalancerInboundNatPools": [
+                                                    {
+                                                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_mdsnfabric01_node01_name')), '/inboundNatPools/LoadBalancerBEAddressNatPool')]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "properties": {
+                                    "publisher": "Microsoft.Azure.ServiceFabric",
+                                    "type": "ServiceFabricNode",
+                                    "typeHandlerVersion": "1.0",
+                                    "autoUpgradeMinorVersion": true,
+                                    "settings": {
+                                        "clusterEndpoint": "https://southcentralus.servicefabric.azure.com/runtime/clusters/0290fba3-53d5-4df6-86c3-51e98a4ddacb",
+                                        "nodeTypeRef": "[parameters('virtualMachineScaleSets_node01_name')]",
+                                        "dataPath": "D:\\\\SvcFab",
+                                        "durabilityLevel": "Bronze",
+                                        "enableParallelJobs": true,
+                                        "nicPrefixOverride": "10.0.0.0/24",
+                                        "certificate": {
+                                            "thumbprint": "9C8C68CE9794D2FD6F4BD206336FF05AE8AC6D53",
+                                            "x509StoreName": "My"
+                                        }
+                                    }
+                                },
+                                "name": "[concat(parameters('virtualMachineScaleSets_node01_name'),'_ServiceFabricNode')]"
+                            },
+                            {
+                                "properties": {
+                                    "publisher": "Microsoft.Azure.Diagnostics",
+                                    "type": "IaaSDiagnostics",
+                                    "typeHandlerVersion": "1.5",
+                                    "autoUpgradeMinorVersion": true,
+                                    "settings": {
+                                        "WadCfg": {
+                                            "DiagnosticMonitorConfiguration": {
+                                                "overallQuotaInMB": "50000",
+                                                "EtwProviders": {
+                                                    "EtwEventSourceProviderConfiguration": [
+                                                        {
+                                                            "provider": "Microsoft-ServiceFabric-Actors",
+                                                            "scheduledTransferKeywordFilter": "1",
+                                                            "scheduledTransferPeriod": "PT5M",
+                                                            "DefaultEvents": {
+                                                                "eventDestination": "ServiceFabricReliableActorEventTable"
+                                                            }
+                                                        },
+                                                        {
+                                                            "provider": "Microsoft-ServiceFabric-Services",
+                                                            "scheduledTransferPeriod": "PT5M",
+                                                            "DefaultEvents": {
+                                                                "eventDestination": "ServiceFabricReliableServiceEventTable"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "EtwManifestProviderConfiguration": [
+                                                        {
+                                                            "provider": "cbd93bc2-71e5-4566-b3a7-595d8eeca6e8",
+                                                            "scheduledTransferLogLevelFilter": "Information",
+                                                            "scheduledTransferKeywordFilter": "4611686018427387904",
+                                                            "scheduledTransferPeriod": "PT5M",
+                                                            "DefaultEvents": {
+                                                                "eventDestination": "ServiceFabricSystemEventTable"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "StorageAccount": "sfdgmdsnfabric011093"
+                                    }
+                                },
+                                "name": "VMDiagnosticsVmExt_vmNodeType0Name"
+                            }
+                        ]
+                    }
+                },
+                "overprovision": false
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_msdnfabricvault_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet_mdsnfabric01_name'), parameters('subnets_Subnet_0_name'))]",
+                "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_mdsnfabric01_node01_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/microsoft.insights/components/sfinsights'.",
+            "type": "microsoft.insights/components",
+            "kind": "other",
+            "name": "[parameters('components_sfinsights_name')]",
+            "apiVersion": "2014-04-01",
+            "location": "eastus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "ApplicationId": "[parameters('components_sfinsights_name')]"
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.KeyVault/vaults/msdnfabricvault'.",
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[parameters('vaults_msdnfabricvault_name')]",
+            "apiVersion": "2015-06-01",
+            "location": "southcentralus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "6660b467-add3-4d9e-8ada-48b1721959f3",
+                "accessPolicies": [
+                    {
+                        "tenantId": "6660b467-add3-4d9e-8ada-48b1721959f3",
+                        "objectId": "6826b919-8a52-43ff-ba01-93a5342f9835",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "6660b467-add3-4d9e-8ada-48b1721959f3",
+                        "objectId": "b9df6dfd-23d5-4572-8414-93fa6cef2a57",
+                        "permissions": {
+                            "secrets": [
+                                "get",
+                                "set",
+                                "delete"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "6660b467-add3-4d9e-8ada-48b1721959f3",
+                        "objectId": "4152faff-1b9f-4cb0-a3e2-ba948f4eb580",
+                        "permissions": {
+                            "secrets": [
+                                "get"
+                            ]
+                        }
+                    }
+                ],
+                "enabledForDeployment": true
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/loadBalancers/LB-mdsnfabric01-node01'.",
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[parameters('loadBalancers_LB_mdsnfabric01_node01_name')]",
+            "apiVersion": "2017-06-01",
+            "location": "southcentralus",
+            "tags": {
+                "resourceType": "Service Fabric",
+                "clusterName": "mdsnfabric01"
+            },
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "681e6c0d-9eb1-41e1-b504-cf2ca5ba14f2",
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerIPConfig",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_LBIP_mdsnfabric01_0_name'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "LoadBalancerBEAddressPool",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded"
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "LBRule",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id')]"
+                            },
+                            "frontendPort": 19000,
+                            "backendPort": 19000,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 5,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_1')]"
+                            },
+                            "probe": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_2')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "LBHttpRule",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_3')]"
+                            },
+                            "frontendPort": 19080,
+                            "backendPort": 19080,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 5,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_4')]"
+                            },
+                            "probe": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_5')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "FabricGatewayProbe",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "Tcp",
+                            "port": 19000,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "FabricHttpGatewayProbe",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "Tcp",
+                            "port": 19080,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ],
+                "inboundNatRules": [
+                    {
+                        "name": "LoadBalancerBEAddressNatPool.0",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_6')]"
+                            },
+                            "frontendPort": 3389,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "LoadBalancerBEAddressNatPool.1",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_7')]"
+                            },
+                            "frontendPort": 3390,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "LoadBalancerBEAddressNatPool.2",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_8')]"
+                            },
+                            "frontendPort": 3391,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "LoadBalancerBEAddressNatPool.3",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_9')]"
+                            },
+                            "frontendPort": 3392,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "LoadBalancerBEAddressNatPool.4",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_10')]"
+                            },
+                            "frontendPort": 3393,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp"
+                        }
+                    }
+                ],
+                "outboundNatRules": [],
+                "inboundNatPools": [
+                    {
+                        "name": "LoadBalancerBEAddressNatPool",
+                        "etag": "W/\"250f2ba9-ad2a-4142-a3d7-c431bedc93b5\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendPortRangeStart": 3389,
+                            "frontendPortRangeEnd": 4500,
+                            "backendPort": 3389,
+                            "protocol": "Tcp",
+                            "frontendIPConfiguration": {
+                                "id": "[parameters('loadBalancers_LB_mdsnfabric01_node01_id_11')]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_LBIP_mdsnfabric01_0_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/publicIPAddresses/LBIP-mdsnfabric01-0'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_LBIP_mdsnfabric01_0_name')]",
+            "apiVersion": "2017-06-01",
+            "location": "southcentralus",
+            "tags": {
+                "resourceType": "Service Fabric",
+                "clusterName": "mdsnfabric01"
+            },
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "aa699a2d-3089-4c55-a28d-b35f213b3996",
+                "ipAddress": "40.84.186.243",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "mdsnfabric01",
+                    "fqdn": "mdsnfabric01.southcentralus.cloudapp.azure.com"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/virtualNetworks/VNet-mdsnfabric01'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_VNet_mdsnfabric01_name')]",
+            "apiVersion": "2017-06-01",
+            "location": "southcentralus",
+            "tags": {
+                "resourceType": "Service Fabric",
+                "clusterName": "mdsnfabric01"
+            },
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "706313da-5be1-416a-b24b-48f597c5e0ce",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "Subnet-0",
+                        "etag": "W/\"e81e2038-4d36-427a-bfcb-bb301ef780d8\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourcegroups/msdn-servicefabric/providers/Microsoft.ServiceFabric/clusters/mdsnfabric01'.",
+            "type": "Microsoft.ServiceFabric/clusters",
+            "name": "[parameters('clusters_mdsnfabric01_name')]",
+            "apiVersion": "2017-07-01-preview",
+            "location": "southcentralus",
+            "tags": {
+                "resourceType": "Service Fabric",
+                "clusterName": "mdsnfabric01"
+            },
+            "scale": null,
+            "properties": {
+                "clusterCodeVersion": "6.1.456.9494",
+                "clusterState": "Ready",
+                "managementEndpoint": "[concat('https://', parameters('clusters_mdsnfabric01_name'),'.southcentralus.cloudapp.azure.com:19080')]",
+                "certificate": {
+                    "thumbprint": "9C8C68CE9794D2FD6F4BD206336FF05AE8AC6D53",
+                    "x509StoreName": "My"
+                },
+                "clientCertificateThumbprints": [],
+                "clientCertificateCommonNames": [],
+                "fabricSettings": [
+                    {
+                        "name": "Security",
+                        "parameters": [
+                            {
+                                "name": "ClusterProtectionLevel",
+                                "value": "EncryptAndSign"
+                            }
+                        ]
+                    }
+                ],
+                "upgradeDescription": {
+                    "forceRestart": false,
+                    "upgradeReplicaSetCheckTimeout": "10675199.02:48:05.4775807",
+                    "healthCheckWaitDuration": "00:05:00",
+                    "healthCheckStableDuration": "00:05:00",
+                    "healthCheckRetryTimeout": "00:45:00",
+                    "upgradeTimeout": "12:00:00",
+                    "upgradeDomainTimeout": "02:00:00",
+                    "healthPolicy": {
+                        "maxPercentUnhealthyNodes": 100,
+                        "maxPercentUnhealthyApplications": 100
+                    },
+                    "deltaHealthPolicy": {
+                        "maxPercentDeltaUnhealthyNodes": 0,
+                        "maxPercentUpgradeDomainDeltaUnhealthyNodes": 0,
+                        "maxPercentDeltaUnhealthyApplications": 0
+                    }
+                },
+                "diagnosticsStorageAccountConfig": {
+                    "storageAccountName": "[concat('sflogs', parameters('clusters_mdsnfabric01_name'),'1223')]",
+                    "protectedAccountKeyName": "StorageAccountKey1",
+                    "blobEndpoint": "[concat('https', '://', parameters('storageAccounts_sflogsmdsnfabric011223_name'), '.blob.core.windows.net', '/')]",
+                    "queueEndpoint": "[concat('https', '://', parameters('storageAccounts_sflogsmdsnfabric011223_name'), '.queue.core.windows.net', '/')]",
+                    "tableEndpoint": "[concat('https', '://', parameters('storageAccounts_sflogsmdsnfabric011223_name'), '.table.core.windows.net', '/')]"
+                },
+                "nodeTypes": [
+                    {
+                        "name": "node01",
+                        "clientConnectionEndpointPort": 19000,
+                        "httpGatewayEndpointPort": 19080,
+                        "applicationPorts": {
+                            "startPort": 20000,
+                            "endPort": 30000
+                        },
+                        "ephemeralPorts": {
+                            "startPort": 49152,
+                            "endPort": 65534
+                        },
+                        "isPrimary": true,
+                        "vmInstanceCount": 5,
+                        "reverseProxyEndpointPort": 19081,
+                        "durabilityLevel": "Bronze"
+                    }
+                ],
+                "vmImage": "Windows",
+                "reliabilityLevel": "Silver",
+                "upgradeMode": "Automatic",
+                "availableClusterVersions": [
+                    {
+                        "codeVersion": "6.0.232.9494",
+                        "supportExpiryUtc": "2018-03-30T00:00:00",
+                        "environment": "Windows"
+                    },
+                    {
+                        "codeVersion": "6.0.238.9494",
+                        "supportExpiryUtc": "2018-03-30T00:00:00",
+                        "environment": "Windows"
+                    },
+                    {
+                        "codeVersion": "6.1.456.9494",
+                        "supportExpiryUtc": "9999-12-31T23:59:59.9999999",
+                        "environment": "Windows"
+                    }
+                ],
+                "addonFeatures": [
+                    "DnsService",
+                    "RepairManager"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_sflogsmdsnfabric011223_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Storage/storageAccounts/sflogsmdsnfabric011223'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_sflogsmdsnfabric011223_name')]",
+            "apiVersion": "2017-06-01",
+            "location": "southcentralus",
+            "tags": {
+                "resourceType": "Service Fabric",
+                "clusterName": "mdsnfabric01"
+            },
+            "scale": null,
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Storage/storageAccounts/sfdgmdsnfabric011093'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_sfdgmdsnfabric011093_name')]",
+            "apiVersion": "2017-06-01",
+            "location": "southcentralus",
+            "tags": {
+                "resourceType": "Service Fabric",
+                "clusterName": "mdsnfabric01"
+            },
+            "scale": null,
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f6cc61fe-1ed2-4223-b16d-e59db2e5b242/resourceGroups/msdn-servicefabric/providers/Microsoft.Network/virtualNetworks/VNet-mdsnfabric01/subnets/Subnet-0'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_VNet_mdsnfabric01_name'), '/', parameters('subnets_Subnet_0_name'))]",
+            "apiVersion": "2017-06-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNet_mdsnfabric01_name'))]"
+            ]
+        }
+    ]
+}

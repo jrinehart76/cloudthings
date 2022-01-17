@@ -1,0 +1,35 @@
+{
+   "properties": {
+      "displayName": "Audit resource groups with missing tag",
+      "description": "Audit resource groups missing a particular tag",
+      "mode": "all",
+      "parameters": {
+         "tagName": {
+            "type": "String",
+            "metadata": {
+               "description": "Name of the tag, such as CostCenter"
+            }
+         }
+      },
+      "policyRule": {
+         "if": {
+            "allOf": [
+               {
+                  "field": "type",
+                  "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+               },
+               {
+                  "field": "[concat('tags[',parameters('tagName'), ']')]",
+                  "exists": "false"
+               }
+            ]
+         },
+         "then": {
+            "effect": "audit"
+         }
+      },
+      "metadata": {
+         "category": "Tags"
+      }
+   }
+}

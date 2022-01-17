@@ -1,0 +1,93 @@
+﻿type,title,description,acceptancecriteria,areapath,iterationpath
+Epic,VDC Deployment,Elements needed to build a VDC,All features should be completed before the epic completion is accepted,VDCTeam,
+Feature,Azure Identity - Connectivity,Ensure best practices are being followed for Identity and sync activities to on-prem,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Validate AD Connect and sync settings,Validate AD Connect settings,Configuration validation:  Ensure that AD Connect is using 10M best practices,VDCTeam,Sprint2
+Feature,Azure Identity - Extend,Extend on-prem Identity into Azure (if required),All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Update Windows Domain Controller template,Create a templated deployment for Windows Domain Controller,Create and update Windows Domain Controller  template per 10M best practices and Customer standards,VDCTeam,Sprint3
+User Story,Deploy Domain Contoller into targeted Azure regions,Deploy Domain Controller workload through template,Deployed to Azure:  Windows Domain Contollers that meets  Customer standards - per region,VDCTeam,Sprint3
+Feature,Cloud Design ,Design sessions are meant to capture the key design decisions and requirements across the primary VDC disciplines.  These decisions will guide the VDC deployment. ,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Cloud Design Session - Identity Discovery,Intitial design session focused on Identity,On-site design session complete,VDCTeam,Sprint1
+User Story,Identity Design Strategy Update,"Updates made to strategy documenation, focus on Identity","Initial design strategy document for Identity created, based on design session and 10M best practices",VDCTeam,Sprint1
+User Story,Identity Design Strategy Review,Review with Customer updated Identity strategy,10M and Customer review of strategy document,VDCTeam,Sprint1
+User Story,Identity Design Strategy Finalization,Finalized Identity strategy document,Updated and finalized Identity strategy document provided to the Customer,VDCTeam,Sprint1
+User Story,Cloud Design Session - Operational Discovery,Intitial design session focused on Operations,On-site design session complete,VDCTeam,Sprint1
+User Story,Operational Design Strategy Update,"Updates made to strategy documenation, focus on Operations","Initial design strategy document for Operations created, based on design session and 10M best practices",VDCTeam,Sprint1
+User Story,Operational Design Strategy Review,Review with Customer updated Operations strategy,10M and Customer review of strategy document,VDCTeam,Sprint1
+User Story,Operational Design Strategy Finalization,Finalized Operations strategy document,Updated and finalized Operational strategy document provided to the Customer,VDCTeam,Sprint1
+User Story,Cloud Design Session - Organizational Discovery,Intitial design session focused on the Organization,On-site design session complete,VDCTeam,Sprint1
+User Story,Organizational Design Strategy Update,"Updates made to strategy documenation, focus on Organizational layout","Initial design strategy document for Organizational layout created, based on design session and 10M best practices",VDCTeam,Sprint1
+User Story,Organizational Design Strategy Review,Review with Customer updated Organizational strategy,10M and Customer review of strategy document,VDCTeam,Sprint1
+User Story,Organizational Design Strategy Finalization,Finalized Organizational strategy document,Updated and finalized Organization strategy document provided to the Customer,VDCTeam,Sprint1
+User Story,Cloud Design Session - Workload Discovery,Intitial design session focused on Workloads,On-site design session complete,VDCTeam,Sprint1
+User Story,Workload Design Strategy Update,"Updates made to strategy documenation, focus on Workloads","Initial design strategy document for Workloads created, based on design session and 10M best practices",VDCTeam,Sprint1
+User Story,Workload Design Strategy Review,Review with Customer updated Workload strategy,10M and Customer review of strategy document,VDCTeam,Sprint1
+User Story,Workload Design Strategy Finalization,Finalized Workload strategy document,Updated and finalized Workload strategy document provided to the Customer,VDCTeam,Sprint1
+User Story,Cloud Design Session - Network Discovery,Intitial design session focused on Network,On-site design session complete,VDCTeam,Sprint1
+User Story,Network Design Strategy Update,"Updates made to strategy documenation, focus on Network","Initial design strategy document for Network created, based on design session and 10M best practices",VDCTeam,Sprint1
+User Story,Network Design Strategy Review,Review with Customer updated Network strategy,10M and Customer review of strategy document,VDCTeam,Sprint1
+User Story,Network Design Strategy Finalization,Finalized network strategy document,Updated and finalized Network strategy document provided to the Customer,VDCTeam,Sprint1
+Feature,Operations - Update Management,Update management via Azure updates,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Deploy and Configure Azure Automation Account,Deploy and configure an Azure Automation account (w/ RunAs abiltiy),Deployed to Azure:  Azure automation accounts - per region and per 10M best practices,VDCTeam,Sprint5
+User Story,Configure Azure Update management,Configure Azure update solution,Deployed to Azure:  Azure update solution,VDCTeam,Sprint6
+Feature,Operations - Monitoring,Monitoring component deployments and configurations,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Update base monitoring dashboards,Create and update a base monitoring dashboard that is templatized,Create and update base monitoring dashboard template per 10M best practices and Customer standards,VDCTeam,Sprint5
+User Story,Deploy base monitoring dashboards,Deploy base monitoring dashboards to centralized dashboard resource group,Deployed to Azure:  base monitoring dashboard,VDCTeam,Sprint6
+Feature,Operations - Log Analytics,Log Analytics collects and provides near realtime data that can feed alerts/monitors and provide insight to the health of your Azure deployment,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Deploy Log Analytics,Deploy Log Analytics,Deployed to Azure:  A centralized Log Analytics workspace,VDCTeam,Sprint3
+User Story,Configure Network Monitor,Configure the Network monitoring Log Analytics solution,Deployed to Azure:  Configuration of Network monitor - Azure to Azure networks and Azure to on-prem.  TCP or UDP (TCP requires firewall changes),VDCTeam,Sprint4
+User Story,Deploy base monitoring solutions,Deploy 10M recommended Log Analytics solutions,"Deployed to Azure:  Azure Backup, ADReplication, AntiMalware, AgentHealthAssessment, Azure Activity, AzureApplicationGateway, AzureNSGAnalytics, KeyVaultAnalytics, NetworkMonitoring, Updates",VDCTeam,Sprint4
+User Story,Configure base monitoring solutions,Configure where necessary the base monitoring solutions,Configuration of the log analytics solutions - 10M recommended,VDCTeam,
+Feature,Operations - Alerts,Alerts - Define alerting criteria and create base alerting framework,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Deploy and Configure Azure Alert Groups,Create Azure Alert groups,Deployed to Azure:  Azure alert groups per 10M best practices and Customer standards,VDCTeam,Sprint5
+Feature,Operations - Backup,Enable Azure backup by default and ensure that the necessary infrastructure is in place to leverage it.,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Update Recovery services vault template,Create a templated deployment for a Recovery Services Vault,Create and update Recovery Services Vault template per 10M best practices and Customer standards,VDCTeam,Sprint3
+User Story,Deploy Centralized Recovery Services vault (per region),Deploy Recvovery Services Vault through template,Deployed to Azure:  Recovery Services Vault(s) - per design and region,VDCTeam,Sprint3
+User Story,Create template to enable backups on VM,Create a templatized method to enable backups on VM's,Deployment method:  Template method to enable backups on VM's,VDCTeam,Sprint3
+User Story,Create template to setup backup policies,Create a templatized method to build a backup policy,Deployment method:  Template method to create backup policies within a Recovery Services Vault,VDCTeam,Sprint3
+Feature,Azure Governance - Cloud Admin,Cloud Admin resources are centralized resources that are leveraged by shared services and across subscriptions,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Deploy and Configure Cloud Admin Keyvault,Create centralized keyvaults (in each region) per 10M best practices,"Deployed to Azure:  Regional keyvault to contain encryption keys and/or secrets, passwords.  Configuration also includes enabling access policies, diagnostic logging and firewalls",VDCTeam,Sprint3
+User Story,Deploy and Configure Central Cloud Admin storage account,Createc centralized storage accounts per 10M best practices,"Deployed to Azure:  1. Centralized storage account that can be leveraged for boot diagnostics, additional logging, etc.  2. Centralized storage account that can be used to store scripts, files, etc that are used by the cloud team",VDCTeam,Sprint3
+Feature,Azure Governance - Subscription Alignment,Ensure that all subscriptions within the Azure deployment are following 10M best practices and are aligned,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Deploy Subscriptions,"Based on the design sessions, follow the subscription layout created.",Deployed to Azure:  Subscriptions with the appropriate setup,VDCTeam,Sprint2
+User Story,Resource provider registration,Enable appropriate resource providers per subscription,Deployed to Azure: Appropriate Resource providers are registered within each subscription,VDCTeam,Sprint2
+User Story,Configure Activity Log,Enable and configure activity log per subscription following 10M best practices,Deployed to Azure:  Activity log enabled and configured to 10M best practices - per subscription,VDCTeam,Sprint3
+User Story,Create Activity Log profile,Create Activity log profile per subscription following 10M best practices,Deployed to Azure:  Log profiles should be set for each subscription.  Activity logs should be sent to both Log Analytics as well as a centralized storage account for X # of days as necessary for compliance,VDCTeam,Sprint3
+User Story,Validate subscription RBAC,Validate users in the top-level subscription roles.  Enable inheritance,"Deployed to Azure:  Owner, Contributor, etc roles should be validated and inheritance should be enabled",VDCTeam,Sprint2
+Feature,Azure Governance - Security Center,"Based on design sessions and security/compliance requirements, configure Security Center order to meet organizational needs",All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Deploy and Configure Security Center,Enable Security Center ,Deployed to Azure: 1. Security Center standard is enabled for each subscription 2. Configure Security Center settings within each subscription to match 10M best practices or meet organizational needs,VDCTeam,Sprint3
+Feature,Azure Governance - Policy,"Based on design sessions and security/compliance requirements, configure Azure policy in order to meet organizational needs",All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Deploy and Configure Azure Policy Center (base policies),Configure Azure Policy Center,"Deployed to Azure:  Security Center Policy (ASC), SKU size policy, Region deployment policy, Required tags policy",VDCTeam,Sprint6
+Feature,Azure Workloads - Linux,Linux workload development - this feature should translate the customer's Linux standards to Azure,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Update Linux workload template,Create a templated deployment for a Linux workload,Create and update Linux template per 10M best practices and Customer standards,VDCTeam,Sprint4
+User Story,Deploy Linux workload,Deploy Linux workload through template,Deployed to Azure:  A Linux workload that meets Customer standards,VDCTeam,Sprint4
+Feature,Azure Workloads - Windows,Windows workload development - this feature should translate the customer's Windows standards to Azure,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Update Windows workload template,Create a templated deployment for a Windows workload,Create and update Windows template per 10M best practices and Customer standards,VDCTeam,Sprint4
+User Story,Deploy Windows workload,Deploy Windows workload through template,Deployed to Azure:  A Windows workload that meets Customer standards,VDCTeam,Sprint4
+Feature,Azure Workloads - SQL IaaS,SQL workload development - this feature should translate the customer's SQL IaaS standards to Azure,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Update SQL IaaS workload template,Create a templated deployment for a SQL IaaS workload,Create and update SQL template per 10M best practices and Customer standards,VDCTeam,Sprint5
+User Story,Deploy SQL IaaS workload,Deploy SQL IaaS workload through template,Deployed to Azure:  A SQL IaaS workload that meets Customer standards,VDCTeam,Sprint5
+Feature,Azure Workloads - SQL PaaS,SQL PaaS workload development - this feature should translate the customer's SQL standards to Azure (PaaS),All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Update SQL PaaS workload template,Create a templated deployment for a SQL PaaS workload,Create and update SQL PaaS template per 10M best practices and Customer standards,VDCTeam,Sprint5
+User Story,Deploy SQL PaaS workload,Deploy SQL PaaS workload through template,Deployed to Azure:  A SQL PaaS instance that meets  Customer standards,VDCTeam,Sprint5
+Feature,Azure Workloads - Web and App,Web/App workload development - this feature should translate the customer's Web/App/DB standards to Azure,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create and Update Web and App workload  pattern template,Create a templated deployment for a web/app/db pattern,Create and update Nested templates for Web/App pattern per 10M best practices and Customer standards,VDCTeam,Sprint6
+User Story,Deploy Web and App workload,Deploy Web/App/DB pattern through template,Deployed to Azure:  A web/app workload - this should include app components that are necessary for the application to function,VDCTeam,Sprint6
+Feature,Azure Networking - Core,Core networking elements for the Azure deployment,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Lock HVA (Network),"Locks should be applied to high value assets - ie. vNets, load balancers, app gateways and other critical network assets",Deployed to Azure:  Read only locks (following naming standard) to all HVAs,VDCTeam,Sprint2
+User Story,Deploy Core Network,"Core network consists of vNet's, shared service subnets, peering,etc",Deployed to Azure:  Core networking described in the Cloud worksheet,VDCTeam,Sprint2
+User Story,Deploy and Configure DMZ,DMZ networking compontents (if needed),Deployed to Azure:  DMZ networks and routing if needed,VDCTeam,Sprint2
+Feature,Azure Networking - Security,Secure Azure networking assets and adopt a security first posture in regards to its components,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Deploy and Configure NSG,NSG deployments should protect internet facing ,Deployed to Azure:  NSGs deployed per 10M best practices or organizational need,VDCTeam,Sprint2
+Feature,Azure Networking - Services,"Azure networking services include loadbalancers, app gateways, etc",All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Create Azure loadbalancer template,Create a templated deployment for an Azure load balancer,Create and update load balancer templates per 10M best practices,VDCTeam,Sprint3
+User Story,Create Azure Application Gateway template,Create a templated deployment for an Application Gateway,Create and update application gateway templates per 10M best practices,VDCTeam,Sprint3
+User Story,Deploy Loadbalancer(s),Leverage template(s) for deployment,Deployed to Azure:  Load Balancers per design,VDCTeam,Sprint4
+User Story,Deploy Application Gateway(s),Leverage template(s) for deployment,Deployed to Azure:  Application Gateways per design,VDCTeam,Sprint4
+User Story,Deploy NVA,Work with customer team to deploy 3rd party NVA (if needed,Deployed to Azure:  Base NVA,VDCTeam,Sprint2
+User Story,Configure NVA,Provide guidance to networking team where needed,Aid customer networking team with Azure specific questions issues,VDCTeam,Sprint3
+Feature,Azure Networking - Connectivity,Connectivity from Azure to on-prem networks as well as connectivity to Azure services through the Azure backplane,All stories should be completed before the Feature completion is accepted,VDCTeam,
+User Story,Enable Service Endpoints,Enable service endpoints in the appropriate networks/subnets,"Deployed to Azure: Agreed upon Service Endpoints per subnet ie. Storage, SQL, Keyvault. Etc",VDCTeam,Sprint2
+User Story,Create and Update VPN template,Update VPN template to match customer needes,Create and update Azure VPN template per design,VDCTeam,Sprint2
+User Story,Deploy Azure VPN ,Deploy VPN template,Deployed to Azure:  Standard VPN in each shared service hub (per region),VDCTeam,Sprint3
+User Story,Validate Connectivity,Work with customer networking team to validate network connectivity,Deployed to Azure:  Validate that on-prem to azure connectivty is functioning,VDCTeam,Sprint3
+User Story,Validate Networking equipment,Work with customer team to ensure that networking equipment is able to connect to Azure through VPN,Documentation Provided: Ensure that on-prem network stack meets requirements,VDCTeam,Sprint2

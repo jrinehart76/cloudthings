@@ -1,0 +1,137 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "EastUS",
+      "metadata": {
+        "description": "The Azure region for this deployment"
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "Dev",
+      "metadata": {
+        "description": "The abbreviated environment label"
+      }
+    },
+    "application": {
+      "type": "string",
+      "defaultValue": "APP",
+      "metadata": {
+        "description": "The abbreviated application name"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "AM",
+      "metadata": {
+        "description": "The abbreviated Azure Region code"
+      }
+    },
+    "adminEmail": {
+      "type": "string",
+      "defaultValue": "username@estee.com",
+      "metadata": {
+        "description": "Admin email adress"
+      }
+    },
+    "orgName": {
+      "type": "string",
+      "defaultValue": "Estee",
+      "metadata": {
+        "description": "Organization Name"
+      }
+    },
+    "tier": {
+      "type": "string",
+      "defaultValue": "Premium",
+      "allowedValues": [
+        "Standard",
+        "Premium",
+        "Developer"
+      ],
+      "metadata": {
+        "description": "APIM service tier"
+      }
+    },
+    "apimVnetType": {
+      "type": "string",
+      "defaultValue": "External",
+      "allowedValues": [
+        "Internal",
+        "External"
+      ],
+      "metadata": {
+        "description": "External VNet gives APIM the ability to be reached from the VNet and public. Internal only allows communication from the VNet."
+      }
+    },
+    "existingVnetRG": {
+      "type": "string",
+      "defaultValue": "test-vnet02",
+      "metadata": {
+        "description": "Resource Group of the existing Virtual Network"
+      }
+    },
+    "existingVnet": {
+      "type": "string",
+      "defaultValue": "test-vnet02",
+      "metadata": {
+        "description": "Name of the existing Virtual Network"
+      }
+    },
+    "existingSubnet": {
+      "type": "string",
+      "defaultValue": "apim",
+      "metadata": {
+        "description": "Name of the subnet within the existing Virtual Network that CosmosDB will be deployed to"
+      }
+    }
+  },
+  "variables": {
+    "baseNamingPrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
+    "apimName": "[tolower(concat('APIM-', variables('baseNamingPrefix')))]",
+    "gwSecurityProtpcalsTls10": "False",
+    "gwSecurityProtpcalsTls11": "False",
+    "gwSecurityProtpcalsTls30": "False",
+    "gwSecurityBackendProtpcalsTls10": "False",
+    "gwSecurityBackendProtpcalsTls11": "False",
+    "gwSecurityBackendProtpcalsTls30": "False",
+    "gwSecurityCipherTripleDes168": "False"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ApiManagement/service",
+      "name": "[variables('apimName')]",
+      "apiVersion": "2018-01-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('tier')]",
+        "capacity": 1
+      },
+      "scale": null,
+      "properties": {
+        "publisherEmail": "[parameters('adminEmail')]",
+        "publisherName": "[parameters('orgName')]",
+        "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
+        "hostnameConfigurations": [],
+        "additionalLocations": null,
+        "virtualNetworkConfiguration": {
+          "subnetResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('existingVNetRG'), '/providers/Microsoft.Network/virtualNetworks/', parameters('existingVNet'), '/subnets/', parameters('existingSubnet'))]"
+        },
+        "customProperties": {
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "[variables('gwSecurityProtpcalsTls10')]",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "[variables('gwSecurityProtpcalsTls11')]",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Ssl30": "[variables('gwSecurityProtpcalsTls30')]",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": "[variables('gwSecurityCipherTripleDes168')]",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "[variables('gwSecurityBackendProtpcalsTls10')]",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "[variables('gwSecurityBackendProtpcalsTls11')]",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "[variables('gwSecurityBackendProtpcalsTls30')]"
+        },
+        "virtualNetworkType": "[parameters('apimVnetType')]",
+        "certificates": null
+      }
+    }
+  ]
+}
