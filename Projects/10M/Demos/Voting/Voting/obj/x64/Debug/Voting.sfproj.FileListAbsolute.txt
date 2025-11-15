@@ -1,2 +1,0 @@
-C:\Projects\10M\Demos\Voting\Voting\obj\x64\Debug\Voting.sfproj.CoreCompileInputs.cache
-Z:\OneDrive\Projects\10M\Demos\Voting\Voting\obj\x64\Debug\Voting.sfproj.CoreCompileInputs.cache
