@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-09-01/policySetDefinition.json#",
+  "name": "cloud-governance-foundation",
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "properties": {
+    "displayName": "Cloud Governance Foundation - Five Disciplines",
+    "description": "Comprehensive governance policy set aligned with Azure Cloud Adoption Framework's five governance disciplines: Cost Management, Security Baseline, Identity Baseline, Resource Consistency, and Deployment Acceleration.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Governance",
+      "source": "https://www.technicalanxiety.com/basecamp-summit/"
+    },
+    "policyDefinitionGroups": [
+      {
+        "name": "CostManagement",
+        "displayName": "1. Cost Management",
+        "description": "Policies to control and optimize spending. Without cost governance, organizations overspend by 200-400% in their first quarter."
+      },
+      {
+        "name": "SecurityBaseline",
+        "displayName": "2. Security Baseline",
+        "description": "Security policies and controls. Security retrofits cost 10x more than building it correctly from the start."
+      },
+      {
+        "name": "IdentityBaseline",
+        "displayName": "3. Identity Baseline",
+        "description": "Managing identities and access through RBAC and least privilege principles."
+      },
+      {
+        "name": "ResourceConsistency",
+        "displayName": "4. Resource Consistency",
+        "description": "Uniform organization through naming conventions and tagging strategies."
+      },
+      {
+        "name": "DeploymentAcceleration",
+        "displayName": "5. Deployment Acceleration",
+        "description": "Automating deployments through Infrastructure as Code and CI/CD pipelines."
+      }
+    ]
+  }
+}
