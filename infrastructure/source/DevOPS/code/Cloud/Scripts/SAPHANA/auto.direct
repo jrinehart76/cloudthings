@@ -1,4 +1,0 @@
-/usr/home/ -rw,soft,timeo=5,intr nas-server.customer-a-domain.local:/Linux_home
-/sapbasis -fstype=nfs,rw,hard nas-server.customer-a-domain.local:/sapbasis1
-/usr/sap/trans_elc -fstype=nfs,rw,hard  nas-server.customer-a-domain.local:/saptrans
-/sapbasisazr -fstype=nfs,rw,hard sap-admin-server.customer-a-domain.local:/sapbasisazr
