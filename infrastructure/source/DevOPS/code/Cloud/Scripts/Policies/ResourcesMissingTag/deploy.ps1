@@ -1,4 +1,4 @@
-$subName = "ELC-AM-POC"
+$subName = "CUST-A-AM-POC"
 $policyName = "Policy-AM-EastUS-POC-ResourcesMissingTag"
 $policyFile = ".\Scripts\Policies\ResourcesMissingTag\policy.json"
 

@@ -34,10 +34,10 @@
         Cmnd_Alias ORACLESUDO = /bin/su - orasid,/bin/su - sidadm,/bin/su - oracle
         %sutemp       ALL =(ALL) NOPASSWD: ALL
         ##AD Group Unix
-        %u-elc\ am-unix\ admins ALL=(ALL)       NOPASSWD: ALL
+        %u-CUST-A\ am-unix\ admins ALL=(ALL)       NOPASSWD: ALL
         #SAP Basis Group
-        %u-elc\ am-unix\ access\ basis  ALL=(ALL) NOPASSWD: ALL
-        #%u-elc\ am-unix\ access\ basis  ALL=(ALL) NOPASSWD: ORACLESUDO
+        %u-CUST-A\ am-unix\ access\ basis  ALL=(ALL) NOPASSWD: ALL
+        #%u-CUST-A\ am-unix\ access\ basis  ALL=(ALL) NOPASSWD: ORACLESUDO
 
   - name: Changing sssd.conf permission
     file: path=/etc/sssd/sssd.conf mode=0600      

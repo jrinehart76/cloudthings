@@ -23,19 +23,19 @@ REPLACEMENTS = {
     r'\b10M\b': 'MSP',
     r'\b10m\b': 'msp',
     
-    # Customer A (Estee Lauder / ELC)
+    # Customer A (Customer-A / CUST-A)
     r'\bEstee\s+Lauder\b': 'Customer-A',
     r'\bEsteeCloud\b': 'CustomerA-Cloud',
     r'\bELC\b': 'CUST-A',
     r'\belc-': 'cust-a-',
     
-    # Customer B (Helmerich & Payne / H&P)
+    # Customer B (Customer-B / CUST-B)
     r'\bHelmerich\s+&\s+Payne\b': 'Customer-B',
     r'\bHelmerich\s+and\s+Payne\b': 'Customer-B',
     r'\bH&P\b': 'CUST-B',
     r'\bhp-': 'cust-b-',
     
-    # Customer C (Children's Mercy / CMH)
+    # Customer C (Customer-C / CUST-C)
     r"\bChildren's\s+Mercy\b": 'Customer-C',
     r'\bCMH\b': 'CUST-C',
     r'\bcmh-': 'cust-c-',

@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-sql-critical-cpu",
+                    "alertName": "MSP-sql-critical-cpu",
                     "alertDescription": "[concat('Critical CPU SQL. ', parameters('version'))]",
                     "query": "//critical cpu usage on sql\r\n AzureMetrics\r\n | where ResourceProvider has '.sql' and MetricName has 'cpu_percent'\r\n | summarize [\"Average % CPU\"]=round(min_of(max(Maximum), 100.0)) by Computer=Resource\r\n | where [\"Average % CPU\"] >= 95",
                     "frequencyInMinutes": 15,
@@ -34,7 +34,7 @@
                     "severity": 3
                 },
                 {
-                    "alertName": "10m-sql-critical-deadlocks",
+                    "alertName": "MSP-sql-critical-deadlocks",
                     "alertDescription": "[concat('Critical Deadlocks SQL. ', parameters('version'))]",
                     "query": "//critical deadlocks found on sql\r\n AzureMetrics\r\n | where ResourceProvider has '.sql' and MetricName == 'deadlock'\r\n | summarize [\"Total Deadlocks\"]=round(sum(Total)) by Computer=Resource\r\n | where [\"Total Deadlocks\"] > 0",
                     "frequencyInMinutes": 15,

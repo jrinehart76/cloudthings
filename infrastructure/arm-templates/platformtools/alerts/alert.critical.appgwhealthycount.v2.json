@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-appgwv2-healthy-alert",
+                    "alertName": "MSP-appgwv2-healthy-alert",
                     "alertDescription": "[concat('Healthy Backend Host Count for V2 SKU App Gateways. ', parameters('version'))]",
                     "query": "//critical alert for app gateway v2 sku healthy host count\r\n AzureMetrics\r\n | where ResourceProvider has '.network'\r\n | where MetricName has 'healthyhostcount'\r\n | summarize ['Healthy Host Count']=avg(Count) by Computer=Resource, TimeGenerated\r\n | where ['Healthy Host Count'] < 2",
                     "frequencyInMinutes": 5,

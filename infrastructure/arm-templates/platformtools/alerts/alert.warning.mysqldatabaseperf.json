@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-mysql-warning-cpu",
+                    "alertName": "MSP-mysql-warning-cpu",
                     "alertDescription": "Warning CPU MySQL. v1",
                     "query": "AzureMetrics | where TimeGenerated > now(-15m) | where ResourceProvider == 'MICROSOFT.DBFORMYSQL' and MetricName == 'cpu_percent' | project Computer=Resource, ResourceGroup, Average | summarize averagePercentCPU=percentiles(Average, 15) by Computer, ResourceGroup | where averagePercentCPU between (95 .. 98)",
                     "frequencyInMinutes": 15,
@@ -31,7 +31,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-mysql-warning-mem",
+                    "alertName": "MSP-mysql-warning-mem",
                     "alertDescription": "Warning Memory MySQL. v1",
                     "query": "AzureMetrics | where TimeGenerated > now(-15m) | where ResourceProvider == 'MICROSOFT.DBFORMYSQL' and MetricName == 'memory_percent' | project Computer=Resource, ResourceGroup, Average | summarize averagePercentMemory=percentiles(Average, 95) by Computer, ResourceGroup | where averagePercentMemory between (85 .. 95)",
                     "frequencyInMinutes": 15,

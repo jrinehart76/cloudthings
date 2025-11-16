@@ -13,14 +13,14 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "10m-action-exec-s3",
+      "name": "MSP-action-exec-s3",
       "location": "Global",
       "properties": {
         "groupShortName": "10mES3",
         "enabled": true,
         "logicAppReceivers": [
           {
-            "name": "10M Alert Manager S3",
+            "name": "MSP Alert Manager S3",
             "resourceId": "[parameters( 'logicAppId' )]",
             "callbackUrl": "[parameters( 'logicAppUrl' )]",
             "useCommonAlertSchema": true

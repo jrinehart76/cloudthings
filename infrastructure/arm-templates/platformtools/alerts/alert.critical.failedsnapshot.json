@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "[concat('10m-', parameters('fileshareName'), '-failed-snapshot-automation-alert')]",
+                    "alertName": "[concat('MSP-', parameters('fileshareName'), '-failed-snapshot-automation-alert')]",
                     "alertDescription": "Snapshot Automation Failure Alert. v1",
                     "query": "[concat('let xmRunbook = \"', parameters('fileshareName'), '\"; AzureDiagnostics | where TimeGenerated > now(-15m) | where ResourceProvider has \"automation\" and RunbookName_s has xmRunbook | where ResultDescription has \"failed\" or ResultType has \"failed\" or StreamType_s has \"error\"| summarize Failures=count() by RunbookName_s | where Failures > 0')]",
                     "frequencyInMinutes": 15,

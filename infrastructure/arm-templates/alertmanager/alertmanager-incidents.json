@@ -46,7 +46,7 @@
       }
     },
     {
-      "name": "10m-incident-manager-exceptions",
+      "name": "MSP-incident-manager-exceptions",
       "type": "Microsoft.Logic/workflows",
       "location": "[parameters('logicAppLocation')]",
       "tags": {

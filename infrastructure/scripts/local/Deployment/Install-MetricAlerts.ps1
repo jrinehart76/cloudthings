@@ -40,18 +40,18 @@ param (
  )
 
 ##Create resource id variables
-$actionGroupS1   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/10m-action-crit-s1"
-$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/10m-action-exec-s2"
-$actionGroupS3   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/10m-action-exec-s3"              #critical action group resource ID
-$actionGroupS4   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/10m-action-warn-s4"
-#$actionGroupDev   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/10m-sre-app"
+$actionGroupS1   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-action-crit-s1"
+$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-action-exec-s2"
+$actionGroupS3   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-action-exec-s3"              #critical action group resource ID
+$actionGroupS4   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-action-warn-s4"
+#$actionGroupDev   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-sre-app"
 
 ##Deploy alerts
 New-AzResourceGroupDeployment `
     -Name "deploy-vm-metric-cpu-warning-alert" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./Platform/alerts/alert.metric.cpu.json `
-    -alertName "10m-vm-warning-cpu-metric" `
+    -alertName "MSP-vm-warning-cpu-metric" `
     -alertSeverity "Warning" `
     -alertFrequencyInMinutes 15 `
     -alertWindowInMinutes 60 `
@@ -67,7 +67,7 @@ New-AzResourceGroupDeployment `
     -Name "deploy-vm-metric-cpu-critical-alert" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./Platform/alerts/alert.metric.cpu.json `
-    -alertName "10m-vm-critical-cpu-metric" `
+    -alertName "MSP-vm-critical-cpu-metric" `
     -alertSeverity "Critical" `
     -alertFrequencyInMinutes 15 `
     -alertWindowInMinutes 60 `
@@ -83,7 +83,7 @@ New-AzResourceGroupDeployment `
     -Name "deploy-vm-metric-mem-warning-alert" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./Platform/alerts/alert.metric.memory.json `
-    -alertName "10m-vm-warning-memory-metric" `
+    -alertName "MSP-vm-warning-memory-metric" `
     -alertSeverity "Warning" `
     -alertFrequencyInMinutes 15 `
     -alertWindowInMinutes 60 `
@@ -98,7 +98,7 @@ New-AzResourceGroupDeployment `
     -Name "deploy-vm-metric-mem-critical-alert" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./Platform/alerts/alert.metric.memory.json `
-    -alertName "10m-vm-critical-memory-metric" `
+    -alertName "MSP-vm-critical-memory-metric" `
     -alertSeverity "Critical" `
     -alertFrequencyInMinutes 15 `
     -alertWindowInMinutes 60 `
@@ -113,7 +113,7 @@ New-AzResourceGroupDeployment `
     -Name "deploy-vm-metric-disk-warning-alert" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./Platform/alerts/alert.metric.disk.json `
-    -alertName "10m-vm-warning-disk-metric" `
+    -alertName "MSP-vm-warning-disk-metric" `
     -alertSeverity "Warning" `
     -alertFrequencyInMinutes 15 `
     -alertWindowInMinutes 60 `
@@ -129,7 +129,7 @@ New-AzResourceGroupDeployment `
     -Name "deploy-vm-metric-disk-critical-alert" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./Platform/alerts/alert.metric.disk.json `
-    -alertName "10m-vm-critical-disk-metric" `
+    -alertName "MSP-vm-critical-disk-metric" `
     -alertSeverity "Critical" `
     -alertFrequencyInMinutes 15 `
     -alertWindowInMinutes 60 `

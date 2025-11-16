@@ -5,10 +5,10 @@ This guide explains how to sanitize customer references before making the reposi
 ## Why Sanitize?
 
 The repository contains references to actual customers and projects:
-- **10th Magnitude / 10M** - Managed service provider name
-- **Estee Lauder / ELC** - Customer A
-- **Helmerich & Payne / H&P** - Customer B  
-- **Children's Mercy / CMH** - Customer C
+- **ManagedServiceProvider / MSP** - Managed service provider name
+- **Customer-A / CUST-A** - Customer A
+- **Customer-B / CUST-B** - Customer B  
+- **Customer-C / CUST-C** - Customer C
 
 These need to be replaced with generic placeholders before public release.
 
@@ -16,15 +16,15 @@ These need to be replaced with generic placeholders before public release.
 
 | Original | Replacement | Type |
 |----------|-------------|------|
-| 10th Magnitude | ManagedServiceProvider | Company |
-| 10M / 10m | MSP / msp | Company |
-| Estee Lauder | Customer-A | Customer |
-| EsteeCloud | CustomerA-Cloud | Project |
-| ELC | CUST-A | Customer |
-| Helmerich & Payne | Customer-B | Customer |
-| H&P | CUST-B | Customer |
-| Children's Mercy | Customer-C | Customer |
-| CMH | CUST-C | Customer |
+| ManagedServiceProvider | ManagedServiceProvider | Company |
+| MSP / MSP | MSP / msp | Company |
+| Customer-A | Customer-A | Customer |
+| CustomerA-Cloud | CustomerA-Cloud | Project |
+| CUST-A | CUST-A | Customer |
+| Customer-B | Customer-B | Customer |
+| CUST-B | CUST-B | Customer |
+| Customer-C | Customer-C | Customer |
+| CUST-C | CUST-C | Customer |
 
 ## Sanitization Process
 
@@ -87,9 +87,9 @@ git add -A
 git commit -m "Sanitize customer references for public release
 
 Replaced all customer-specific references with generic placeholders:
-- Company names (10th Magnitude → ManagedServiceProvider)
-- Customer names (Estee Lauder → Customer-A, etc.)
-- Project prefixes (elc- → cust-a-, hp- → cust-b-, etc.)
+- Company names (ManagedServiceProvider → ManagedServiceProvider)
+- Customer names (Customer-A → Customer-A, etc.)
+- Project prefixes (CUST-A- → cust-a-, cust-b- → cust-b-, etc.)
 
 This prepares the repository for public release while protecting
 customer confidentiality."

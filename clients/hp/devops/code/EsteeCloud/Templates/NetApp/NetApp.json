@@ -88,7 +88,7 @@
       "name": "[variables('netAppAccountName')]",
       "location": "eastus",
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {}
     },
@@ -101,7 +101,7 @@
         "[resourceId('Microsoft.NetApp/netAppAccounts', variables('netAppAccountName'))]"
       ],
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {
         "serviceLevel": "[parameters('capacityPoolServiceLevel')]",

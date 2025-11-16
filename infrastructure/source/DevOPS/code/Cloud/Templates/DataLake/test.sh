@@ -1,6 +1,6 @@
 az login --username dwentzel@10thmagnitude.com 
 
-az account set --subscription ELC-AM-POC-DevOps
+az account set --subscription CUST-A-AM-POC-DevOps
 az account list
 
 az group create --name rgTestDave --location "eastus2"

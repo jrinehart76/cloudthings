@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-windows-vm-warning-datadisk",
+                    "alertName": "MSP-windows-vm-warning-datadisk",
                     "alertDescription": "Warning Data Disk Alert on Windows. v1",
                     "query": "Perf | where CounterName has '% free space' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer)) | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName !has 'C:' | project Computer, InstanceName, CounterValue | summarize PercentFree=avg(CounterValue) by Computer, InstanceName | extend Computer, InstanceName, round(PercentFree) | where PercentFree between (11 .. 20) | join kind= inner (Perf | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer)))on InstanceName, Computer | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName !has 'C:' | summarize MegabytesFree=avg(CounterValue) by Computer, InstanceName, PercentFree | project Computer, InstanceName, round(MegabytesFree), PercentFree | where MegabytesFree between (10211 .. 20420)",
                     "frequencyInMinutes": 15,
@@ -31,7 +31,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-windows-vm-warning-osdisk",
+                    "alertName": "MSP-windows-vm-warning-osdisk",
                     "alertDescription": "Warning OS Disk Alert on Windows. v1",
                     "query": "Perf | where CounterName has '% free space' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer)) | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName has 'C:' | project Computer, InstanceName, CounterValue | summarize PercentFree=avg(CounterValue) by Computer, InstanceName | project Computer, InstanceName, round(PercentFree) | where PercentFree between (11 .. 20) | join kind= inner (Perf | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))) on InstanceName, Computer | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName has 'C:' | summarize MegabytesFree=avg(CounterValue) by Computer, InstanceName, PercentFree | project Computer, InstanceName, round(MegabytesFree), PercentFree | where MegabytesFree between (1025 .. 4092)",
                     "frequencyInMinutes": 15,

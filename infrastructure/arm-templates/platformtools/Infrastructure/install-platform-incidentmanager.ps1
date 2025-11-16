@@ -14,7 +14,7 @@ param (
  )
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-incident-managers-exceptions" `
+    -Name "deploy-MSP-incident-managers-exceptions" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./templates/alertmanager/alertmanager-incidents.json `
     -logicAppEnv $logicAppEnv `
@@ -22,7 +22,7 @@ New-AzResourceGroupDeployment `
     -dynamicsCrmOnlineConnectionName $dynamicsCrmOnlineConnectionName
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-incident-managers-criticals" `
+    -Name "deploy-MSP-incident-managers-criticals" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./templates/alertmanager/alertmanager-critical.json `
     -logicAppEnv $logicAppEnv `

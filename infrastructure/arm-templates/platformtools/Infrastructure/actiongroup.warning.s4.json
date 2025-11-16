@@ -13,14 +13,14 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "10m-action-warn-s4",
+      "name": "MSP-action-warn-s4",
       "location": "Global",
       "properties": {
         "groupShortName": "10mWS4",
         "enabled": true,
         "logicAppReceivers": [
           {
-            "name": "10M Alert Manager S4",
+            "name": "MSP Alert Manager S4",
             "resourceId": "[parameters( 'logicAppId' )]",
             "callbackUrl": "[parameters( 'logicAppUrl' )]",
             "useCommonAlertSchema": true

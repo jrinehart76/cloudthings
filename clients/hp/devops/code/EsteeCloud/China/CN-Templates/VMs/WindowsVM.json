@@ -73,7 +73,7 @@
     },
     "virtualNetworkName": {
       "type": "string",
-      "defaultValue": "VNET-AM-EastUS-POC-10M",
+      "defaultValue": "VNET-AM-EastUS-POC-MSP",
       "metadata": {
         "description": "The virtual network to which the VM will be attached"
       }

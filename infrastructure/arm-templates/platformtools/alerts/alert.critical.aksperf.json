@@ -20,7 +20,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-kubernetes-cpu-critical",
+                    "alertName": "MSP-kubernetes-cpu-critical",
                     "alertDescription": "Critical CPU Alert on Kubernetes. v1",
                     "query": "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; let capacityCounterName = \"cpuCapacityNanoCores\"; let usageCounterName = \"cpuUsageNanoCores\"; KubeNodeInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | distinct ClusterName, Computer | join hint.strategy=shuffle (Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == \"K8SNode\" | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, CounterName, bin(TimeGenerated, trendBinSize) | project Computer, CapacityStartTime = TimeGenerated, CapacityEndTime = TimeGenerated + trendBinSize, LimitValue) on Computer | join kind=inner hint.strategy=shuffle (Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == \"K8SNode\" | where CounterName == usageCounterName | project Computer, UsageValue = CounterValue, TimeGenerated) on Computer | where TimeGenerated >= CapacityStartTime and TimeGenerated < CapacityEndTime | project ClusterName, Computer, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by  Computer=ClusterName | where AggregatedValue >= 95",
                     "frequencyInMinutes": 5,
@@ -31,7 +31,7 @@
                     "severity": 3
                 },
                 {
-                    "alertName": "10m-kubernetes-memory-critical",
+                    "alertName": "MSP-kubernetes-memory-critical",
                     "alertDescription": "Critical Memory Alert on Kubernetes. Please reference the OneNote - Azure Alert Platform - Azure Kubernetes for details. v1",
                     "query": "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; let capacityCounterName = \"memoryCapacityBytes\"; let usageCounterName = \"memoryRssBytes\"; KubeNodeInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | distinct ClusterName, Computer | join hint.strategy=shuffle (Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == \"K8SNode\" | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, CounterName, bin(TimeGenerated, trendBinSize) | project Computer, CapacityStartTime = TimeGenerated, CapacityEndTime = TimeGenerated + trendBinSize, LimitValue) on Computer | join kind=inner hint.strategy=shuffle (Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == \"K8SNode\" | where CounterName == usageCounterName | project Computer, UsageValue = CounterValue, TimeGenerated) on Computer | where TimeGenerated >= CapacityStartTime and TimeGenerated < CapacityEndTime | project ClusterName, Computer, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by Computer=ClusterName | where AggregatedValue >= 95",
                     "frequencyInMinutes": 5,

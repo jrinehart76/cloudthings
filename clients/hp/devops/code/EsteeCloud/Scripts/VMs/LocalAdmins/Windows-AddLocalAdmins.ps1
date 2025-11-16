@@ -7,7 +7,7 @@ param(
 )
 
 $ResourceGroupVMs = Get-AzResource -ResourceType "Microsoft.Compute/virtualMachines" -ResourceGroupName $ResourceGroup
-$ScriptPath = "D:/a/r1/a/_10thMagnitudeDevOps/code/EsteeCloud/Scripts/VMs/LocalAdmins/AzRunCommand.ps1"
+$ScriptPath = "D:/a/r1/a/_10thMagnitudeDevOps/code/CustomerA-Cloud/Scripts/VMs/LocalAdmins/AzRunCommand.ps1"
 Write-Host $ScriptPath
 Write-Host "Azure VMs Detected: $($ResourceGroupVMs)"
 foreach($vm in $ResourceGroupVMs){

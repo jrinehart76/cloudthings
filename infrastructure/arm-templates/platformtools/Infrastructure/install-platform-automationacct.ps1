@@ -30,7 +30,7 @@ param (
 <#
 $automationAccountName = "aa-prod-01"
 $automationAccountLocation = "eastus2"
-$resourceGroup = "10m-prod-mgmt-01"
+$resourceGroup = "MSP-prod-mgmt-01"
 #>
 
 ##Deploy automation account

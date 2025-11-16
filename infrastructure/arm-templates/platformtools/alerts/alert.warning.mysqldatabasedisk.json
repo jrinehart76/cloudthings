@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-mysql-warning-disk",
+                    "alertName": "MSP-mysql-warning-disk",
                     "alertDescription": "Warning Disk MySQL. v1",
                     "query": "AzureMetrics | where TimeGenerated > now(-15m) | where ResourceProvider == 'MICROSOFT.DBFORMYSQL' and MetricName == 'storage_percent' | project Computer=Resource, ResourceGroup, Average | summarize averagePercentDiskUsed=percentiles(Average, 99) by Computer, ResourceGroup | where averagePercentDiskUsed between (85 .. 95)",
                     "frequencyInMinutes": 15,

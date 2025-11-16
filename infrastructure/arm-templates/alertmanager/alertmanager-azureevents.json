@@ -69,7 +69,7 @@
       }
     },
     {
-      "name": "10m-event-azure",
+      "name": "MSP-event-azure",
       "type": "Microsoft.Logic/workflows",
       "location": "[parameters('logicAppLocation')]",
       "tags": {

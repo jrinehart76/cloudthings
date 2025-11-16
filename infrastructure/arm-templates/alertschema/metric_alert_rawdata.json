@@ -13,15 +13,15 @@
         "data": {
             "essentials": {
                 "alertId": "/subscriptions/b843d1ef-73c6-48b8-907e-099f9d9d8032/providers/Microsoft.AlertsManagement/alerts/0a08fc35-2bd6-4403-b9a4-bd7b5d7c42d0",
-                "alertRule": "10m-test-alert-[pgo-prod-asp-300]-cpu-alert",
+                "alertRule": "MSP-test-alert-[app-prod-asp-300]-cpu-alert",
                 "severity": "Sev3",
                 "signalType": "Metric",
                 "monitorCondition": "Fired",
                 "monitoringService": "Platform",
                 "alertTargetIDs": [
-                    "/subscriptions/b843d1ef-73c6-48b8-907e-099f9d9d8032/resourcegroups/prod-pg-px-ds-service/providers/microsoft.web/serverfarms/pgo-prod-asp-300"
+                    "/subscriptions/b843d1ef-73c6-48b8-907e-099f9d9d8032/resourcegroups/prod-pg-px-ds-service/providers/microsoft.web/serverfarms/app-prod-asp-300"
                 ],
-                "originAlertId": "b843d1ef-73c6-48b8-907e-099f9d9d8032_prod-pg-px-ds-service_microsoft.insights_metricAlerts_10m-test-alert-[pgo-prod-asp-300]-cpu-alert_1406773819",
+                "originAlertId": "b843d1ef-73c6-48b8-907e-099f9d9d8032_prod-pg-px-ds-service_microsoft.insights_metricAlerts_10m-test-alert-[app-prod-asp-300]-cpu-alert_1406773819",
                 "firedDateTime": "2020-03-20T20:23:28.2510171Z",
                 "description": "FOR TESTING ONLY",
                 "essentialsVersion": "1.0",

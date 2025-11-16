@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-sql-critical-disk",
+                    "alertName": "MSP-sql-critical-disk",
                     "alertDescription": "[concat('Critical Disk SQL. ', parameters('version'))]",
                     "query": "//critical disk usage on sql\r\n AzureMetrics\r\n | where ResourceProvider has 'sql' and MetricName has 'storage_percent'\r\n | summarize [\"Storage Used\"]=round(min_of(max(Maximum), 100.0)) by Computer=Resource\r\n | where [\"Storage Used\"] >= 95",
                     "frequencyInMinutes": 15,

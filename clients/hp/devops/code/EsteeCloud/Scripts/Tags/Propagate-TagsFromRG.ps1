@@ -1,4 +1,4 @@
-﻿$subName = "ELC-AM-POC"
+﻿$subName = "CUST-A-AM-POC"
 $rgName = "RG-AM-EastUS-POC-CEP-China"
 $purgeOldTags = $false
 $verboseOutput = $true

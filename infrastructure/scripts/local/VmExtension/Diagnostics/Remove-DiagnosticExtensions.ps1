@@ -88,7 +88,7 @@ param (
                         -ErrorAction "SilentlyContinue"
 
             foreach ($ex in $VMex) {
-                if (($ex.Publisher -like "Microsoft.Azure.Diagnostics") -and ($ex.Etag -notlike '{"ManagedBy":"10th Magnitude"}')) {
+                if (($ex.Publisher -like "Microsoft.Azure.Diagnostics") -and ($ex.Etag -notlike '{"ManagedBy":"ManagedServiceProvider"}')) {
                     Write-Output "[$($vm.Name)] Found [$($ex.Name)]" 
                     Write-Output "[$($vm.Name)] Removing [$($ex.Name)]"
                     $error.clear()
@@ -107,7 +107,7 @@ param (
                         Write-Output "[$($vm.Name)] - Successfully removed [$($ex.Name)]"
                     }
                 }
-                elseif (($ex.Publisher -like "Microsoft.Azure.Diagnostics") -and ($ex.Etag -like '{"ManagedBy":"10th Magnitude"}')){
+                elseif (($ex.Publisher -like "Microsoft.Azure.Diagnostics") -and ($ex.Etag -like '{"ManagedBy":"ManagedServiceProvider"}')){
                     Write-Output "[$($vm.Name)] - Found [$($ex.Name)] - Already correctly installed" 
                 }
                 else {

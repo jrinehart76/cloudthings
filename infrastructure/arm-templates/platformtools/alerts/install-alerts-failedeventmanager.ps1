@@ -34,7 +34,7 @@ param (
  )
 
 ##Create resource id variables
-$actionGroupS1   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/10m-alert-crit-s1"
+$actionGroupS1   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-crit-s1"
 
 ##Deploy AppGW Critical Backend Health Alert
 New-AzResourceGroupDeployment `

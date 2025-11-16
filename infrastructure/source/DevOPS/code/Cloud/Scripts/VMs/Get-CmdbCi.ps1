@@ -52,14 +52,14 @@ foreach($sub in $subs) {
     @{N='serial_number';E={'NA'}}, `
     @{N='manufacturer';E={'Microsoft Corporation'}}, `
     @{N='model_id';E={'Azure'}}, `
-    @{N='supported_by';E={'10th Magnitude'}}, `
-	@{N='u_support_company';E={'10th Magnitude'}}, `
-    @{N='support_group';E={'ELC-CloudOps-ManagedServices-G'}}, `
+    @{N='supported_by';E={'ManagedServiceProvider'}}, `
+	@{N='u_support_company';E={'ManagedServiceProvider'}}, `
+    @{N='support_group';E={'CUST-A-CloudOps-ManagedServices-G'}}, `
     @{N='u_pci';E={"false"} }, `
     @{N='u_sox';E={"false"}}, ` 
     @{N='u_type';E={"$($_.storageProfile.osDisk.osType) Server"}}, `
-    @{N='u_ownership_type';E={'ELC Owned'}}, `
-    @{N='discovery_source';E={"10M"}}, `
+    @{N='u_ownership_type';E={'CUST-A Owned'}}, `
+    @{N='discovery_source';E={"MSP"}}, `
     @{N='ResourceGroupName';E={$_.ResourceGroupName}}, `
     @{N='NicID';E={$_.networkProfile.networkInterfaces[0].Id}}, `
     @{N='ImageId';E={$_.storageProfile.imageReference.Id}}

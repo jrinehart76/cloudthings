@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-postgresql-critical-disk",
+                    "alertName": "MSP-postgresql-critical-disk",
                     "alertDescription": "[concat('Critical Disk PostGRESQL. ', parameters('version'))]",
                     "query": "//critical disk usage on postgresql\r\n AzureMetrics\r\n | where ResourceProvider has 'dbforpostgresql' and MetricName has 'storage_percent'\r\n | project Computer=Resource, ResourceGroup, Average\r\n | summarize [\"Average % Disk Used\"]=percentiles(Average, 90) by Computer, ResourceGroup\r\n | where [\"Average % Disk Used\"] >= 95",
                     "frequencyInMinutes": 15,

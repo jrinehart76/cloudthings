@@ -1,6 +1,6 @@
-$subscription = "ELC-AM-CEPLATAM"
+$subscription = "CUST-A-AM-CEPLATAM"
 $keyVaultName = "AKV-AM-EastUS-DEV-CEP"
-$certificateName = "elc-cep-api-am-dev-elcompanies-com"
+$certificateName = "CUST-A-cep-api-am-dev-elcompanies-com"
 $pfxPassword = "YourSecurePasswordHere"
 $exportPath = ".\Scripts\KeyVault"
 $verboseOutput = $true

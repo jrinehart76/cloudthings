@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-postgresql-warning-disk",
+                    "alertName": "MSP-postgresql-warning-disk",
                     "alertDescription": "Warning Disk PostGRESQL. v1",
                     "query": "AzureMetrics | where TimeGenerated > now(-15m)  | where ResourceProvider has 'dbforpostgresql' and MetricName has 'storage_percent' | project Computer=Resource, ResourceGroup, Average | summarize averagePercentDiskUsed=percentiles(Average, 99) by Computer, ResourceGroup | where averagePercentDiskUsed between (85 .. 95)",
                     "frequencyInMinutes": 15,

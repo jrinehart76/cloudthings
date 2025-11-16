@@ -41,9 +41,9 @@ roleRef:
   kind: Role 
   name: dev-user-full-access
   apiGroup: rbac.authorization.k8s.io
-"@ | out-file d:\a\r1\a\_10thMagnitudeDevOps\code\EsteeCloud\Scripts\Kubernetes\$($Namespace[$i]).yaml -enc ASCII
+"@ | out-file d:\a\r1\a\_10thMagnitudeDevOps\code\CustomerA-Cloud\Scripts\Kubernetes\$($Namespace[$i]).yaml -enc ASCII
 
-kubectl apply -f d:\a\r1\a\_10thMagnitudeDevOps\code\EsteeCloud\Scripts\Kubernetes\$($Namespace[$i]).yaml --kubeconfig $AKSKubeConfigPath
+kubectl apply -f d:\a\r1\a\_10thMagnitudeDevOps\code\CustomerA-Cloud\Scripts\Kubernetes\$($Namespace[$i]).yaml --kubeconfig $AKSKubeConfigPath
 
         }
     catch

@@ -68,7 +68,7 @@
       "name": "[variables('netAppAccountName')]",
       "location": "eastus",
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {}
     },
@@ -81,7 +81,7 @@
         "[resourceId('Microsoft.NetApp/netAppAccounts', variables('netAppAccountName'))]"
       ],
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {
         "serviceLevel": "Premium",
@@ -97,7 +97,7 @@
         "[resourceId('Microsoft.NetApp/netAppAccounts',variables('netAppAccountName'))]"
       ],
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {
         "serviceLevel": "Standard",
@@ -114,7 +114,7 @@
         "[resourceId('Microsoft.NetApp/netAppAccounts', variables('netAppAccountName'))]"
       ],
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {
         "serviceLevel": "Premium",
@@ -159,7 +159,7 @@
         "[resourceId('Microsoft.NetApp/netAppAccounts', variables('netAppAccountName'))]"
       ],
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {
         "serviceLevel": "Standard",
@@ -206,7 +206,7 @@
         "[resourceId('Microsoft.NetApp/netAppAccounts', variables('netAppAccountName'))]"
       ],
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {
         "serviceLevel": "Standard",
@@ -253,7 +253,7 @@
         "[resourceId('Microsoft.NetApp/netAppAccounts', variables('netAppAccountName'))]"
       ],
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {
         "serviceLevel": "Standard",

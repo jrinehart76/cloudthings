@@ -1,4 +1,4 @@
-$subName = "ELC-AM-NONPROD"
+$subName = "CUST-A-AM-NONPROD"
 $jsonTagFile = ".\Scripts\Tags\TagFromJSON\Tags.json"
 $updateChildResrouces = $false
 $purgeOldTags = $false

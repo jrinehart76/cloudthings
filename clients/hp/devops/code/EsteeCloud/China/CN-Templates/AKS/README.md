@@ -21,5 +21,5 @@ The IP address plan used for this cluster consists of a VNET, a Subnet (VNET-Loc
 ## Example Azure CLI Deployment
 
 ```
-az group deployment  create --template-file aks.json -g RG-AM-EastUS-POC-10M-CEP-AKS --parameters azureServicePrincipalAppId=<SPappId> azureServicePrincipalAppKey=<SPKey> nodeSSHPublicKey=<sshKey>  serviceCidr=15.15.3.0/24 dnsServiceIP=15.15.3.5
+az group deployment  create --template-file aks.json -g RG-AM-EastUS-POC-MSP-CEP-AKS --parameters azureServicePrincipalAppId=<SPappId> azureServicePrincipalAppKey=<SPKey> nodeSSHPublicKey=<sshKey>  serviceCidr=15.15.3.0/24 dnsServiceIP=15.15.3.5
 ```

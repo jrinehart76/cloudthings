@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-windows-vm-critical-cpu",
+                    "alertName": "MSP-windows-vm-critical-cpu",
                     "alertDescription": "[concat('Critical CPU Alert on Windows. ', parameters('version'))]",
                     "query": "//critical cpu alert for windows\r\n Perf\r\n | where Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n | where ObjectName has 'processor' and CounterName has 'processor time' and InstanceName has '_total'\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average CPU\"]=avg(CounterValue) by Computer\r\n | where [\"Average CPU\"] >= 98",
                     "frequencyInMinutes": 15,
@@ -34,7 +34,7 @@
                     "severity": 3
                 },
                 {
-                    "alertName": "10m-windows-vm-critical-mem",
+                    "alertName": "MSP-windows-vm-critical-mem",
                     "alertDescription": "[concat('Critical Memory Alert on Windows. ',parameters('version'))]",
                     "query": "//critical memory alert for windows\r\n Perf\r\n | where Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n | where ObjectName has 'memory' and CounterName has 'available mbytes'\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average Available Memory\"]=avg(CounterValue) by Computer\r\n | where [\"Average Available Memory\"] < 512",
                     "frequencyInMinutes": 15,

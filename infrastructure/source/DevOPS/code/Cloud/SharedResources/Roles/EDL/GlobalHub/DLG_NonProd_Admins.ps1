@@ -40,7 +40,7 @@ function Assign-RoleDefinition {
 
 
 $PrincipalID = @()
-$PrincipalID += (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalAdmin')[0].Id
+$PrincipalID += (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalAdmin')[0].Id
 
 
 # Keyvault Access Policies
@@ -51,21 +51,21 @@ $keyvaultRG = "RG-AM-EastUS-Dev-DLG-OtherPAAS"
 foreach($k in $allKeyvaults){
 Set-AzKeyVaultAccessPolicy -VaultName $k -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString '10thMagnitudeDevOps')[0].Id -PermissionsToSecrets get,list,set,delete,recover,backup,restore
 Set-AzKeyVaultAccessPolicy -VaultName $k -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString '10thMagnitudeSupport')[0].Id -PermissionsToSecrets get,list,set,delete,recover,backup,restore
-Set-AzKeyVaultAccessPolicy -VaultName $k -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalAdmin')[0].Id -PermissionsToSecrets get,list,set,delete,recover,backup,restore
+Set-AzKeyVaultAccessPolicy -VaultName $k -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalAdmin')[0].Id -PermissionsToSecrets get,list,set,delete,recover,backup,restore
 }
 
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_All')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_Fin')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_DTC')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_HR')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_SC')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_CsMkt')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_All')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_Fin')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_DTC')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_HR')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_SC')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_CsMkt')[0].Id -PermissionsToSecrets get,list
 
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-Fin" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_Fin')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-DTC" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_DTC')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-Mkt" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_CsMkt')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-SC" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_SC')[0].Id -PermissionsToSecrets get,list
-Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-HR" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-ELC-EDLGlobalDev_HR')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-Fin" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_Fin')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-DTC" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_DTC')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-Mkt" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_CsMkt')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-SC" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_SC')[0].Id -PermissionsToSecrets get,list
+Set-AzKeyVaultAccessPolicy -VaultName "AKV-AM-EUS-Dev-DLG-HR" -ResourceGroupName $keyvaultRG -ObjectId (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalDev_HR')[0].Id -PermissionsToSecrets get,list
 
 
 

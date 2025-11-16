@@ -13,7 +13,7 @@
         "data": {
             "essentials": {
                 "alertId": "/subscriptions/7ab6c981-15d8-44aa-a555-0f2ca122f747/providers/Microsoft.AlertsManagement/alerts/935f261c-995f-464b-9602-3200a9cab944",
-                "alertRule": "10m-azure-resource-alert",
+                "alertRule": "MSP-azure-resource-alert",
                 "severity": "Sev4",
                 "signalType": "Activity Log",
                 "monitorCondition": "Fired",

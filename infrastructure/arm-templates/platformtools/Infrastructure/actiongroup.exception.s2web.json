@@ -13,14 +13,14 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "10m-action-exec-s2web",
+      "name": "MSP-action-exec-s2web",
       "location": "Global",
       "properties": {
         "groupShortName": "10mE2Web",
         "enabled": true,
         "logicAppReceivers": [
           {
-            "name": "10M Alert Manager S2",
+            "name": "MSP Alert Manager S2",
             "resourceId": "[parameters( 'logicAppId' )]",
             "callbackUrl": "[parameters( 'logicAppUrl' )]",
             "useCommonAlertSchema": true

@@ -39,7 +39,7 @@ param (
  )
 
 ##Create resource id variables           
-$actionGroupS3   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/10m-alert-exec-s3"                
+$actionGroupS3   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s3"                
 
 ##Deploy all alerts
 ##Critical Alerts begin here

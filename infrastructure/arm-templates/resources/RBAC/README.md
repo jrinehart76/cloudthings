@@ -50,11 +50,11 @@ The "name" field is not required for the ARM Rest API call but was added to help
 ### Azure CLI Single User/Group Deployment
 
 ```
-az group deployment create --name "rbac1" --resource-group RG-AM-EastUS-POC-10M-CEP-RBAC --template-file "./rbac.json" --parameters "./rbac.parameters.json"
+az group deployment create --name "rbac1" --resource-group RG-AM-EastUS-POC-MSP-CEP-RBAC --template-file "./rbac.json" --parameters "./rbac.parameters.json"
 ```
 
 ### Azure CLI Single User/Group Deployment
 
 ```
-az group deployment create --name "rbac1" --resource-group RG-AM-EastUS-POC-10M-CEP-RBAC --template-file "./rbac-multiuser.json" --parameters "./rbac.parameters-mulituser.json"
+az group deployment create --name "rbac1" --resource-group RG-AM-EastUS-POC-MSP-CEP-RBAC --template-file "./rbac-multiuser.json" --parameters "./rbac.parameters-mulituser.json"
 ```

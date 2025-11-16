@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-oracle-ogg-nonprod-critical-alert",
+                    "alertName": "MSP-oracle-ogg-nonprod-critical-alert",
                     "alertDescription": "[concat('NONPROD Oracle GoldenGate Error Alert. ', parameters('version'))]",
                     "query": "//nonprod oracle goldengate query\r\n GoldenGate_CL\r\n | where TimeGenerated > now(-1h)\r\n | where _ResourceId contains 'fea13a4d-5f74-44cc-8611-0cbc35235413'\r\n | where RawData contains 'ERROR  '\r\n | summarize by Error=RawData, Computer, TimeGenerated",
                     "frequencyInMinutes": 60,

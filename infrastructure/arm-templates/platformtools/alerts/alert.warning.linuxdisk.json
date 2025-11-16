@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-linux-vm-warning-root-mount",
+                    "alertName": "MSP-linux-vm-warning-root-mount",
                     "alertDescription": "Warning Root Mount on Linux. v1",
                     "query": "Perf | where CounterName has '% used space' and Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer)) | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks' | where ObjectName has 'Logical Disk' and CounterName has '% used space' and InstanceName == '/' | project Computer, InstanceName, CounterValue | summarize PercentUsed=round(avg(CounterValue),2) by Computer, InstanceName | project Computer, InstanceName, PercentUsed | where PercentUsed >= 90 | join (Perf | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer)))on InstanceName, Computer | project Computer, InstanceName, CounterValue, PercentUsed | summarize averageGigabytesFree=round((avg(CounterValue)/1024),2) by Computer, InstanceName, PercentUsed | project Computer, InstanceName, averageGigabytesFree, PercentUsed | where averageGigabytesFree between (11 .. 20)",
                     "frequencyInMinutes": 90,
@@ -31,7 +31,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-linux-vm-warning-data-mount",
+                    "alertName": "MSP-linux-vm-warning-data-mount",
                     "alertDescription": "Warning Data Mount Alert on Linux. v1",
                     "query": "Perf | where CounterName has '% used space' and Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer)) | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks' | where InstanceName !has '_total' and InstanceName !contains '/mnt/resource' and InstanceName != '/' | project Computer, InstanceName, CounterValue | summarize PercentUsed=round(avg(CounterValue),2) by Computer, InstanceName | project Computer, InstanceName, PercentUsed | where PercentUsed >= 95 | join (Perf | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer)))on InstanceName, Computer | project Computer, InstanceName, CounterValue, PercentUsed | summarize averageGigabytesFree=round((avg(CounterValue)/1024),2) by Computer, InstanceName, PercentUsed | project Computer, InstanceName, averageGigabytesFree, PercentUsed | where averageGigabytesFree between (11 .. 20)",
                     "frequencyInMinutes": 90,

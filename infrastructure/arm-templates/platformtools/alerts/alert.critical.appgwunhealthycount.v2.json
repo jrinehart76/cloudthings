@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-appgwv2-unhealthy-alert",
+                    "alertName": "MSP-appgwv2-unhealthy-alert",
                     "alertDescription": "[concat('Unhealthy Backend Host Count for V2 SKU App Gateways. ', parameters('version'))]",
                     "query": "//critical alert for app gateway unhealthy host count\r\n AzureDiagnostics\r\n | where OperationName contains 'gatewayperformance'\r\n | project unHealthyHostCount_d, Resource, ResourceGroup, ResourceId, TimeGenerated\r\n | summarize by Computer=Resource, ['Resource Group']=ResourceGroup, ['Unhealthy Host Count']=unHealthyHostCount_d\r\n | where ['Unhealthy Host Count'] > 0",
                     "frequencyInMinutes": 5,

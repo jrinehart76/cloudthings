@@ -20,7 +20,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-security-ddos-attack-critical",
+                    "alertName": "MSP-security-ddos-attack-critical",
                     "alertDescription": "DDoS Attack on a public endpoint.",
                     "query": "",
                     "frequencyInMinutes": 5,

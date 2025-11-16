@@ -6,7 +6,7 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "10m-alert-critmim-s1",
+      "name": "MSP-alert-critmim-s1",
       "location": "Global",
       "properties": {
         "groupShortName": "10mCMIMS1",
@@ -14,7 +14,7 @@
         "logicAppReceivers": [],
         "emailReceivers": [
           {
-            "name": "10M Support Alert Shadow",
+            "name": "MSP Support Alert Shadow",
             "emailAddress": "supportalerts@10thmagnitude.com",
             "useCommonAlertSchema": true
           }

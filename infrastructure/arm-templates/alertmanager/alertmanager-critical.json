@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "logicAppName": {
-            "defaultValue": "10m-incident-manager-critical",
+            "defaultValue": "MSP-incident-manager-critical",
             "type": "string"
         },
         "dynamicsConnectionName": {

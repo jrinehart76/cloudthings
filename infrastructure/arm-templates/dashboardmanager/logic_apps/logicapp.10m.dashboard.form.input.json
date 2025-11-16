@@ -34,7 +34,7 @@
         }
       },
       {
-        "name": "10m-dashboard-manager-form",
+        "name": "MSP-dashboard-manager-form",
         "type": "Microsoft.Logic/workflows",
         "location": "[parameters('logicAppLocation')]",
         "tags": {

@@ -1,4 +1,4 @@
-$subName = "ELC-AM-POC"
+$subName = "CUST-A-AM-POC"
 
 ##################################
 Import-Module AzureRM

@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                {
-                    "alertName": "10m-security-kernel-module-load",
+                    "alertName": "MSP-security-kernel-module-load",
                     "alertDescription": "Loading and Unloading Kernel Modules. v1",
                     "query": "LinuxAuditLog | where key == 'kernelmodules' and RecordType != 'CONFIG_CHANGE'",
                     "frequencyInMinutes": 15,
@@ -31,7 +31,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-suspicious-executed-commands",
+                    "alertName": "MSP-security-suspicious-executed-commands",
                     "alertDescription": "Distinct Paths of Executed Commands. v1",
                     "query": "LinuxAuditLog | where RecordType == 'syscall' and syscall == 'execve' | summarize count() by exe",
                     "frequencyInMinutes": 15,
@@ -42,7 +42,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-failed-logon-attempts-linux",
+                    "alertName": "MSP-security-failed-logon-attempts-linux",
                     "alertDescription": "Linux Systems with Failed Logons. v1",
                     "query": "LinuxAuditLog | where RecordType == 'user_login' and res != 'success' | summarize count() by acct",
                     "frequencyInMinutes": 15,
@@ -53,7 +53,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-linux-executed-commands",
+                    "alertName": "MSP-security-linux-executed-commands",
                     "alertDescription": "Linux Commands Executed. v1",
                     "query": "LinuxAuditLog | where RecordType == 'syscall' and syscall == 'execve' | summarize count() by cmd",
                     "frequencyInMinutes": 15,
@@ -64,7 +64,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-linux-group-changes",
+                    "alertName": "MSP-security-linux-group-changes",
                     "alertDescription": "Computers with Users Added to a Linux Group. v1",
                     "query": "Syslog | where Facility == 'authpriv' and SyslogMessage has 'to group' and (SyslogMessage has 'add' or SyslogMessage has 'added') | summarize by Computer",
                     "frequencyInMinutes": 15,
@@ -75,7 +75,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-linux-group-created",
+                    "alertName": "MSP-security-linux-group-created",
                     "alertDescription": "Computers with a Linux Group Created. v1",
                     "query": "Syslog | where Facility == 'authpriv' and SyslogMessage has 'new group' | summarize count() by Computer",
                     "frequencyInMinutes": 15,
@@ -86,7 +86,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-linux-failed-password-changes",
+                    "alertName": "MSP-security-linux-failed-password-changes",
                     "alertDescription": "Computers with Failed Linux User Password Changes. v1",
                     "query": "Syslog | where Facility == 'authpriv' and ((SyslogMessage has 'passwd:chauthtok' and SyslogMessage has 'authentication failure') or SyslogMessage has 'password change failed') | summarize count() by Computer",
                     "frequencyInMinutes": 15,
@@ -97,7 +97,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-failed-ssh-logons",
+                    "alertName": "MSP-security-failed-ssh-logons",
                     "alertDescription": "Computers with Failed SSH Logons. v1",
                     "query": "Syslog | where (Facility == 'authpriv' and SyslogMessage has 'sshd:auth' and SyslogMessage has 'authentication failure') or (Facility == 'auth' and ((SyslogMessage has 'Failed' and SyslogMessage has 'invalid user' and SyslogMessage has 'ssh2') or SyslogMessage has 'error: PAM: Authentication failure')) | summarize count() by Computer",
                     "frequencyInMinutes": 15,
@@ -108,7 +108,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-failed-su-logons",
+                    "alertName": "MSP-security-failed-su-logons",
                     "alertDescription": "Computers with Failed SU Logons. v1",
                     "query": "Syslog | where (Facility == 'authpriv' and SyslogMessage has 'su:auth' and SyslogMessage has 'authentication failure') or (Facility == 'auth' and SyslogMessage has 'FAILED SU') | summarize count() by Computer",
                     "frequencyInMinutes": 15,
@@ -119,7 +119,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-failed-sudo-logons",
+                    "alertName": "MSP-security-failed-sudo-logons",
                     "alertDescription": "Computers with Failed SUDO Logons. v1",
                     "query": "Syslog | where (Facility == 'authpriv' and SyslogMessage has 'sudo:auth' and (SyslogMessage has 'authentication failure' or SyslogMessage has 'conversation failed')) or ((Facility == 'auth' or Facility == 'authpriv') and SyslogMessage has 'user NOT in sudoers') | summarize count() by Computer",
                     "frequencyInMinutes": 15,
@@ -130,7 +130,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-security-abnormally-high-deletes",
+                    "alertName": "MSP-security-abnormally-high-deletes",
                     "alertDescription": "Delete Count by User and Operation. v1",
                     "query": "AzureActivity | where OperationName contains '/delete' and OperationName !contains 'snapshots' | summarize Deletes = count(Caller) by OperationName, Caller",
                     "frequencyInMinutes": 15,

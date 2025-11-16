@@ -4,7 +4,7 @@
     "parameters": {
         "logicAppName" : {
             "type": "string",
-            "defaultValue": "10m-dashboard-deployment"
+            "defaultValue": "MSP-dashboard-deployment"
         },
         "logicAppLocation" : {
             "type": "string"

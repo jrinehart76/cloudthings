@@ -55,7 +55,7 @@
       lineinfile: 
         path: /etc/sudoers
         state: present
-        line: '%u-elc\ am-unix\ admins  ALL=(ALL) NOPASSWD: ALL' 
+        line: '%u-CUST-A\ am-unix\ admins  ALL=(ALL) NOPASSWD: ALL' 
         validate: '/usr/sbin/visudo -cf %s'
 
     - name: "Restarting autofs "

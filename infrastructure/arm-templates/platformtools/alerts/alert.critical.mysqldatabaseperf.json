@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-mysql-critical-cpu",
+                    "alertName": "MSP-mysql-critical-cpu",
                     "alertDescription": "[concat('Critical CPU MySQL. ', parameters('version'))]",
                     "query": "//critical cpu usage on mysql\r\n AzureMetrics\r\n | where ResourceProvider has '.dbformysql' and MetricName has 'cpu_percent'\r\n | project Computer=Resource, ResourceGroup, Average\r\n | summarize [\"Average % CPU\"]=percentiles(Average, 90) by Computer, ResourceGroup\r\n | where [\"Average % CPU\"] > 98",
                     "frequencyInMinutes": 15,
@@ -34,7 +34,7 @@
                     "severity": 3
                 },
                 {
-                    "alertName": "10m-mysql-critical-mem",
+                    "alertName": "MSP-mysql-critical-mem",
                     "alertDescription": "[concat('Critical Memory MySQL. ', parameters('version'))]",
                     "query": "//critical memory usage on mysql\r\n AzureMetrics\r\n | where ResourceProvider has '.dbformysql' and MetricName has 'memory_percent'\r\n | project Computer=Resource, ResourceGroup, Average\r\n | summarize [\"Average % Memory\"]=percentiles(Average, 90) by Computer, ResourceGroup\r\n | where [\"Average % Memory\"] > 95",
                     "frequencyInMinutes": 15,

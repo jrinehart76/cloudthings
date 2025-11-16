@@ -35,13 +35,13 @@ function Assign-RoleDefinition {
 }
 #>
 <#
-ELC-AP-NONPROD-V2
+CUST-A-AP-NONPROD-V2
 7ab6c981-15d8-44aa-a555-0f2ca122f747
 
-U-ELC-CEPAPAC-Admins
+U-CUST-A-CEPAPAC-Admins
 7aa941b5-dd3b-4160-837b-b7c953874067
 
-U-ELC-CEPAPAC-Devs
+U-CUST-A-CEPAPAC-Devs
 f01c092b-c095-442d-9780-44365c726456
 
 #>
@@ -49,7 +49,7 @@ f01c092b-c095-442d-9780-44365c726456
 $subId = '7ab6c981-15d8-44aa-a555-0f2ca122f747'
 [array]$PrincipalId = "f01c092b-c095-442d-9780-44365c726456"
 
-# set subscription to elc-ap-nonprod-v2
+# set subscription to CUST-A-ap-nonprod-v2
 Select-AzureRmSubscription -Subscription $subId
 
 foreach($p in $PrincipalId){

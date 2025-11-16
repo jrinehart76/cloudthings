@@ -32,7 +32,7 @@
         {
             "type": "microsoft.insights/metricAlerts",
             "apiVersion": "2018-03-01",
-            "name": "[concat('10m-', parameters('storage') ,'-azfileshare-alert')]",
+            "name": "[concat('MSP-', parameters('storage') ,'-azfileshare-alert')]",
             "location": "global",
             "tags": {},
             "properties": {

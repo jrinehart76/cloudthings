@@ -66,7 +66,7 @@ param (
  )
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-sev2-event-managers-$deploymentVersion" `
+    -Name "deploy-MSP-sev2-event-managers-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./AlertManager/alertmanager-sev2events.json `
     -logicAppEnv $logicAppEnv `
@@ -77,7 +77,7 @@ New-AzResourceGroupDeployment `
     -dynamicsCrmOnlineConnectionName $dynamicsCrmOnlineConnectionName
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-sev3-event-managers-$deploymentVersion" `
+    -Name "deploy-MSP-sev3-event-managers-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./AlertManager/alertmanager-sev3events.json `
     -logicAppEnv $logicAppEnv `
@@ -88,7 +88,7 @@ New-AzResourceGroupDeployment `
     -dynamicsCrmOnlineConnectionName $dynamicsCrmOnlineConnectionName
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-sev4-event-managers-$deploymentVersion" `
+    -Name "deploy-MSP-sev4-event-managers-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./AlertManager/alertmanager-sev4events.json `
     -logicAppEnv $logicAppEnv `
@@ -99,7 +99,7 @@ New-AzResourceGroupDeployment `
     -dynamicsCrmOnlineConnectionName $dynamicsCrmOnlineConnectionName
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-info-event-managers-$deploymentVersion" `
+    -Name "deploy-MSP-info-event-managers-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./AlertManager/alertmanager-infoevents.json `
     -logicAppEnv $logicAppEnv `
@@ -110,7 +110,7 @@ New-AzResourceGroupDeployment `
     -dynamicsCrmOnlineConnectionName $dynamicsCrmOnlineConnectionName
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-security-event-managers-$deploymentVersion" `
+    -Name "deploy-MSP-security-event-managers-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./AlertManager/alertmanager-securityevents.json `
     -logicAppEnv $logicAppEnv `
@@ -121,7 +121,7 @@ New-AzResourceGroupDeployment `
     -dynamicsCrmOnlineConnectionName $dynamicsCrmOnlineConnectionName
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-azure-event-managers-$deploymentVersion" `
+    -Name "deploy-MSP-azure-event-managers-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./AlertManager/alertmanager-azureevents.json `
     -logicAppEnv $logicAppEnv `
@@ -132,7 +132,7 @@ New-AzResourceGroupDeployment `
     -dynamicsCrmOnlineConnectionName $dynamicsCrmOnlineConnectionName
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-web-event-managers-$deploymentVersion" `
+    -Name "deploy-MSP-web-event-managers-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./AlertManager/alertmanager-webevents.json `
     -logicAppEnv $logicAppEnv `

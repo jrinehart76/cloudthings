@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-update-failed-warning",
+                    "alertName": "MSP-update-failed-warning",
                     "alertDescription": "Warning Update Failed. v1",
                     "query": "UpdateRunProgress | where TimeGenerated > now(-5m) | where InstallationStatus == 'Failed' | summarize Failures=count(InstallationStatus) by Computer, Title, bin(TimeGenerated, 5m)",
                     "frequencyInMinutes": 5,

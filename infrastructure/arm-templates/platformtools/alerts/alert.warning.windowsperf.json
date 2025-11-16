@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-windows-vm-warning-cpu",
+                    "alertName": "MSP-windows-vm-warning-cpu",
                     "alertDescription": "Warning CPU Alert on Windows. v1",
                     "query": "Perf | where TimeGenerated > now(-15m) | where ObjectName == 'Processor' and CounterName == '% Processor Time' and InstanceName == '_Total' and Computer in ((Heartbeat | where OSType has 'Windows' | distinct Computer)) | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks' | where (Computer !has 'k8s' and Computer !has 'aks') | summarize averagePercentCPU = avg(CounterValue) by Computer | where averagePercentCPU between (95 .. 98)",
                     "frequencyInMinutes": 15,
@@ -31,7 +31,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-windows-vm-warning-mem",
+                    "alertName": "MSP-windows-vm-warning-mem",
                     "alertDescription": "Warning Memory Alert on Windows. v1",
                     "query": "Perf | where TimeGenerated > now(-15m) | where ObjectName has 'Memory' and CounterName has 'Available MBytes' | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks' | where (Computer !has 'k8s' and Computer !has 'aks') | summarize availableMemory=avg(CounterValue) by Computer | where availableMemory between (513 .. 1024)",
                     "frequencyInMinutes": 15,

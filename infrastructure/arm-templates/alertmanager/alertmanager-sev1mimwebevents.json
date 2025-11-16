@@ -69,7 +69,7 @@
       }
     },
     {
-      "name": "10m-event-manager-sev-1-mim-web",
+      "name": "MSP-event-manager-sev-1-mim-web",
       "type": "Microsoft.Logic/workflows",
       "location": "[parameters('logicAppLocation')]",
       "tags": {

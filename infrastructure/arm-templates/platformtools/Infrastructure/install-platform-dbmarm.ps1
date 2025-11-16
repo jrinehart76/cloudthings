@@ -20,9 +20,9 @@ param (
  )
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-10m-dashboard-manager-armdeploy" `
+    -Name "deploy-MSP-dashboard-manager-armdeploy" `
     -ResourceGroupName $resourceGroup `
-    -TemplateFile ./templates/dashboard_manager/logic_apps/logicapp.10m.dashboard.deployment.json `
+    -TemplateFile ./templates/dashboard_manager/logic_apps/logicapp.MSP.dashboard.deployment.json `
     -logicAppLocation $logicAppLocation `
     -logicAppName $logicAppName `
     -integrationAccountName $integrationAccountName `

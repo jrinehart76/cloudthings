@@ -51,7 +51,7 @@ param (
  )
 
  New-AzResourceGroupDeployment `
-    -Name "deploy-10m-um-hybridWorker-$deploymentVersion" `
+    -Name "deploy-MSP-um-hybridWorker-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./UpdateManager/Compliance/Templates/updatecompliance-hybridworker.json `
     -count $count `

@@ -41,7 +41,7 @@
             "name": "[parameters('alertName')]",
             "location": "[parameters( 'workspaceLocation' )]",
             "tags": {
-                "ManagedBy": "10th Magnitude"
+                "ManagedBy": "ManagedServiceProvider"
             },
             "properties": {
                 "description": "[concat('Metric CPU Alert - ', parameters('alertSeverity'))]",

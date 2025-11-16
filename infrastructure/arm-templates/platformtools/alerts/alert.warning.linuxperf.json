@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-linux-vm-warning-cpu",
+                    "alertName": "MSP-linux-vm-warning-cpu",
                     "alertDescription": "Warning CPU Alert on Linux. v1",
                     "query": "Perf\r\n | where ObjectName has 'processor' and CounterName has '% processor time' and InstanceName has '_total'\r\n | where isnotempty(_ResourceId)\r\n | where Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average % CPU\"]=avg(CounterValue) by Computer\r\n | where [\"Average % CPU\"] between (95 .. 98)",
                     "frequencyInMinutes": 15,
@@ -31,7 +31,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-linux-vm-warning-mem",
+                    "alertName": "MSP-linux-vm-warning-mem",
                     "alertDescription": "Warning Memory Alert on Linux. v1",
                     "query": "Perf\r\n | where ObjectName has 'processor' and CounterName has '% processor time' and InstanceName has '_total'\r\n | where isnotempty(_ResourceId)\r\n | where Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average % CPU\"]=avg(CounterValue) by Computer\r\n | where [\"Average % CPU\"] between (85 .. 95)",
                     "frequencyInMinutes": 15,

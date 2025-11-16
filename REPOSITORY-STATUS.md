@@ -46,16 +46,16 @@ This repository contains valuable Azure governance and operations content but in
 The sanitization script identified:
 - **Files to modify:** 361 files
 - **Total replacements:** 1,028 references
-- **Customer names:** 10th Magnitude, Estee Lauder, Helmerich & Payne, Children's Mercy
+- **Customer names:** ManagedServiceProvider, Customer-A, Customer-B, Customer-C
 
 ### Reference Breakdown
 
 | Customer | References | Replacement |
 |----------|------------|-------------|
-| 10th Magnitude / 10M | ~300 | ManagedServiceProvider / MSP |
-| Estee Lauder / ELC | ~400 | Customer-A / CUST-A |
-| Helmerich & Payne / H&P | ~200 | Customer-B / CUST-B |
-| Children's Mercy / CMH | ~100 | Customer-C / CUST-C |
+| ManagedServiceProvider / MSP | ~300 | ManagedServiceProvider / MSP |
+| Customer-A / CUST-A | ~400 | Customer-A / CUST-A |
+| Customer-B / CUST-B | ~200 | Customer-B / CUST-B |
+| Customer-C / CUST-C | ~100 | Customer-C / CUST-C |
 | Project prefixes | ~28 | Generic prefixes |
 
 ## Before Making Public

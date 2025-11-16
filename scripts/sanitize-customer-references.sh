@@ -26,25 +26,25 @@ echo ""
 # Define replacements (case-insensitive where appropriate)
 declare -A replacements=(
     # Company names
-    ["10th Magnitude"]="ManagedServiceProvider"
-    ["10M"]="MSP"
-    ["10m"]="msp"
+    ["ManagedServiceProvider"]="ManagedServiceProvider"
+    ["MSP"]="MSP"
+    ["MSP"]="msp"
     
     # Customer names
-    ["Estee Lauder"]="Customer-A"
-    ["EsteeCloud"]="CustomerA-Cloud"
-    ["ELC"]="CUST-A"
-    ["Helmerich & Payne"]="Customer-B"
-    ["Helmerich and Payne"]="Customer-B"
-    ["H&P"]="CUST-B"
-    ["Children's Mercy"]="Customer-C"
-    ["CMH"]="CUST-C"
+    ["Customer-A"]="Customer-A"
+    ["CustomerA-Cloud"]="CustomerA-Cloud"
+    ["CUST-A"]="CUST-A"
+    ["Customer-B"]="Customer-B"
+    ["Customer-B"]="Customer-B"
+    ["CUST-B"]="CUST-B"
+    ["Customer-C"]="Customer-C"
+    ["CUST-C"]="CUST-C"
     
     # Project/environment names that might be customer-specific
-    ["EsteeCloud"]="CustomerCloud"
-    ["elc-"]="cust-a-"
-    ["hp-"]="cust-b-"
-    ["cmh-"]="cust-c-"
+    ["CustomerA-Cloud"]="CustomerCloud"
+    ["CUST-A-"]="cust-a-"
+    ["cust-b-"]="cust-b-"
+    ["CUST-C-"]="cust-c-"
 )
 
 # Function to sanitize a file

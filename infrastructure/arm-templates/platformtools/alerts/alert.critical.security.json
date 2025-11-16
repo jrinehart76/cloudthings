@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                {
-                    "alertName": "10m-high-security-alert",
+                    "alertName": "MSP-high-security-alert",
                     "alertDescription": "Security Center High Security Alert. 0320",
                     "query": "//alert query for high severity security alerts\r\n SecurityAlert\r\n | where AlertSeverity == 'High'\r\n | summarize Alerts=count() by ['Alert Name']=AlertName, ['Type']=AlertType, ['Impacted Resource']=tostring(split(ResourceId, '/',8))",
                     "frequencyInMinutes": 5,

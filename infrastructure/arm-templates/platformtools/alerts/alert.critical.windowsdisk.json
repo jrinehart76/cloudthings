@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-windows-vm-critical-datadisk",
+                    "alertName": "MSP-windows-vm-critical-datadisk",
                     "alertDescription": "[concat('Critical Disk Alert on Windows. ', parameters('version'))]",
                     "query": "//critical data disk on windows\r\n Perf\r\n | where CounterName has '% free space' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName !has 'C:'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize PercentFree=avg(CounterValue) by Computer, InstanceName\r\n | project Computer, InstanceName, PercentFree\r\n | where PercentFree < 10\r\n | join (Perf\r\n | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n ) on InstanceName, Computer\r\n | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName !has 'C:'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize averageMegabytesFree=avg(CounterValue) by Computer, InstanceName\r\n | project Computer, InstanceName, averageMegabytesFree\r\n | where averageMegabytesFree < 10210",
                     "frequencyInMinutes": 15,
@@ -34,7 +34,7 @@
                     "severity": 3
                 },
                 {
-                    "alertName": "10m-windows-vm-critical-osdisk",
+                    "alertName": "MSP-windows-vm-critical-osdisk",
                     "alertDescription": "[concat('Critical OS Disk Alert on Windows. ', parameters('version'))]",
                     "query": "//critical os disk on windows\r\n Perf\r\n | where CounterName has '% free space' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName has 'C:'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize PercentFree=avg(CounterValue) by Computer, InstanceName\r\n | project Computer, InstanceName, PercentFree\r\n | where PercentFree < 10\r\n | join (Perf\r\n | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'windows' | distinct Computer))\r\n ) on InstanceName, Computer\r\n | where InstanceName !has '_total' and InstanceName !contains 'harddisk' and InstanceName has 'C:'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize averageMegabytesFree=avg(CounterValue) by Computer, InstanceName\r\n | project Computer, InstanceName, averageMegabytesFree\r\n | where averageMegabytesFree < 1024",
                     "frequencyInMinutes": 15,

@@ -42,10 +42,10 @@ function Get-RoleDefinition {
 }
 
 <#
-ELC-CN-NonProd
+CUST-A-CN-NonProd
 93be8cec-1449-48fd-8b0d-64a650f2f826
 
-U-ELC-CEPChina-Admins-Cloud 
+U-CUST-A-CEPChina-Admins-Cloud 
 da79c72a-9d43-4227-8c98-d5075f8fa4ef
 
 #>

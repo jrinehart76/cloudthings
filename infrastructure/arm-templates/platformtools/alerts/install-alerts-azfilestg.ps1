@@ -38,7 +38,7 @@ param (
  )
 
 ##Create resource id variables
-$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/10m-alert-exec-s2"              #critical action group resource ID
+$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s2"              #critical action group resource ID
 
 $storageList = Get-AzStorageAccount
 

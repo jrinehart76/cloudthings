@@ -20,7 +20,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-kubernetes-controller-critical",
+                    "alertName": "MSP-kubernetes-controller-critical",
                     "alertDescription": "Critical Controller Alert on Kubernetes. v1",
                     "query": "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ContainerName contains \"gateway\" | summarize by ContainerID, ControllerName, TimeGenerated | join hint.strategy=shuffle ( ContainerLog ) on ContainerID | summarize by ControllerName, LogEntry, TimeGenerated | where LogEntry contains \"exception\" | summarize Exceptions=count() by Computer=ControllerName",
                     "frequencyInMinutes": 5,  

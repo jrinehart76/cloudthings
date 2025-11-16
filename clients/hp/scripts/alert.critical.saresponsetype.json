@@ -27,7 +27,7 @@
         {
             "type": "microsoft.insights/metricalerts",
             "apiVersion": "2018-03-01",
-            "name": "10m-storage-error-event-alert",
+            "name": "MSP-storage-error-event-alert",
             "location": "global",
             "properties": {
                 "description": "[concat('Azure Storage Account ResponseType metric alert. ', parameters('version'))]",
@@ -74,7 +74,7 @@
                 "targetResourceType": "Microsoft.Storage/storageAccounts",
                 "actions": [
                     {
-                        "actionGroupId": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('storageResourceGroup'), '/providers/Microsoft.insights/actiongroups/10m-alert-dev-proknow')]",
+                        "actionGroupId": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('storageResourceGroup'), '/providers/Microsoft.insights/actiongroups/MSP-alert-dev-proknow')]",
                         "webHookProperties": {
                         }
                     }

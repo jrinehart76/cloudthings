@@ -62,20 +62,20 @@ if (!$error) {
 }
 
 # Get Logic App callback Urls
-$sev2la = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "10m-event-sev-2"
-$sev2cb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "10m-event-sev-2" -TriggerName "manual"
-$sev3la = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "10m-event-sev-3"
-$sev3cb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "10m-event-sev-3" -TriggerName "manual"
-$sev4la = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "10m-event-sev-4"
-$sev4cb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "10m-event-sev-4" -TriggerName "manual"
-$infola = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "10m-event-info"
-$infocb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "10m-event-info" -TriggerName "manual"
-$azurela = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "10m-event-azure"
-$azurecb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "10m-event-azure" -TriggerName "manual"
-$secla = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "10m-event-security"
-$seccb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "10m-event-security" -TriggerName "manual"
-$webla = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "10m-event-web"
-$webcb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "10m-event-web" -TriggerName "manual"
+$sev2la = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "MSP-event-sev-2"
+$sev2cb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "MSP-event-sev-2" -TriggerName "manual"
+$sev3la = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "MSP-event-sev-3"
+$sev3cb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "MSP-event-sev-3" -TriggerName "manual"
+$sev4la = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "MSP-event-sev-4"
+$sev4cb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "MSP-event-sev-4" -TriggerName "manual"
+$infola = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "MSP-event-info"
+$infocb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "MSP-event-info" -TriggerName "manual"
+$azurela = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "MSP-event-azure"
+$azurecb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "MSP-event-azure" -TriggerName "manual"
+$secla = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "MSP-event-security"
+$seccb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "MSP-event-security" -TriggerName "manual"
+$webla = Get-AzLogicApp -ResourceGroupName $resourceGroup -Name "MSP-event-web"
+$webcb = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name "MSP-event-web" -TriggerName "manual"
 
 # Deploy Action Groups
 $error.clear()

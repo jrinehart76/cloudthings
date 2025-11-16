@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-oracle-dblog-nonprod-critical-alert",
+                    "alertName": "MSP-oracle-dblog-nonprod-critical-alert",
                     "alertDescription": "[concat('NONPROD Oracle Database Log Error Alert. ', parameters('version'))]",
                     "query": "//nonprod oracle dblog query\r\n Oracle_CL\r\n | where TimeGenerated > now(-1h)\r\n | where _ResourceId contains 'fea13a4d-60f74-44cc-8611-0cbc3602360413'\r\n | where RawData contains 'ORA-'\r\n | summarize by Error=RawData, Computer, TimeGenerated",
                     "frequencyInMinutes": 60,

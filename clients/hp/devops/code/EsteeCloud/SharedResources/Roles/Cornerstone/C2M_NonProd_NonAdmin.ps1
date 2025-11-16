@@ -35,7 +35,7 @@ function Assign-RoleDefinition {
 }
 #>
 <#
-ELC-AM-NONPROD-CORNERSTONE
+CUST-A-AM-NONPROD-CORNERSTONE
 fea13a4d-5f74-44cc-8611-0cbc35235413
 
 G-AM-Cornerstone-NonProd

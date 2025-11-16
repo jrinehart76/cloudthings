@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-postgresql-warning-cpu",
+                    "alertName": "MSP-postgresql-warning-cpu",
                     "alertDescription": "Warning CPU PostGRESQL. v1",
                     "query": "AzureMetrics | where TimeGenerated > now(-15) | where ResourceProvider has 'dbforpostgresql' and MetricName == 'cpu_percent' | project Computer=Resource, ResourceGroup, Average | summarize averagePercentCPU=percentiles(Average, 90) by Computer, ResourceGroup | where averagePercentCPU between (95 .. 98)",
                     "frequencyInMinutes": 15,
@@ -31,7 +31,7 @@
                     "severity": 4
                 },
                 {
-                    "alertName": "10m-postgresql-warning-mem",
+                    "alertName": "MSP-postgresql-warning-mem",
                     "alertDescription": "Warning Memory PostGRESQL. v1",
                     "query": "AzureMetrics | where TimeGenerated > now(-15m) | where ResourceProvider has 'dbforpostgresql' and MetricName has 'memory_percent' | project Computer=Resource, ResourceGroup, Average | summarize averagePercentMemory=percentiles(Average, 95) by Computer, ResourceGroup | where averagePercentMemory between (85 .. 95)",
                     "frequencyInMinutes": 15,

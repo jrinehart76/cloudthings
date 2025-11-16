@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-data-usage-alert-warning",
+                    "alertName": "MSP-data-usage-alert-warning",
                     "alertDescription": "Log Analytics Data Ingestion has exceeded acceptable thresholds. Please investigate. v1",
                     "query": "Usage | where TimeGenerated > now(-1d) | where IsBillable == true | summarize TotalVolumeGB = round(sum(Quantity)/1000) by bin(TimeGenerated, 1d) | where TotalVolumeGB >= 200",
                     "frequencyInMinutes": 60,

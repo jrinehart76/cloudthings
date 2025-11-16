@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-linux-vm-critical-root-mount",
+                    "alertName": "MSP-linux-vm-critical-root-mount",
                     "alertDescription": "[concat('Critical Root Mount on Linux. ', parameters('version'))]",
                     "query": "//critical root mount on linux\r\n Perf\r\n | where CounterName has '% used space' and Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | where isnotempty(_ResourceId)\r\n | where ObjectName has 'Logical Disk' and CounterName has '% used space' and InstanceName == '/'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize PercentUsed=round(avg(CounterValue),2) by Computer, InstanceName\r\n | project Computer, InstanceName, PercentUsed\r\n | where PercentUsed >= 90\r\n | join (Perf\r\n | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n ) on InstanceName, Computer\r\n | project Computer, InstanceName, CounterValue, PercentUsed\r\n | summarize averageGigabytesFree=round((avg(CounterValue)/1024),2) by Computer, InstanceName, PercentUsed\r\n | project Computer, InstanceName, [\"Average GB Free\"]=averageGigabytesFree, [\"Precent Used\"]=PercentUsed\r\n | where [\"Average GB Free\"] <= 10",
                     "frequencyInMinutes": 15,
@@ -34,7 +34,7 @@
                     "severity": 3
                 },
                 {
-                    "alertName": "10m-linux-vm-critical-data-mount",
+                    "alertName": "MSP-linux-vm-critical-data-mount",
                     "alertDescription": "[concat('Critical Data Mount Alert on Linux. ', parameters('version'))]",
                     "query": "//critical data mount on linux\r\n Perf\r\n | where CounterName has '% used space' and Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | where isnotempty(_ResourceId)\r\n | where InstanceName !has '_total' and InstanceName !contains '/mnt/resource' and InstanceName != '/'\r\n | project Computer, InstanceName, CounterValue\r\n | summarize PercentUsed=round(avg(CounterValue),2) by Computer, InstanceName\r\n | project Computer, InstanceName, PercentUsed\r\n | where PercentUsed >= 95\r\n | join (Perf\r\n | where CounterName has 'free megabytes' and Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n ) on InstanceName, Computer\r\n | project Computer, InstanceName, CounterValue, PercentUsed\r\n | summarize averageGigabytesFree=round((avg(CounterValue)/1024),2) by Computer, InstanceName, PercentUsed\r\n | project Computer, InstanceName, [\"Average GB Free\"]=averageGigabytesFree, [\"Percent Used\"]=PercentUsed\r\n | where [\"Average GB Free\"] <= 10",
                     "frequencyInMinutes": 15,

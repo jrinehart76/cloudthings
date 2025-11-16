@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "databaseAccounts_name": {
-            "defaultValue": "10m-dashboard-library-db",
+            "defaultValue": "MSP-dashboard-library-db",
             "type": "String"
         }
     },

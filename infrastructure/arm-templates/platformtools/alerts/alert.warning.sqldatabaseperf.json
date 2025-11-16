@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-sql-warning-cpu",
+                    "alertName": "MSP-sql-warning-cpu",
                     "alertDescription": "Warning CPU SQL. v1",
                     "query": "AzureMetrics | where TimeGenerated > now(-15m) | where ResourceProvider has \"sql\" and MetricName == \"cpu_percent\" | summarize averageCPU=round(avg(Average)) by Computer=Resource | where averageCPU between (85 .. 94)",
                     "frequencyInMinutes": 15,

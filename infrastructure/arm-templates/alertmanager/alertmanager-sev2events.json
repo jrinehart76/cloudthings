@@ -69,7 +69,7 @@
       }
     },
     {
-      "name": "10m-event-sev-2",
+      "name": "MSP-event-sev-2",
       "type": "Microsoft.Logic/workflows",
       "location": "[parameters('logicAppLocation')]",
       "tags": {

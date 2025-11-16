@@ -11,7 +11,7 @@ Introduction to Dashboard Manager
 ## **Dashboard Libary Cosmos Db**
 
 When choosing a database to store the information required of the dashboard library SQL was discussed.  However, it was determined the complexties to store and model the database were very high and a relational database was not a good fit for the goal of the dashboard.  Then it was decided to go with 
-The Dashboard Library is seperated into three containers in the Cosmos Db **10m-dashboard-library-db**.
+The Dashboard Library is seperated into three containers in the Cosmos Db **MSP-dashboard-library-db**.
 
 * DashboardType
 * parts
@@ -79,11 +79,11 @@ Parts
 
 ## **Dashboard Deployment**
 
-The Dashboard Deployment is executed by leveraging the logic app **10m-dashboard-deployment**.  This logic app receives an http request from **10m-dashboard-form-input** process the input and then builds an ARM Template dynamically.  The template represents a dashboard for the application which is being monitored.
+The Dashboard Deployment is executed by leveraging the logic app **MSP-dashboard-deployment**.  This logic app receives an http request from **MSP-dashboard-form-input** process the input and then builds an ARM Template dynamically.  The template represents a dashboard for the application which is being monitored.
 
 ### **Integration Account**
 
-One of the requirements to handle the complexity of this Logic App was to use Inline JavaScript steps.  The prerequist to running Inline JavaScript code in a Logic App is to have an _Integration Account_ associated with the Logic App. [Click here to learn more about Integration Accounts](https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-enterprise-integration-create-integration-account).  The integration account associated with the **10m-dashboard-deployment** is **10m-dashaboard-integration-account** and is currently configured for the Free Pricing Tier.
+One of the requirements to handle the complexity of this Logic App was to use Inline JavaScript steps.  The prerequist to running Inline JavaScript code in a Logic App is to have an _Integration Account_ associated with the Logic App. [Click here to learn more about Integration Accounts](https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-enterprise-integration-create-integration-account).  The integration account associated with the **MSP-dashboard-deployment** is **MSP-dashaboard-integration-account** and is currently configured for the Free Pricing Tier.
 
 ### **Logic App**
 
@@ -174,8 +174,8 @@ return template;
     1. api.connection.arm.json
     1. api.connection.cosmosdb.json
     1. integration.account.template.json
-1. logicapp.10m.dashboard.deployment.json
-1. logicapp.10m.dashboard.form.input.json
+1. logicapp.MSP.dashboard.deployment.json
+1. logicapp.MSP.dashboard.form.input.json
 
 ## **Authors**
 

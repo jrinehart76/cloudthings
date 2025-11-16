@@ -57,7 +57,7 @@
                                     "settings": {
                                         "content": {
                                             "settings": {
-                                                "content": "#### 10th Magnitude\r\n#### Azure Managed Services\r\n#### support@10thmagnitude.com",
+                                                "content": "#### ManagedServiceProvider\r\n#### Azure Managed Services\r\n#### support@10thmagnitude.com",
                                                 "title": "[subscription().displayName]",
                                                 "subtitle": ""
                                             }

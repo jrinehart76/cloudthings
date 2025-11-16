@@ -46,19 +46,19 @@ Thumbs.db
 # dotCover
 *.dotCover
 
-/code/.vs/esteecloud/DesignTimeBuild/.dtbcache
-/code/.vs/esteecloud/v15/.suo
-/code/EsteeCloud/Data/DataCatalog
-/code/EsteeCloud/bin
+/code/.vs/CustomerA-Cloud/DesignTimeBuild/.dtbcache
+/code/.vs/CustomerA-Cloud/v15/.suo
+/code/CustomerA-Cloud/Data/DataCatalog
+/code/CustomerA-Cloud/bin
 /code/.vs/
 /.vs/ProjectSettings.json
 
 /.vs
-/code/EsteeCloud/.vs
-/code/EsteeCloud/Scripts/DataFactory
-/code/EsteeCloud/Scripts/RecoveryServices/AzureBackup/Backup-VMRecoveryServicesVault.ps1
-/code/EsteeCloud/Scripts/ServicePrincipals/Backup-VMRecoveryServicesVault.ps1
-/code/EsteeCloud/Scripts/ServicePrincipals/Retreve-DataFactoryServicePrincipal.ps1
-/code/EsteeCloud/Templates/VMs/RecoveryServices/recoveryService.json
-code/EsteeCloud/Scripts/SAPHANA/sap_config.retry
-code/EsteeCloud/Scripts/Kubernetes/credentials-velero
+/code/CustomerA-Cloud/.vs
+/code/CustomerA-Cloud/Scripts/DataFactory
+/code/CustomerA-Cloud/Scripts/RecoveryServices/AzureBackup/Backup-VMRecoveryServicesVault.ps1
+/code/CustomerA-Cloud/Scripts/ServicePrincipals/Backup-VMRecoveryServicesVault.ps1
+/code/CustomerA-Cloud/Scripts/ServicePrincipals/Retreve-DataFactoryServicePrincipal.ps1
+/code/CustomerA-Cloud/Templates/VMs/RecoveryServices/recoveryService.json
+code/CustomerA-Cloud/Scripts/SAPHANA/sap_config.retry
+code/CustomerA-Cloud/Scripts/Kubernetes/credentials-velero

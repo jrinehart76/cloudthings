@@ -1,6 +1,6 @@
 ﻿
 Param(
-[string]$cosmosRGName = "RG-AM-EastUS-POC-10M-CEP-CosmosDB",
+[string]$cosmosRGName = "RG-AM-EastUS-POC-MSP-CEP-CosmosDB",
 [string]$apiVersion = "2015-04-08",
 [string]$acctName = "cosdb-am-eastus-poc",
 [string]$isVirtualNetworkFilterEnabled ="True",

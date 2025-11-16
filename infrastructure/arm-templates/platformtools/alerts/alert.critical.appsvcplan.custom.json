@@ -26,9 +26,9 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "[concat('10m-', parameters('planName') ,'-critical-cpu')]",
+                    "alertName": "[concat('MSP-', parameters('planName') ,'-critical-cpu')]",
                     "alertDescription": "[concat('Critical CPU Application Service Plan. ', parameters('version'))]",
-                    "query": "[concat('AzureMetrics | where TimeGenerated > now(-10m) | where ResourceProvider has \"microsoft.web\" and MetricName has \"cpupercentage\" | where Resource has \"', parameters('planName') ,'\" | summarize maxCPU=round(min_of(max(Maximum), 100.0)) by Computer=Resource | where maxCPU >= 90')]",
+                    "query": "[concat('AzureMetrics | where TimeGenerated > now(-MSP) | where ResourceProvider has \"microsoft.web\" and MetricName has \"cpupercentage\" | where Resource has \"', parameters('planName') ,'\" | summarize maxCPU=round(min_of(max(Maximum), 100.0)) by Computer=Resource | where maxCPU >= 90')]",
                     "frequencyInMinutes": 10,
                     "timeWindowInMinutes": 10,
                     "emailSubject": "[concat(parameters('customerId'),'-Critical-CPU-AppSVCPlan')]",
@@ -37,7 +37,7 @@
                     "severity": 1
                 },
                 {
-                    "alertName": "[concat('10m-', parameters('planName') ,'-critical-mem')]",
+                    "alertName": "[concat('MSP-', parameters('planName') ,'-critical-mem')]",
                     "alertDescription": "[concat('Critical Memory Application Service Plan. ', parameters('version'))]",
                     "query": "[concat('AzureMetrics | where TimeGenerated > now(-45m) | where ResourceProvider has \"microsoft.web\" and MetricName has \"memorypercentage\" | where Resource has \"', parameters('planName') ,'\" | summarize maxMem=round(min_of(max(Maximum), 100.0)) by Computer=Resource | where maxMem >= 90')]",
                     "frequencyInMinutes": 45,

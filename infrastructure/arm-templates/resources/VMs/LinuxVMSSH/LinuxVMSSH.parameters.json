@@ -40,13 +40,13 @@
       "value": "RG-AM-EastUS-DevOpsPOC-Mgmt"
     },
     "virtualNetworkName": {
-      "value": "VNET-AM-EastUS-POC-10M"
+      "value": "VNET-AM-EastUS-POC-MSP"
     },
     "subnetName": {
       "value": "default"
     },
     "availabilitySetName": {
-      "value": "AS-AM-EastUS-POC-10M-Server"
+      "value": "AS-AM-EastUS-POC-MSP-Server"
     },
     "availabilitySetUpdateDomainCount": {
       "value": 5

@@ -25,18 +25,18 @@ param (
  )
 
 ##Create resource id variables
-$actionGroupSvcId   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/10m-alert-servicehealth"              #critical action group resource ID
+$actionGroupSvcId   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-servicehealth"              #critical action group resource ID
 
 New-AzResourceGroupDeployment `
     -Name "deploy-resourcehealth-critical-alerts" `
     -ResourceGroupName $agResourceGroup `
     -TemplateFile ./alert.critical.resourcehealth.json `
-    -alertNameResource "10m-azure-resource-alert" `
+    -alertNameResource "MSP-azure-resource-alert" `
     -actionGroupId $actionGroupSvcId
 
 New-AzResourceGroupDeployment `
     -Name "deploy-servicehealth-critical-alerts" `
     -ResourceGroupName $agResourceGroup `
     -TemplateFile ./alert.critical.servicehealth.json `
-    -alertNameService "10m-azure-service-alert" `
+    -alertNameService "MSP-azure-service-alert" `
     -actionGroupId $actionGroupSvcId

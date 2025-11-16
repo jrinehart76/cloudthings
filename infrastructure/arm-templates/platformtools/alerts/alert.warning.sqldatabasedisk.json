@@ -20,9 +20,9 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-sql-warning-disk",
+                    "alertName": "MSP-sql-warning-disk",
                     "alertDescription": "Warning Disk SQL. v1",
-                    "query": "AzureMetrics | where TimeGenerated > now(-10m) | where ResourceProvider has \"sql\" and MetricName == \"storage_percent\" | summarize totalStorage=round(min_of(max(Maximum), 100.0)) by Computer=Resource | where totalStorage between (70 .. 84)",
+                    "query": "AzureMetrics | where TimeGenerated > now(-MSP) | where ResourceProvider has \"sql\" and MetricName == \"storage_percent\" | summarize totalStorage=round(min_of(max(Maximum), 100.0)) by Computer=Resource | where totalStorage between (70 .. 84)",
                     "frequencyInMinutes": 10,
                     "timeWindowInMinutes": 10,
                     "emailSubject": "[concat(parameters('customerId'), '-Warning-Disk-SQL')]",

@@ -210,7 +210,7 @@
     },
     "availabilitySetName": {
       "type": "string",
-      "defaultValue": "AS-AM-EastUS-POC-10M-Server",
+      "defaultValue": "AS-AM-EastUS-POC-MSP-Server",
       "metadata": {
         "description": "The availability set that will house the VM"
       }

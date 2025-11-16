@@ -20,7 +20,7 @@
         "alertCopy": {
             "warnAlertDetails": [
                 {
-                    "alertName": "10m-rpo-warning",
+                    "alertName": "MSP-rpo-warning",
                     "alertDescription": "Replication RPO violation. v1",
                     "query": "AzureDiagnostics | where TimeGenerated > now(-4h) | where name_s != '' and isnotnull(rpoInSeconds_d) and Resource has '' | project Computer=name_s, rpoInHours=((rpoInSeconds_d / 60) / 60), Vault=Resource, TimeGenerated | summarize avgRPOInHours=avg(rpoInHours) by Computer, Vault, TimeGenerated | where avgRPOInHours > 4 and TimeGenerated < now(-1h)",
                     "frequencyInMinutes": 5,

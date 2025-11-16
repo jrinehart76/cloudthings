@@ -19,7 +19,7 @@
       "name": "[parameters('routeTableName')]",
       "location": "[parameters('Location')]",
       "tags": {
-        "ManagedBy": "10th Magnitude"
+        "ManagedBy": "ManagedServiceProvider"
       },
       "properties": {
         "disableBgpRoutePropagation": true,

@@ -27,7 +27,7 @@
         {
             "type": "microsoft.insights/metricalerts",
             "apiVersion": "2018-03-01",
-            "name": "10m-storage-authentication-error",
+            "name": "MSP-storage-authentication-error",
             "location": "global",
             "properties": {
                 "description": "[concat('Azure Storage Account ResponseType metric alert. ', parameters('version'))]",
@@ -74,7 +74,7 @@
                 "targetResourceType": "Microsoft.Storage/storageAccounts",
                 "actions": [
                     {
-                        "actionGroupId": "/subscriptions/987c15f0-5fa8-4216-9c10-8f3c8f5bd319/resourcegroups/prod-eus2-mt-us-proknow-rg/providers/microsoft.insights/actiongroups/10m-alert-dev-proknow",
+                        "actionGroupId": "/subscriptions/987c15f0-5fa8-4216-9c10-8f3c8f5bd319/resourcegroups/prod-eus2-mt-us-proknow-rg/providers/microsoft.insights/actiongroups/MSP-alert-dev-proknow",
                         "webHookProperties": {
                         }
                     }

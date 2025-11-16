@@ -35,7 +35,7 @@ param (
  )
 
 ##Create resource id variables      
-$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/10m-alert-highsec-s2"   
+$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-highsec-s2"   
 
 New-AzResourceGroupDeployment `
     -Name "deploy-high-security-alerts" `

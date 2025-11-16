@@ -223,9 +223,9 @@
   },
   "variables": {
     "nestedTemplates": {
-      "omsRecoveryServices": "[concat(parameters('_artifactsLocation'), '/EsteeCloud/CEP/OMS/nestedtemplates/omsRecoveryServices.json', parameters('_artifactsLocationSasToken'))]",
-      "omsAutomation": "[concat(parameters('_artifactsLocation'), '/EsteeCloud/CEP/OMS/nestedtemplates/omsAutomation.json', parameters('_artifactsLocationSasToken'))]",
-      "omsWorkspace": "[concat(parameters('_artifactsLocation'), '/EsteeCloud/CEP/OMS/nestedtemplates/omsWorkspace.json', parameters('_artifactsLocationSasToken'))]"
+      "omsRecoveryServices": "[concat(parameters('_artifactsLocation'), '/CustomerA-Cloud/CEP/OMS/nestedtemplates/omsRecoveryServices.json', parameters('_artifactsLocationSasToken'))]",
+      "omsAutomation": "[concat(parameters('_artifactsLocation'), '/CustomerA-Cloud/CEP/OMS/nestedtemplates/omsAutomation.json', parameters('_artifactsLocationSasToken'))]",
+      "omsWorkspace": "[concat(parameters('_artifactsLocation'), '/CustomerA-Cloud/CEP/OMS/nestedtemplates/omsWorkspace.json', parameters('_artifactsLocationSasToken'))]"
     },
     "baseNamingPrefix": "[concat(parameters('region'), '-',  parameters('location'), '-', parameters('environment'), '-', parameters('application'))]",
     "omsRecoveryVaultName": "[concat('OMSVault-', variables('baseNamingPrefix'))]",

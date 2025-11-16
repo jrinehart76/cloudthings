@@ -1,6 +1,6 @@
 az login --username dwentzel@10thmagnitude.com 
 
-az account set --subscription ELC-AM-POC-DevOps
+az account set --subscription CUST-A-AM-POC-DevOps
 az account list
 
 az group create --name rgTestDaveHDI --location "eastus2"
@@ -8,7 +8,7 @@ az group create --name rgTestDaveHDI --location "eastus2"
 # HDI-base testing
 az group create --name rgTestKafka2 --location "eastus2"
 # prereq
-az group deployment create --resource-group rgTestKafka2 --template-file code/EsteeCloud/Data/DataLake/ADLS.json
+az group deployment create --resource-group rgTestKafka2 --template-file code/CustomerA-Cloud/Data/DataLake/ADLS.json
 
 # parameters 
 # adlStoreName (based on above):adlsameastusdevlmx
@@ -17,7 +17,7 @@ az group deployment create --resource-group rgTestKafka2 --template-file code/Es
 # keyName:  adlskey
 # keyVersion:  4b76d54d85884a789d340a5bcd76e28d
 
-az group deployment create --resource-group rgTestKafka2 --template-file code/EsteeCloud/Data/HDInsight/HDI-base.json
+az group deployment create --resource-group rgTestKafka2 --template-file code/CustomerA-Cloud/Data/HDInsight/HDI-base.json
 
 #SPN info, this must be known ahead of time and is not part of keyvault
 cert:  elc10mHdiTemplate
@@ -32,7 +32,7 @@ MIIKCgIBAzCCCcYGCSqGSIb3DQEHAaCCCbcEggmzMIIJrzCCBggGCSqGSIb3DQEHAaCCBfkEggX1MIIF
 
 ## HDI-standalone
 az group create --name rgTestDaveHDI --location "eastus2"
-az group deployment create --resource-group rgTestDaveHDI --template-file code/EsteeCloud/Data/HDInsight/HDI-standalone.json
+az group deployment create --resource-group rgTestDaveHDI --template-file code/CustomerA-Cloud/Data/HDInsight/HDI-standalone.json
 
 
 az group delete --name rgTestDaveHDI

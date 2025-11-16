@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-appsvc-critical-cpu",
+                    "alertName": "MSP-appsvc-critical-cpu",
                     "alertDescription": "[concat('Critical CPU Application Service Plan. ', parameters('version'))]",
                     "query": "AzureMetrics | where TimeGenerated > now(-15m) | where ResourceProvider has 'microsoft.web' and MetricName has 'cpupercentage' | summarize ['Maximum CPU']=round(min_of(max(Maximum), 100.0)) by Computer=Resource | where ['Maximum CPU'] > 95",
                     "frequencyInMinutes": 15,
@@ -34,7 +34,7 @@
                     "severity": 3
                 },
                 {
-                    "alertName": "10m-appsvc-critical-mem",
+                    "alertName": "MSP-appsvc-critical-mem",
                     "alertDescription": "[concat('Critical Memory Application Service Plan. ', parameters('version'))]",
                     "query": "AzureMetrics | where TimeGenerated > now(-15m) | where ResourceProvider has 'microsoft.web' and MetricName has 'memorypercentage' | summarize ['Maximum Memory']=round(min_of(max(Maximum), 100.0)) by Computer=Resource | where ['Maximum Memory'] > 90",
                     "frequencyInMinutes": 15,

@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "10m-azure-backup-failure-critical",
+                    "alertName": "MSP-azure-backup-failure-critical",
                     "alertDescription": "[concat('Azure Backup failure alert.', parameters('version'))]",
                     "query": "//azure backup failure alert query\r\n AddonAzureBackupJobs\r\n | where JobFailureCode != 'Success' and JobOperation has 'backup'\r\n | join kind=inner\r\n (\r\n CoreAzureBackup\r\n | where OperationName has 'BackupItem'\r\n | where BackupItemType has 'VM' and BackupManagementType has 'IaaSVM'\r\n | distinct BackupItemUniqueId, BackupItemFriendlyName\r\n) on BackupItemUniqueId\r\n | extend Computer=tolower(BackupItemFriendlyName)\r\n | summarize Failures=count() by Computer\r\n | where Failures > 0",
                     "frequencyInMinutes": 60,

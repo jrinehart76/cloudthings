@@ -30,9 +30,9 @@ param (
     [string]$ResourceGroupName
 )
 
-$alerts = Get-AzResource -ResourceGroupName $ResourceGroupName -ResourceType microsoft.insights/scheduledqueryrules | Where-Object {($_.Name -like "10m-*") -and ($_.Name -notlike "*oracle*")}
-$actions = Get-AzResource -ResourceGroupName $ResourceGroupName -ResourceType microsoft.insights/actiongroups | Where-Object Name -like "10m-*"
-$logicApps = Get-AzResource -ResourceGroupName $ResourceGroupName -ResourceType Microsoft.Logic/workflows | Where-Object Name -like "10m-*"
+$alerts = Get-AzResource -ResourceGroupName $ResourceGroupName -ResourceType microsoft.insights/scheduledqueryrules | Where-Object {($_.Name -like "MSP-*") -and ($_.Name -notlike "*oracle*")}
+$actions = Get-AzResource -ResourceGroupName $ResourceGroupName -ResourceType microsoft.insights/actiongroups | Where-Object Name -like "MSP-*"
+$logicApps = Get-AzResource -ResourceGroupName $ResourceGroupName -ResourceType Microsoft.Logic/workflows | Where-Object Name -like "MSP-*"
 
 if ($alerts) {
     foreach ($alert in $alerts) {
@@ -50,7 +50,7 @@ if ($alerts) {
     }
 }
 else {
-    Write-Output "No 10M alerts found"
+    Write-Output "No MSP alerts found"
 }
 
 if ($actions) {
@@ -69,7 +69,7 @@ if ($actions) {
     }
 }
 else {
-    Write-Output "No 10M Action Groups found"
+    Write-Output "No MSP Action Groups found"
 }
 
 if ($logicApps) {
@@ -88,5 +88,5 @@ if ($logicApps) {
     }
 }
 else {
-    Write-Output "No 10M Logic Apps found"
+    Write-Output "No MSP Logic Apps found"
 }

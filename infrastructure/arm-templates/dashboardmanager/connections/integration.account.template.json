@@ -7,7 +7,7 @@
         {
             "type": "Microsoft.Logic/integrationAccounts",
             "apiVersion": "2016-06-01",
-            "name": "10m-dashaboard-integration-account",
+            "name": "MSP-dashaboard-integration-account",
             "location": "eastus",
             "sku": {
                 "name": "Free"

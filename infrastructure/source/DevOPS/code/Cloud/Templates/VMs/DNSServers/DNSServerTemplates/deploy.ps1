@@ -1,9 +1,9 @@
-$subName = "ELC-AM-PROD-PAAS"
+$subName = "CUST-A-AM-PROD-PAAS"
 $rgName = "RG-AM-EastUS-Prod-PaaS-DNSServers"
 $region = "eastus"
 $deploymentPrefix = "US-AZR-PUDNS"
 $templateFile = ".\Templates\VM\Linux-BindServer-nCopy\template.PasswordAuth.json"
-$parameterFile = ".\Parameters\ELC-AM-PROD-PAAS\RG-AM-EastUS-Prod-PaaS-DNSServers\parameters.json"
+$parameterFile = ".\Parameters\CUST-A-AM-PROD-PAAS\RG-AM-EastUS-Prod-PaaS-DNSServers\parameters.json"
 $updateRGTags = $true
 $verboseOutput = $true
 

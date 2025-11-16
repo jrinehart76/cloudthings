@@ -8,11 +8,11 @@
         },
         "appServicePlanName": {
             "type": "string",
-            "defaultValue": "10m-event-service-plan"
+            "defaultValue": "MSP-event-service-plan"
         },
         "functionName": {
             "type": "string",
-            "defaultValue": "10m-event-processing-function"
+            "defaultValue": "MSP-event-processing-function"
         }
     },
     "variables": {
