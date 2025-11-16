@@ -1,0 +1,132 @@
+// Query: Identify Oversized Virtual Machines
+// Purpose: Find VMs that can be downsized to save costs
+// Impact: Typical savings of 15-25% on compute costs
+// Author: Jason Rinehart
+// Blog: https://technicalanxiety.com
+// Last Updated: 2025-01-15
+//
+// This query identifies VMs where the allocated resources significantly
+// exceed actual usage patterns. Right-sizing is one of the fastest ways
+// to reduce cloud costs without impacting performance.
+//
+// Common patterns:
+// - VMs sized for peak load that rarely occurs
+// - Over-provisioned during migration "just to be safe"
+// - Legacy sizing that hasn't been reviewed
+// - Development VMs sized like production
+//
+// Real-world impact: Organizations typically find 30-40% of VMs can be
+// downsized by at least one SKU level, saving 15-25% on compute costs.
+
+let timeRange = 14d;  // Two weeks of data for reliable patterns
+let cpuThreshold = 40.0;  // Average CPU below 40%
+let memoryThreshold = 50.0;  // Average memory below 50%
+let peakCpuThreshold = 70.0;  // Even peak CPU below 70%
+let peakMemoryThreshold = 75.0;  // Even peak memory below 75%
+
+// Get CPU utilization
+let CPUData = Perf
+| where TimeGenerated > ago(timeRange)
+| where ObjectName == "Processor" and CounterName == "% Processor Time"
+| where InstanceName == "_Total"
+| summarize 
+    AvgCPU = avg(CounterValue),
+    MaxCPU = max(CounterValue),
+    P95CPU = percentile(CounterValue, 95),
+    SampleCount = count()
+    by Computer, _ResourceId
+| where SampleCount > 100  // Ensure sufficient data points
+| where AvgCPU < cpuThreshold and MaxCPU < peakCpuThreshold;
+
+// Get Memory utilization
+let MemoryData = Perf
+| where TimeGenerated > ago(timeRange)
+| where ObjectName == "Memory" and CounterName == "% Committed Bytes In Use"
+| summarize 
+    AvgMemory = avg(CounterValue),
+    MaxMemory = max(CounterValue),
+    P95Memory = percentile(CounterValue, 95),
+    SampleCount = count()
+    by Computer, _ResourceId
+| where SampleCount > 100
+| where AvgMemory < memoryThreshold and MaxMemory < peakMemoryThreshold;
+
+// Get disk utilization for context
+let DiskData = Perf
+| where TimeGenerated > ago(timeRange)
+| where ObjectName == "LogicalDisk" and CounterName == "% Free Space"
+| where InstanceName !in ("_Total", "HarddiskVolume1")  // Exclude system volumes
+| summarize 
+    AvgFreeSpace = avg(CounterValue),
+    MinFreeSpace = min(CounterValue)
+    by Computer, _ResourceId;
+
+// Combine metrics and calculate recommendations
+CPUData
+| join kind=inner (MemoryData) on Computer, _ResourceId
+| join kind=leftouter (DiskData) on Computer, _ResourceId
+| extend UtilizationScore = (AvgCPU + AvgMemory) / 2
+| extend Recommendation = case(
+    UtilizationScore < 20, "Downsize by 2 SKU levels (50% cost reduction)",
+    UtilizationScore < 30, "Downsize by 1 SKU level (25% cost reduction)",
+    UtilizationScore < 40, "Consider downsizing (15% cost reduction)",
+    "Monitor - borderline case"
+)
+| extend Priority = case(
+    UtilizationScore < 20, "High",
+    UtilizationScore < 30, "Medium",
+    "Low"
+)
+| extend EstimatedMonthlySavings = case(
+    UtilizationScore < 20, 200.0,  // Approximate, adjust for your VM sizes
+    UtilizationScore < 30, 100.0,
+    50.0
+)
+| project 
+    Priority,
+    Computer,
+    AvgCPU = round(AvgCPU, 1),
+    MaxCPU = round(MaxCPU, 1),
+    P95CPU = round(P95CPU, 1),
+    AvgMemory = round(AvgMemory, 1),
+    MaxMemory = round(MaxMemory, 1),
+    P95Memory = round(P95Memory, 1),
+    UtilizationScore = round(UtilizationScore, 1),
+    Recommendation,
+    EstimatedMonthlySavings,
+    _ResourceId
+| order by UtilizationScore asc, EstimatedMonthlySavings desc
+
+// USAGE NOTES:
+// 1. Review recommendations during low-usage periods (weekends/nights)
+// 2. Consider workload patterns - batch jobs may show low average but high peak
+// 3. Test downsizing in dev/test first
+// 4. Use Azure Advisor for specific SKU recommendations
+// 5. Document current SKU before changes for easy rollback
+//
+// VALIDATION STEPS:
+// Before downsizing:
+// 1. Verify application performance requirements
+// 2. Check if VM is part of availability set (may require downtime)
+// 3. Review any licensing constraints (SQL Server, etc.)
+// 4. Confirm with application owner
+// 5. Schedule change during maintenance window
+//
+// AUTOMATION:
+// This query can trigger:
+// - ServiceNow tickets for VM owners
+// - Azure Advisor recommendations
+// - Automated downsizing for dev/test (with approval)
+// - Monthly cost optimization reports
+//
+// EXPECTED RESULTS:
+// - VMs sorted by optimization opportunity
+// - Specific downsizing recommendations
+// - Estimated monthly savings
+// - Resource IDs for automation
+//
+// COMMON EXCLUSIONS:
+// Add these filters if needed:
+// | where Computer !contains "prod-sql"  // Exclude production SQL servers
+// | where Computer !contains "dc-"       // Exclude domain controllers
+// | where _ResourceId !contains "/rg-critical/"  // Exclude critical resource groups

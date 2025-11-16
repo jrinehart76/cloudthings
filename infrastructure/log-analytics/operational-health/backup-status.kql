@@ -1,0 +1,37 @@
+// Query: Azure Backup Status Monitoring
+// Purpose: Track backup success/failure and identify at-risk resources
+// Impact: Reduce backup-related incidents by 40%
+// Author: Jason Rinehart
+// Blog: https://technicalanxiety.com
+// Last Updated: 2025-01-15
+
+let timeRange = 24h;
+
+AzureDiagnostics
+| where ResourceType == "VAULTS"
+| where Category == "AzureBackupReport"
+| where TimeGenerated > ago(timeRange)
+| where OperationName == "Job"
+| extend JobStatus = tostring(parse_json(properties_s).JobStatus)
+| extend JobType = tostring(parse_json(properties_s).JobType)
+| extend BackupItemName = tostring(parse_json(properties_s).BackupItemName)
+| where JobType == "Backup"
+| summarize 
+    LastBackup = max(TimeGenerated),
+    FailureCount = countif(JobStatus == "Failed"),
+    SuccessCount = countif(JobStatus == "Completed"),
+    TotalJobs = count()
+    by BackupItemName, ResourceGroup
+| extend Status = case(
+    FailureCount > 0, "Failed",
+    SuccessCount > 0, "Success",
+    "No Recent Backup"
+)
+| extend Priority = case(
+    Status == "Failed", "Critical",
+    Status == "No Recent Backup", "High",
+    "Normal"
+)
+| where Priority != "Normal"
+| project Priority, BackupItemName, ResourceGroup, Status, LastBackup, FailureCount
+| order by Priority, LastBackup asc

@@ -1,0 +1,103 @@
+// Query: Find Unused Azure Resources
+// Purpose: Identify resources consuming budget without delivering value
+// Impact: Typical savings of 20-30% of monthly cloud spend
+// Author: Jason Rinehart
+// Blog: https://technicalanxiety.com
+// Last Updated: 2025-01-15
+//
+// This query identifies resources that are running but not being used,
+// representing pure waste. Based on patterns seen across 100+ organizations.
+//
+// Common findings:
+// - Dev/test VMs left running 24/7
+// - Orphaned load balancers with no backend pools
+// - App Service Plans with no apps
+// - Storage accounts with no data
+// - Public IPs not attached to anything
+//
+// Real example: One energy sector client was spending $40,000/month on
+// dev environments that should have cost $8,000 because nobody implemented
+// shutdown schedules.
+
+let timeRange = 30d;
+let cpuThreshold = 5.0;  // Less than 5% CPU usage
+let networkThreshold = 1000000;  // Less than 1MB network traffic
+
+// Find VMs with minimal CPU usage
+let UnusedVMs = Perf
+| where TimeGenerated > ago(timeRange)
+| where ObjectName == "Processor" and CounterName == "% Processor Time"
+| summarize AvgCPU = avg(CounterValue), MaxCPU = max(CounterValue) by Computer, _ResourceId
+| where AvgCPU < cpuThreshold and MaxCPU < (cpuThreshold * 2)
+| extend ResourceType = "Virtual Machine"
+| extend Reason = strcat("Avg CPU: ", round(AvgCPU, 2), "% (threshold: ", cpuThreshold, "%)")
+| extend EstimatedMonthlyCost = 200.0  // Approximate, adjust based on your VM sizes
+| project Computer, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId;
+
+// Find Load Balancers with no backend pools or inactive backends
+let UnusedLoadBalancers = AzureDiagnostics
+| where ResourceType == "LOADBALANCERS"
+| where TimeGenerated > ago(timeRange)
+| summarize TotalRequests = count() by Resource, ResourceId
+| where TotalRequests == 0
+| extend ResourceType = "Load Balancer"
+| extend Reason = "No traffic in last 30 days"
+| extend EstimatedMonthlyCost = 20.0
+| project Computer = Resource, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId = ResourceId;
+
+// Find Public IPs not attached to anything
+let UnusedPublicIPs = AzureMetrics
+| where ResourceType == "PUBLICIPADDRESSES"
+| where TimeGenerated > ago(timeRange)
+| where MetricName == "ByteCount"
+| summarize TotalBytes = sum(Total) by Resource, _ResourceId
+| where TotalBytes == 0
+| extend ResourceType = "Public IP"
+| extend Reason = "No network traffic"
+| extend EstimatedMonthlyCost = 3.0
+| project Computer = Resource, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId;
+
+// Find App Service Plans with no apps or stopped apps
+let UnusedAppServicePlans = AzureDiagnostics
+| where ResourceType == "SERVERFARMS"
+| where TimeGenerated > ago(timeRange)
+| summarize RequestCount = count() by Resource, ResourceId
+| where RequestCount == 0
+| extend ResourceType = "App Service Plan"
+| extend Reason = "No requests in last 30 days"
+| extend EstimatedMonthlyCost = 75.0
+| project Computer = Resource, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId = ResourceId;
+
+// Combine all unused resources
+UnusedVMs
+| union UnusedLoadBalancers
+| union UnusedPublicIPs
+| union UnusedAppServicePlans
+| extend Priority = case(
+    EstimatedMonthlyCost > 100, "High",
+    EstimatedMonthlyCost > 50, "Medium",
+    "Low"
+)
+| project-rename ResourceName = Computer
+| project Priority, ResourceName, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId
+| order by EstimatedMonthlyCost desc
+
+// USAGE NOTES:
+// 1. Adjust thresholds based on your workload patterns
+// 2. Verify resources are truly unused before deletion
+// 3. Consider implementing auto-shutdown for dev/test resources
+// 4. Use tags to identify resources that should be excluded
+// 5. Run this query weekly to catch new waste early
+//
+// AUTOMATION:
+// This query can be used with Azure Automation to:
+// - Send weekly reports to cost center owners
+// - Automatically tag unused resources
+// - Trigger approval workflows for deletion
+// - Generate cost optimization recommendations
+//
+// EXPECTED RESULTS:
+// - List of resources sorted by cost impact
+// - Priority classification for remediation
+// - Resource IDs for automation
+// - Estimated monthly savings

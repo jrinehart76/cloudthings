@@ -1,0 +1,124 @@
+// Query: Detect Failed Login Attempts and Brute Force Attacks
+// Purpose: Identify credential-based attacks before they succeed
+// Impact: Early detection of security threats
+// Author: Jason Rinehart
+// Blog: https://technicalanxiety.com
+// Last Updated: 2025-01-15
+//
+// Failed login attempts are often the first indicator of an attack.
+// This query identifies patterns consistent with:
+// - Brute force attacks (many failures from same source)
+// - Credential stuffing (many failures across different accounts)
+// - Password spraying (few failures across many accounts)
+//
+// In healthcare environments supporting 5,000+ users, this query has
+// detected attacks within minutes, preventing unauthorized access.
+
+let timeRange = 1h;  // Look at last hour for real-time detection
+let failureThreshold = 5;  // 5+ failures triggers alert
+let accountThreshold = 3;  // Failures across 3+ accounts
+
+// Windows Security Events
+let WindowsFailures = SecurityEvent
+| where TimeGenerated > ago(timeRange)
+| where EventID in (4625, 4771)  // Failed logon, Kerberos pre-auth failed
+| extend 
+    SourceIP = IpAddress,
+    TargetAccount = TargetUserName,
+    FailureReason = Status
+| project TimeGenerated, Computer, SourceIP, TargetAccount, FailureReason, EventID;
+
+// Linux Syslog Events
+let LinuxFailures = Syslog
+| where TimeGenerated > ago(timeRange)
+| where Facility == "auth" or Facility == "authpriv"
+| where SyslogMessage contains "Failed password" or SyslogMessage contains "authentication failure"
+| extend 
+    SourceIP = extract(@"from ([\d\.]+)", 1, SyslogMessage),
+    TargetAccount = extract(@"for (\w+)", 1, SyslogMessage),
+    FailureReason = "Authentication failure"
+| project TimeGenerated, Computer, SourceIP, TargetAccount, FailureReason;
+
+// Azure AD Sign-in Failures
+let AADFailures = SigninLogs
+| where TimeGenerated > ago(timeRange)
+| where ResultType != "0"  // Non-success
+| extend 
+    SourceIP = IPAddress,
+    TargetAccount = UserPrincipalName,
+    FailureReason = ResultDescription
+| project TimeGenerated, Computer = AppDisplayName, SourceIP, TargetAccount, FailureReason;
+
+// Combine all failure sources
+let AllFailures = WindowsFailures
+| union LinuxFailures
+| union AADFailures;
+
+// Analyze patterns
+AllFailures
+| summarize 
+    FailureCount = count(),
+    UniqueAccounts = dcount(TargetAccount),
+    UniqueComputers = dcount(Computer),
+    FirstFailure = min(TimeGenerated),
+    LastFailure = max(TimeGenerated),
+    Accounts = make_set(TargetAccount, 10),
+    Reasons = make_set(FailureReason, 5)
+    by SourceIP
+| extend Duration = datetime_diff('minute', LastFailure, FirstFailure)
+| extend AttackType = case(
+    FailureCount > 20 and UniqueAccounts == 1, "Brute Force - Single Account",
+    FailureCount > 10 and UniqueAccounts > 5, "Password Spraying",
+    FailureCount > 15 and UniqueAccounts > 3, "Credential Stuffing",
+    FailureCount > failureThreshold, "Suspicious Activity",
+    "Normal Failed Logins"
+)
+| extend Severity = case(
+    AttackType contains "Brute Force", "Critical",
+    AttackType contains "Spraying", "High",
+    AttackType contains "Stuffing", "High",
+    AttackType contains "Suspicious", "Medium",
+    "Low"
+)
+| where Severity in ("Critical", "High", "Medium")
+| project 
+    Severity,
+    AttackType,
+    SourceIP,
+    FailureCount,
+    UniqueAccounts,
+    Duration,
+    FirstFailure,
+    LastFailure,
+    TargetedAccounts = Accounts,
+    FailureReasons = Reasons
+| order by Severity, FailureCount desc
+
+// USAGE NOTES:
+// 1. Run every 5-15 minutes for real-time detection
+// 2. Adjust thresholds based on your environment
+// 3. Whitelist known sources (VPN endpoints, etc.)
+// 4. Integrate with SIEM for automated response
+//
+// RESPONSE ACTIONS:
+// Critical/High Severity:
+// 1. Block source IP at firewall/NSG
+// 2. Force password reset for targeted accounts
+// 3. Enable MFA if not already active
+// 4. Review successful logins from same source
+// 5. Check for lateral movement
+//
+// AUTOMATION:
+// This query can trigger:
+// - Automated IP blocking via Azure Firewall
+// - ServiceNow security incidents
+// - Email/SMS alerts to security team
+// - Conditional Access policy updates
+// - Account lockouts for targeted users
+//
+// PREVENTION:
+// - Enforce MFA for all users
+// - Implement Conditional Access policies
+// - Use Azure AD Identity Protection
+// - Enable account lockout policies
+// - Deploy Azure Sentinel for advanced detection

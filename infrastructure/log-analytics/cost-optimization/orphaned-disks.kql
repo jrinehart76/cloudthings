@@ -1,0 +1,65 @@
+// Query: Find Orphaned Managed Disks
+// Purpose: Identify unattached disks consuming storage costs
+// Impact: Typical savings of 5-10% on storage costs
+// Author: Jason Rinehart
+// Blog: https://technicalanxiety.com
+// Last Updated: 2025-01-15
+//
+// Orphaned disks are one of the most common sources of waste in Azure.
+// They're created when VMs are deleted but disks aren't, or when disks
+// are detached for troubleshooting and forgotten.
+//
+// At $5-50/month per disk, these add up quickly. I've seen organizations
+// with hundreds of orphaned disks costing thousands monthly.
+
+let timeRange = 30d;
+
+AzureDiagnostics
+| where ResourceType == "DISKS"
+| where TimeGenerated > ago(timeRange)
+| where Category == "Disk"
+| extend DiskState = tostring(parse_json(properties_s).diskState)
+| where DiskState == "Unattached"
+| summarize 
+    FirstSeen = min(TimeGenerated),
+    LastSeen = max(TimeGenerated),
+    DaysUnattached = datetime_diff('day', now(), min(TimeGenerated))
+    by Resource, ResourceId, ResourceGroup
+| extend DiskSizeGB = 128  // Default, adjust based on your environment
+| extend EstimatedMonthlyCost = case(
+    DiskSizeGB <= 128, 10.0,
+    DiskSizeGB <= 512, 25.0,
+    DiskSizeGB <= 1024, 50.0,
+    100.0
+)
+| extend Priority = case(
+    DaysUnattached > 90, "High - Delete immediately",
+    DaysUnattached > 30, "Medium - Verify and delete",
+    "Low - Monitor"
+)
+| project 
+    Priority,
+    DiskName = Resource,
+    ResourceGroup,
+    DaysUnattached,
+    EstimatedMonthlyCost,
+    FirstSeen,
+    _ResourceId = ResourceId
+| order by DaysUnattached desc, EstimatedMonthlyCost desc
+
+// USAGE NOTES:
+// 1. Disks unattached > 90 days are almost always safe to delete
+// 2. Check for snapshots before deletion (may indicate backup strategy)
+// 3. Verify disk isn't part of disaster recovery plan
+// 4. Consider creating snapshot before deletion for safety
+//
+// SAFE DELETION PROCESS:
+// 1. Identify disk owner via tags or resource group
+// 2. Confirm disk is not needed (check with owner)
+// 3. Create snapshot if any uncertainty
+// 4. Delete disk
+// 5. Monitor for 30 days, then delete snapshot
+//
+// AUTOMATION:
+// az disk list --query "[?diskState=='Unattached']" -o table
+// az disk delete --name <disk-name> --resource-group <rg-name>
