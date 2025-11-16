@@ -107,7 +107,7 @@
       "type": "Microsoft.Sql/servers",
       "kind": "v12.0",
       "name": "[variables('sqlServerName')]",
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2021-11-01",
       "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
@@ -117,7 +117,7 @@
       },
       "resources": [
         {
-          "apiVersion": "2017-10-01-preview",
+          "apiVersion": "2021-11-01",
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', variables('sqlServerName'))]"
           ],
@@ -135,7 +135,7 @@
         },
         {
           "condition": "[parameters('enableATP')]",
-          "apiVersion": "2017-03-01-preview",
+          "apiVersion": "2021-11-01",
           "type": "securityAlertPolicies",
           "name": "Default",
           "dependsOn": [
@@ -154,7 +154,7 @@
     },
     {
       "type": "Microsoft.Sql/servers/virtualNetworkRules",
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2021-11-01",
       "dependsOn": [
         "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
       ],

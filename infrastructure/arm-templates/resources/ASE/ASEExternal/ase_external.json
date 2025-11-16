@@ -59,17 +59,15 @@
     {
       "name": "[parameters('name')]",
       "type": "Microsoft.Web/hostingEnvironments",
-      "apiVersion": "2015-02-01",
+      "apiVersion": "2022-03-01",
       "location": "[parameters('location')]",
       "kind": "[parameters('kind')]",
       "properties": {
-        "name": "[parameters('name')]",
-        "location": "[parameters('location')]",
-        "VirtualNetwork": {
-          "Id": "[variables('vnetId')]",
-          "type": "Microsoft.Network/virtualNetworks",
-          "Subnet": "[parameters('subnetName')]"
-        }
+        "virtualNetwork": {
+          "id": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+        },
+        "internalLoadBalancingMode": "None",
+        "zoneRedundant": false
       }
     }
   ]

@@ -1,3 +1,13 @@
+## ⚠️ Consider Modern Alternatives
+
+**HDInsight is still fully supported**, but for new workloads consider:
+- **Azure Synapse Analytics Spark Pools** - Serverless Spark with better integration
+- **Azure Databricks** - Enhanced Spark with collaborative notebooks and MLflow
+
+These templates remain valid for HDInsight deployments, but evaluate modern alternatives for new projects.
+
+---
+
 ## Purpose
 
 Creates an HDI cluster, either:
