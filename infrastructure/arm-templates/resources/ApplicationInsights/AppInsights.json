@@ -48,12 +48,14 @@
       "name": "[variables('appInsightsName')]",
       "type": "microsoft.insights/components",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2014-08-01",
+      "apiVersion": "2020-02-02",
+      "kind": "[parameters('applicationType')]",
       "properties": {
-        "ApplicationId": "[variables('appInsightsName')]",
         "Application_Type": "[parameters('applicationType')]",
-        "Flow_Type": "Redfield",
-        "Request_Source": "IbizaAIExtension"
+        "WorkspaceResourceId": "[if(empty(parameters('workspaceResourceId')), json('null'), parameters('workspaceResourceId'))]",
+        "IngestionMode": "[if(empty(parameters('workspaceResourceId')), 'ApplicationInsights', 'LogAnalytics')]",
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
       }
     }
   ]

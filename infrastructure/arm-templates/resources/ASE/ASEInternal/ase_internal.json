@@ -131,39 +131,36 @@
     {
       "name": "[variables('aseName')]",
       "type": "Microsoft.Web/hostingEnvironments",
-      "apiVersion": "2015-02-01",
+      "apiVersion": "2022-03-01",
       "location": "[parameters('aseLocation')]",
       "kind": "[parameters('kind')]",
       "properties": {
-        "name": "[variables('aseName')]",
-        "location": "[parameters('aseLocation')]",
+        "virtualNetwork": {
+          "id": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+        },
+        "internalLoadBalancingMode": "[if(equals(parameters('internalLoadBalancingMode'), 1), 'Web', if(equals(parameters('internalLoadBalancingMode'), 2), 'Publishing', if(equals(parameters('internalLoadBalancingMode'), 3), 'Web, Publishing', 'None')))]",
         "dnsSuffix": "[parameters('dnsSuffix')]",
-        "internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]",
-        "VirtualNetwork": {
-          "Id": "[variables('vnetId')]",
-          "type": "Microsoft.Network/virtualNetworks",
-          "Subnet": "[parameters('subnetName')]"
-        }
+        "zoneRedundant": false
       }
     },
     {
       "name": "[variables('aspName')]",
       "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2016-03-01",
+      "apiVersion": "2022-03-01",
       "location": "[parameters('aseLocation')]",
       "dependsOn": [
-        "[ concat('Microsoft.Web/hostingEnvironments/', variables('aseName')) ]"
+        "[resourceId('Microsoft.Web/hostingEnvironments', variables('aseName'))]"
       ],
       "properties": {
-        "name": "[variables('aspName')]",
         "hostingEnvironmentProfile": {
-          "id": "[resourceId('Microsoft.Web/hostingEnvironments',variables('aseName'))]",
-          "reserved": "parameters('reserved')"
-        }
+          "id": "[resourceId('Microsoft.Web/hostingEnvironments', variables('aseName'))]"
+        },
+        "reserved": "[parameters('reserved')]",
+        "perSiteScaling": false
       },
       "sku": {
-        "Name": "[parameters('skuCode')]",
-        "Tier": "[parameters('sku')]",
+        "name": "[parameters('skuCode')]",
+        "tier": "[parameters('sku')]",
         "size": "[parameters('skuCode')]",
         "family": "I",
         "capacity": "[parameters('capacity')]"
