@@ -39,7 +39,7 @@ param(
     [string]$workspaceId = '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-am-eastus/providers/Microsoft.OperationalInsights/workspaces/laws-am-eastus'
 )
 
-$requiredDiagnosticName = "MSPDiagnosticsLog"
+$requiredDiagnosticName = "PLATFORMDiagnosticsLog"
 $ConnectionName = 'AzureRunAsConnection'
 $AutomationConnection = Get-AutomationConnection -Name $ConnectionName
 

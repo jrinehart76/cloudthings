@@ -12,7 +12,7 @@
         "data": {
             "essentials": {
                 "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/13ff0cbca0062c3c4c669efd6d9783cf8bd5c56ef43663767ab34eec0151f3b4",
-                "alertRule": "MSP-azure-service-alert",
+                "alertRule": "PLATFORM-azure-service-alert",
                 "severity": "Sev4",
                 "signalType": "Activity Log",
                 "monitorCondition": "Fired",

@@ -74,7 +74,7 @@ param (
 
 # Script storage account details
 $StorageAccountRG = 'rg-oms-dev'
-$StorageAccount = 'mspautomationscriptsa'
+$StorageAccount = 'platformautomationsa'
 
 function Get-TimeStamp {
   return "{0:MM/dd/yy} {0:HH:mm:ss}" -f (Get-Date)

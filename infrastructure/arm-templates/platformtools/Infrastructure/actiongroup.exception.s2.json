@@ -13,14 +13,14 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "MSP-action-exec-s2",
+      "name": "PLATFORM-action-exec-s2",
       "location": "Global",
       "properties": {
-        "groupShortName": "MSPES2",
+        "groupShortName": "PLATFORMES2",
         "enabled": true,
         "logicAppReceivers": [
           {
-            "name": "MSP Alert Manager S2",
+            "name": "PLATFORM Alert Manager S2",
             "resourceId": "[parameters( 'logicAppId' )]",
             "callbackUrl": "[parameters( 'logicAppUrl' )]",
             "useCommonAlertSchema": true

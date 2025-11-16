@@ -95,6 +95,13 @@ The following deprecated services have been moved to `archive/deprecated-service
 - ✅ Already using `StorageV2` (not old `Storage` kind)
 - ✅ No updates required
 
+#### Remaining Work
+- ⚠️ VM templates still use 2015-2017 API versions (functional but not latest)
+- ⚠️ Recovery Services templates use 2016-06-01 (functional but not latest)
+- ⚠️ Some extensions use 2015-06-15 (functional but not latest)
+- 📝 These are still supported by Azure and work correctly
+- 📝 Future updates recommended but not critical for functionality
+
 ---
 
 ## Files Archived
@@ -240,13 +247,19 @@ az deployment group create \
 
 ### Before Modernization
 - Deprecated service templates: 15+ files
-- Old API versions: 50+ instances
+- Old API versions: 50+ instances in critical templates
 - Deprecated services: 5 categories
 
 ### After Modernization
 - Deprecated templates: Archived (not deleted)
-- Current API versions: 100%
+- Critical templates modernized: ASE, SQL-PaaS, Application Insights
 - Active deprecated services: 0
+- Remaining old API versions: ~418 files (primarily VM templates using 2015-2017 APIs)
+
+### API Version Status
+- **Fully Modernized:** ASE (2022-03-01), SQL-PaaS (2021-11-01), App Insights (2020-02-02)
+- **Still Functional:** VM templates, Recovery Services, and other resources using 2015-2017 APIs
+- **Note:** Older API versions are still supported by Azure but should be updated in future iterations
 
 ---
 

@@ -13,7 +13,7 @@
         "data": {
             "essentials": {
                 "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/00000000-0000-0000-0000-000000000000",
-                "alertRule": "MSP-kubernetes-disk-critical",
+                "alertRule": "PLATFORM-kubernetes-disk-critical",
                 "severity": "Sev2",
                 "signalType": "Log",
                 "monitorCondition": "Fired",

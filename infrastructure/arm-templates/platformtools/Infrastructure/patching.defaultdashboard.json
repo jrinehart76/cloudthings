@@ -39,7 +39,7 @@
                     "content": {
                       "settings": {
                         "content": "__Patching Dashboard__\n\nEmail: \nsupport@msp.com\n\nPriority 1: https://support.10thmagnitude.com",
-                        "title": "ManagedServiceProvider",
+                        "title": "CloudPlatformProvider",
                         "subtitle": "Managed Services"
                       }
                     }

@@ -44,8 +44,8 @@
                   "settings": {
                     "content": {
                       "settings": {
-                        "content": "#### ManagedServiceProvider\r\n#### Azure Managed Services\r\n#### support@msp.com",
-                        "title": "Customer-A Companies",
+                        "content": "#### CloudPlatformProvider\r\n#### Azure Managed Services\r\n#### support@msp.com",
+                        "title": "Customer-Example Companies",
                         "subtitle": ""
                       }
                     }

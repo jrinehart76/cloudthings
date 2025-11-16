@@ -23,7 +23,7 @@
         "alertCopy": {
             "critAlertDetails": [
                 {
-                    "alertName": "MSP-linux-vm-critical-cpu",
+                    "alertName": "PLATFORM-linux-vm-critical-cpu",
                     "alertDescription": "[concat('Critical CPU Alert on Linux. ', parameters('version'))]",
                     "query": "//critical cpu usage on linux\r\n Perf\r\n | where Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where isnotempty(_ResourceId)\r\n | where ObjectName has 'processor' and CounterName has '% processor time' and InstanceName has '_total'\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average % CPU\"]=avg(CounterValue) by Computer\r\n | where [\"Average % CPU\"] > 98",
                     "frequencyInMinutes": 15,
@@ -34,7 +34,7 @@
                     "severity": 3
                 },
                 {
-                    "alertName": "MSP-linux-vm-critical-mem",
+                    "alertName": "PLATFORM-linux-vm-critical-mem",
                     "alertDescription": "[concat('Critical Memory Alert on Linux. ', parameters('version'))]",
                     "query": "//critical memory usage on linux\r\n Perf\r\n | where Computer in ((Heartbeat | where OSType has 'linux' | distinct Computer))\r\n | where ObjectName has 'memory' and CounterName has '% used memory'\r\n | where Computer !startswith 'hn'and Computer !startswith 'wn' and Computer !startswith 'zk' and Computer !startswith 'k8s' and Computer !startswith 'aks'\r\n | summarize [\"Average % Used Memory\"] = avg(CounterValue) by Computer\r\n | where [\"Average % Used Memory\"] > 95",
                     "frequencyInMinutes": 15,

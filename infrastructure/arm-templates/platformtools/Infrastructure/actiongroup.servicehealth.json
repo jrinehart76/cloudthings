@@ -13,14 +13,14 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "MSP-action-servicehealth",
+      "name": "PLATFORM-action-servicehealth",
       "location": "Global",
       "properties": {
-        "groupShortName": "MSPSVC",
+        "groupShortName": "PLATFORMSVC",
         "enabled": true,
         "logicAppReceivers": [
           {
-            "name": "MSP Alert Manager S4",
+            "name": "PLATFORM Alert Manager S4",
             "resourceId": "[parameters( 'logicAppId' )]",
             "callbackUrl": "[parameters( 'logicAppUrl' )]",
             "useCommonAlertSchema": true

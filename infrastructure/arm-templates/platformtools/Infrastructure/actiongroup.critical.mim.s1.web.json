@@ -6,16 +6,16 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "MSP-alert-critmim-s1web",
+      "name": "PLATFORM-alert-critmim-s1web",
       "location": "Global",
       "properties": {
-        "groupShortName": "MSPCMIMS1W",
+        "groupShortName": "PLATFORMCMIMS1W",
         "enabled": true,
         "logicAppReceivers": [],
         "emailReceivers": [
           {
-            "name": "MSP Support Alert Shadow",
-            "emailAddress": "supportalerts@msp.com",
+            "name": "PLATFORM Support Alert Shadow",
+            "emailAddress": "alerts@example.com",
             "useCommonAlertSchema": true
           }
         ]

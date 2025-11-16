@@ -13,14 +13,14 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "MSP-action-highsec-s2",
+      "name": "PLATFORM-action-highsec-s2",
       "location": "Global",
       "properties": {
-        "groupShortName": "MSPHSS2",
+        "groupShortName": "PLATFORMHSS2",
         "enabled": true,
         "logicAppReceivers": [
           {
-            "name": "MSP Alert Manager S2",
+            "name": "PLATFORM Alert Manager S2",
             "resourceId": "[parameters( 'logicAppId' )]",
             "callbackUrl": "[parameters( 'logicAppUrl' )]",
             "useCommonAlertSchema": true

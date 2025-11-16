@@ -51,7 +51,7 @@
       "vmName": "platform-hybridWorker-",
       "diskName": "platform-hybridWorker-osDisk-",
       "nicName": "platform-hybridWorker-nic-",
-      "virtualNetworkName": "MSP-ms-platform-vnet",
+      "virtualNetworkName": "PLATFORM-ms-platform-vnet",
       "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
       "networkSecurityGroupName": "platform-hybridWorker-nsg"
     },

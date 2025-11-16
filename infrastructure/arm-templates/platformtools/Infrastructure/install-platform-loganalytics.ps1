@@ -42,7 +42,7 @@ param (
 ##Variable definitions **commented out to allow for dynamic input**
 <#
 $workspaceSubscriptionId = "00000000-0000-0000-0000-000000000000"
-$workspaceResourceGroupName  = "MSP-prod-mgmt-01"
+$workspaceResourceGroupName  = "PLATFORM-prod-mgmt-01"
 $workspaceName     = "la-prod-01"
 $workspaceLocation = "East US"
 $workspaceSKU      = "PerNode"

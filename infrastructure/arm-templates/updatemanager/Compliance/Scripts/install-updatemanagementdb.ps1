@@ -66,7 +66,7 @@ param (
  )
 
  New-AzResourceGroupDeployment `
-    -Name "deploy-MSP-um-sqldb-$databaseName-$deploymentVersion" `
+    -Name "deploy-PLATFORM-um-sqldb-$databaseName-$deploymentVersion" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./UpdateManager/Compliance/Templates/updatecompliance-sqldatabase.json `
     -databaseName $databaseName `

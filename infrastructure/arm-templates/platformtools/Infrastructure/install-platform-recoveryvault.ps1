@@ -27,7 +27,7 @@ param (
 
 ##Declare variables **commented out to allow for dynamic input**
 <#
-$resourceGroup = "MSP-prod-mgmt-01"
+$resourceGroup = "PLATFORM-prod-mgmt-01"
 $recoveryVaultName = "rsv-prod-01"
 $recoveryVaultLocation = "eastus2"
 #>

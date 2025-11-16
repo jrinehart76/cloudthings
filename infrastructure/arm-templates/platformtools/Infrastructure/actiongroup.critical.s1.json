@@ -6,16 +6,16 @@
     {
       "type": "Microsoft.Insights/actionGroups",
       "apiVersion": "2018-03-01",
-      "name": "MSP-action-crit-s1",
+      "name": "PLATFORM-action-crit-s1",
       "location": "Global",
       "properties": {
-        "groupShortName": "MSPCS1",
+        "groupShortName": "PLATFORMCS1",
         "enabled": true,
         "logicAppReceivers": [],
         "emailReceivers": [
           {
-            "name": "MSP Support Alert Shadow",
-            "emailAddress": "supportalerts@msp.com",
+            "name": "PLATFORM Support Alert Shadow",
+            "emailAddress": "alerts@example.com",
             "useCommonAlertSchema": true
           }
         ],

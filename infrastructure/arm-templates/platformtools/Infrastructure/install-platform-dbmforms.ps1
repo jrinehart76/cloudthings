@@ -11,7 +11,7 @@ param (
  )
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-MSP-dashboard-manager" `
+    -Name "deploy-PLATFORM-dashboard-manager" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./templates/dashboard_manager/logic_apps/logicapp.MSP.dashboard.form.input.json `
     -logicAppLocation $logicAppLocation `

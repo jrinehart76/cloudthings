@@ -14,7 +14,7 @@
         Adding more error catching to the results of the snapshot (9/17/2019)
 
     .NOTES
-        AUTHOR: Jason Rinehart, Kyle Thompson [ManagedServiceProvider]
+        AUTHOR: Jason Rinehart, Kyle Thompson [CloudPlatformProvider]
 
     .VERSION
         1.0 - Initial runbook

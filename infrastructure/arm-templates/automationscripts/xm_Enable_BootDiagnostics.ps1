@@ -61,7 +61,7 @@ if ($StorageAccount) {
     return
 }
 
-$Machines = Get-AzVM -ResourceGroupName $ResourceGroupName -Status | Where-Object {$_.Tags["MSPMonitored"] -eq 'y'}
+$Machines = Get-AzVM -ResourceGroupName $ResourceGroupName -Status | Where-Object {$_.Tags["PLATFORMMonitored"] -eq 'y'}
 
 ForEach ($Machine in $Machines) {
     if (!$Machine.DiagnosticsProfile.BootDiagnostics.Enabled) {

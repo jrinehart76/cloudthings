@@ -43,9 +43,9 @@ param (
 $rg = Get-AzResourceGroup -Name $saResourceGroup
 
 # Create script storage
-New-AzStorageAccount -Name "mspplatformautoscripts" -ResourceGroupName $saResourceGroup -Location $rg.location -SkuName "Standard_LRS" -ErrorAction SilentlyContinue
-$keys = Get-AzStorageAccountKey -Name "mspplatformautoscripts" -ResourceGroupName $saResourceGroup
-$ctx = New-AzStorageContext -StorageAccountName "mspplatformautoscripts" -StorageAccountKey $keys.Value[0]
+New-AzStorageAccount -Name "platformautoscripts" -ResourceGroupName $saResourceGroup -Location $rg.location -SkuName "Standard_LRS" -ErrorAction SilentlyContinue
+$keys = Get-AzStorageAccountKey -Name "platformautoscripts" -ResourceGroupName $saResourceGroup
+$ctx = New-AzStorageContext -StorageAccountName "platformautoscripts" -StorageAccountKey $keys.Value[0]
 New-AzStorageContainer -Name "updatemanagement" -Context $ctx -ErrorAction SilentlyContinue
 
 # Upload scripts to storage account

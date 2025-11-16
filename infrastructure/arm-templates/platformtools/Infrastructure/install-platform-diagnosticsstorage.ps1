@@ -25,7 +25,7 @@ param (
 ##Declare variables **commented out to allow for dynamic input**
 <#
 $diagStorageLocation = "eastus"
-$resourceGroup = "MSP-prod-mgmt-01"
+$resourceGroup = "PLATFORM-prod-mgmt-01"
 #>
 
 $randStr = -join ((65..90) + (97..122) | Get-Random -Count 8 | % {[char]$_})

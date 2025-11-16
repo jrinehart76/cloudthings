@@ -5,21 +5,21 @@ param (
  )
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-MSP-dashboard-manager-cosmosdb-conn" `
+    -Name "deploy-PLATFORM-dashboard-manager-cosmosdb-conn" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./templates/dashboard_manager/connections/api.connection.cosmosdb.json
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-MSP-dashboard-manager-msforms-conn" `
+    -Name "deploy-PLATFORM-dashboard-manager-msforms-conn" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./templates/dashboard_manager/connections/api.connection.msforms.json
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-MSP-dashboard-manager-arm-conn" `
+    -Name "deploy-PLATFORM-dashboard-manager-arm-conn" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./templates/dashboard_manager/connections/api.connection.arm.json
 
 New-AzResourceGroupDeployment `
-    -Name "deploy-MSP-dashboard-manager-integration" `
+    -Name "deploy-PLATFORM-dashboard-manager-integration" `
     -ResourceGroupName $resourceGroup `
     -TemplateFile ./templates/dashboard_manager/connections/integration.account.template.json
