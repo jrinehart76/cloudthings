@@ -11,9 +11,9 @@ param (
 )
 
 
-# cloudops group perms - CUST-A-CloudOps
-Set-AzKeyVaultAccessPolicy -VaultName $KeyVaultName -ResourceGroupName $ResourceGroup -ObjectId (Get-AzADGroup -SearchString 'CUST-A-CN-CloudOps')[0].Id -PermissionsToSecrets get,list,set,delete,recover,backup,restore
-Set-AzKeyVaultAccessPolicy -VaultName $KeyVaultName -ResourceGroupName $ResourceGroup -ObjectId (Get-AzADGroup -SearchString 'CUST-A-CN-CloudOps-ManagedServices')[0].Id -PermissionsToSecrets get,list,set,delete,recover,backup,restore
+# cloudops group perms - Customer-CloudOps
+Set-AzKeyVaultAccessPolicy -VaultName $KeyVaultName -ResourceGroupName $ResourceGroup -ObjectId (Get-AzADGroup -SearchString 'Customer-CloudOps')[0].Id -PermissionsToSecrets get,list,set,delete,recover,backup,restore
+Set-AzKeyVaultAccessPolicy -VaultName $KeyVaultName -ResourceGroupName $ResourceGroup -ObjectId (Get-AzADGroup -SearchString 'Customer-CloudOps-ManagedServices')[0].Id -PermissionsToSecrets get,list,set,delete,recover,backup,restore
 
 # VSTS SPN Rights
 Set-AzKeyVaultAccessPolicy -VaultName $KeyVaultName -ResourceGroupName $ResourceGroup -ObjectId (Get-AzADServicePrincipal -DisplayName $VSTSSpnName)[0].Id -PermissionsToSecrets get,list,set,delete

@@ -74,11 +74,11 @@
                     },
                     {
                       "name": "DashboardId",
-                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/baa63ec0-0d57-4cbc-9b4b-4916640bfac4')]"
+                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/00000000-0000-0000-0000-000000000000')]"
                     },
                     {
                       "name": "PartId",
-                      "value": "aed53bf1-cb32-4b03-9138-a81c3d50037c"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -217,11 +217,11 @@
                     },
                     {
                       "name": "DashboardId",
-                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/baa63ec0-0d57-4cbc-9b4b-4916640bfac4')]"
+                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/00000000-0000-0000-0000-000000000000')]"
                     },
                     {
                       "name": "PartId",
-                      "value": "94a7ab1e-c7d1-46c0-b09d-62c0fbbedc52"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -293,11 +293,11 @@
                     },
                     {
                       "name": "DashboardId",
-                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/baa63ec0-0d57-4cbc-9b4b-4916640bfac4')]"
+                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/00000000-0000-0000-0000-000000000000')]"
                     },
                     {
                       "name": "PartId",
-                      "value": "7d533091-1815-41d2-872d-18d0495c29da"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -369,11 +369,11 @@
                     },
                     {
                       "name": "DashboardId",
-                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/baa63ec0-0d57-4cbc-9b4b-4916640bfac4')]"
+                      "value": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/00000000-0000-0000-0000-000000000000')]"
                     },
                     {
                       "name": "PartId",
-                      "value": "e3e1689f-bcd8-44e7-876a-2d0567d6b971"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -452,25 +452,25 @@
                     "value": "Past 24 hours"
                   },
                   "filteredPartIds": [
-                    "StartboardPart-AnalyticsPart-306e4f84-6f53-4cec-bcc6-fac168333005",
-                    "StartboardPart-AnalyticsPart-306e4f84-6f53-4cec-bcc6-fac168333007",
-                    "StartboardPart-AnalyticsPart-a4d4c71a-dcf8-4955-894f-d783eb22400f",
-                    "StartboardPart-AnalyticsPart-a4d4c71a-dcf8-4955-894f-d783eb224011",
-                    "StartboardPart-AnalyticsPart-c8481095-ab7e-45b5-9a94-50e4a0db100f",
-                    "StartboardPart-AnalyticsPart-c8481095-ab7e-45b5-9a94-50e4a0db1011",
-                    "StartboardPart-AnalyticsPart-c8481095-ab7e-45b5-9a94-50e4a0db1013",
-                    "StartboardPart-AnalyticsPart-efbe6a6d-cef0-4051-81ed-a9ae9efa2007",
-                    "StartboardPart-AnalyticsPart-efbe6a6d-cef0-4051-81ed-a9ae9efa200f",
-                    "StartboardPart-AnalyticsPart-efbe6a6d-cef0-4051-81ed-a9ae9efa2011",
-                    "StartboardPart-AnalyticsPart-efbe6a6d-cef0-4051-81ed-a9ae9efa2015",
-                    "StartboardPart-AnalyticsPart-57bedfff-c89c-4991-9ffa-879009eed007",
-                    "StartboardPart-AnalyticsPart-57bedfff-c89c-4991-9ffa-879009eed00f",
-                    "StartboardPart-AnalyticsPart-57bedfff-c89c-4991-9ffa-879009eed011",
-                    "StartboardPart-AnalyticsPart-57bedfff-c89c-4991-9ffa-879009eed013",
-                    "StartboardPart-AnalyticsPart-1ca1ad97-dbe4-463a-a220-8075d2512007",
-                    "StartboardPart-AnalyticsPart-1ca1ad97-dbe4-463a-a220-8075d251200f",
-                    "StartboardPart-AnalyticsPart-1ca1ad97-dbe4-463a-a220-8075d2512011",
-                    "StartboardPart-AnalyticsPart-1ca1ad97-dbe4-463a-a220-8075d2512013"
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000",
+                    "StartboardPart-AnalyticsPart-00000000-0000-0000-0000-000000000000"
                   ]
                 }
               }

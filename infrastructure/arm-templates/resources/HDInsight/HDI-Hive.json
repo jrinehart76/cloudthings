@@ -286,7 +286,7 @@
           "ipRules": [],
           "virtualNetworkRules": [
             {
-              "id": "/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/acs"
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/acs"
             }
           ]
         }

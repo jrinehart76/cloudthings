@@ -14,7 +14,7 @@ $subName = (Get-AzContext).Subscription.Name
 Select-AzSubscription -SubscriptionName GCCS
 Write-Output "Retrieving shared images..."
 $i = 4
-$images = Get-AzGalleryImageDefinition -GalleryName SharedImageGalleryAMEastUSSS -ResourceGroupName RG-AM-EastUS-SS-Images
+$images = Get-AzGalleryImageDefinition -GalleryName SharedImageGalleryAMEastUSSS -ResourceGroupName rg-region1-SS-Images
 Write-Output "Retrieving subscription information..."
 
 $subs = Get-AzSubscription | ? { $_.Name -eq $subName }
@@ -54,7 +54,7 @@ foreach($sub in $subs) {
     @{N='model_id';E={'Azure'}}, `
     @{N='supported_by';E={'ManagedServiceProvider'}}, `
 	@{N='u_support_company';E={'ManagedServiceProvider'}}, `
-    @{N='support_group';E={'CUST-A-CloudOps-ManagedServices-G'}}, `
+    @{N='support_group';E={'Customer-CloudOps-ManagedServices-G'}}, `
     @{N='u_pci';E={"false"} }, `
     @{N='u_sox';E={"false"}}, ` 
     @{N='u_type';E={"$($_.storageProfile.osDisk.osType) Server"}}, `

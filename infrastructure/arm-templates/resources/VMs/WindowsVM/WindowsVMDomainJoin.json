@@ -441,7 +441,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "[concat('/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-SS-Images/providers/Microsoft.Compute/galleries/SharedImageGalleryAMEastUSSS/images/', parameters('sharedImage'),'/versions/', parameters('sharedImageVersion'))]"
+            "id": "[concat('/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-SS-Images/providers/Microsoft.Compute/galleries/SharedImageGalleryAMEastUSSS/images/', parameters('sharedImage'),'/versions/', parameters('sharedImageVersion'))]"
           },                  
         "osDisk": {
             "createOption": "FromImage",
@@ -500,10 +500,10 @@
             "typeHandlerVersion": "1.0",
             "autoUpgradeMinorVersion": true,
             "settings": {
-              "workspaceId": "[reference(resourceId('0ffde392-0ea6-4c28-b315-92e6417ab377', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
+              "workspaceId": "[reference(resourceId('00000000-0000-0000-0000-000000000000', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
             },
             "protectedSettings": {
-              "workspaceKey": "[listKeys(resourceId('0ffde392-0ea6-4c28-b315-92e6417ab377', parameters('laResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
+              "workspaceKey": "[listKeys(resourceId('00000000-0000-0000-0000-000000000000', parameters('laResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
             }
           }
         },

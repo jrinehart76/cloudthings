@@ -70,9 +70,9 @@ Alphabetical list of all parameters found within the ECS Azure Demo templates
 | vmNicName | the prefix used for the name of the NIC the vm will use | 'PROD-REGIONAL-WESTEUROPE-PWEUCXC' |
 | omsAgentType | Specifies the platform for the agent | 'MicrosoftMonitoringAgent' |
 | installOMSAgent | Decide to install the oms agent or not | 'yes' |
-| omsWorkspaceID | The oms workspace ID the vm will register with | '235e16d3-2b95-449e-9b40-9ed47e41e9c8' |
+| omsWorkspaceID | The oms workspace ID the vm will register with | '00000000-0000-0000-0000-000000000000' |
 | omsWorkspaceKey| The oms workspace key the vm will use to authenticate to register with OMS | 'it is a secret' |
-| dscRegistrationUrl | The URL of the azure automation account the vm will register with | 'https://eus2-agentservice-prod-1.azure-automation.net/accounts/fe06d6bd-6b0f-409a-86bb-3a37bb87766d'|
+| dscRegistrationUrl | The URL of the azure automation account the vm will register with | 'https://eus2-agentservice-prod-1.azure-automation.net/accounts/00000000-0000-0000-0000-000000000000'|
 | dscExtensionUpdateTagVersion | Sets the DSC extension to forced an update for every new release, the 2 in the example is the release number which will change if you run a new release  | 'DSC_UK-REGIONAL-2' the 2 here is the release number which will change if you run a new release|
 | dscNodeConfigName | The node configuration the vm will execute when it registers with the automation account| 'RegionalXenDesktopController.XenDesktopRegional-PRDOWEU'|
 | dscNodeConfigNameStringFormat | The node configuration for a vm that requires high availability | 'GlobalDomainController.PRIMARYGDC-PROD-CAC'|

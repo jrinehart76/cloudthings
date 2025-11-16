@@ -28,7 +28,7 @@
       "value": "Hello123!"
     },
     "virtualNetworkRGName": {
-      "value": "RG-AM-EastUS-Prod-ProjectLearn-Networking"
+      "value": "rg-region1-Prod-ProjectLearn-Networking"
     },
     "virtualNetworkName": {
       "value": "VNet-AM-EastUS-Prod-ProjectLearn"

@@ -77,7 +77,7 @@
     },
     "sharedServiceSubnetResourceID": {
       "type": "string",
-      "defaultValue": "/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust",
+      "defaultValue": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust",
       "metadata": {
         "description": "Range of allowed IPs to access cosmosdb"
       }

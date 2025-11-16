@@ -3,8 +3,8 @@ param(
 [string]$Region
 )
 
-([adsi]"WinNT://./Administrators,group").ADD('WinNT://customer-a-domain/U-CUST-A-CloudOps')
-([adsi]"WinNT://./Administrators,group").ADD('WinNT://customer-a-domain/U-CUST-A-CloudManagedServices')
+([adsi]"WinNT://./Administrators,group").ADD('WinNT://customer-a-domain/U-Customer-CloudOps')
+([adsi]"WinNT://./Administrators,group").ADD('WinNT://customer-a-domain/U-Customer-CloudManagedServices')
 foreach($group in $ADGroupName){
     if($ADGroupName.StartsWith('U-')){
 		([adsi]"WinNT://./Administrators,group").ADD("WinNT://customer-a-domain/$($ADGroupName)")

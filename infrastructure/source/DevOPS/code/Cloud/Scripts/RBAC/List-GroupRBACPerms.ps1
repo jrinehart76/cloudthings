@@ -1,4 +1,4 @@
-$subscription = "CUST-A-AM-NONPROD-DATALAKE"
+$subscription = "subscription-nonprod-001-DATALAKE"
 $groupName = "EDLGlobalDevs"
 $verboseOutput = $true
 

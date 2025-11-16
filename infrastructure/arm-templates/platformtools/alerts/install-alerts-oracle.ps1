@@ -38,7 +38,7 @@ param (
 )
 
 ##Create resource id variables
-$actionGroupDev   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/CUST-A-x-ag-dev"              #critical action group resource ID
+$actionGroupDev   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/customer-ag-dev"              #critical action group resource ID
 
 ##Deploy all alerts
 ##Critical Alerts begin here

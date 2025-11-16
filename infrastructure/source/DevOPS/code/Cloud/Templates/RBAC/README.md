@@ -13,7 +13,7 @@ Other roles can be added as necessary to the allowed values in the builtInRoleTy
 
 The guid function uses both the Resource Group ID and the Deployment Name to generate a unique GUID.  Therefore, if you rerun the template you'll need to change the deployment name or else you'll get an error like this:
 ```
-Deployment failed. Correlation ID: 4841bd47-a190-410e-9f65-0b728d3dbc79. {
+Deployment failed. Correlation ID: 00000000-0000-0000-0000-000000000000. {
   "error": {
     "code": "RoleAssignmentUpdateNotPermitted",
     "message": "Tenant ID, application ID, principal ID, and scope are not allowed to be updated."
@@ -38,7 +38,7 @@ The parameters are of the form:
 ```
     {
       "name": "Jennifer Morris",
-      "principalId": "6287d023-281b-42b8-929a-c29ba2b231ec",
+      "principalId": "00000000-0000-0000-0000-000000000000",
       "roleDefinitionId": "Reader"
     },
 ```
@@ -50,11 +50,11 @@ The "name" field is not required for the ARM Rest API call but was added to help
 ### Azure CLI Single User/Group Deployment
 
 ```
-az group deployment create --name "rbac1" --resource-group RG-AM-EastUS-POC-MSP-CEP-RBAC --template-file "./rbac.json" --parameters "./rbac.parameters.json"
+az group deployment create --name "rbac1" --resource-group rg-region1-POC-MSP-CEP-RBAC --template-file "./rbac.json" --parameters "./rbac.parameters.json"
 ```
 
 ### Azure CLI Single User/Group Deployment
 
 ```
-az group deployment create --name "rbac1" --resource-group RG-AM-EastUS-POC-MSP-CEP-RBAC --template-file "./rbac-multiuser.json" --parameters "./rbac.parameters-mulituser.json"
+az group deployment create --name "rbac1" --resource-group rg-region1-POC-MSP-CEP-RBAC --template-file "./rbac-multiuser.json" --parameters "./rbac.parameters-mulituser.json"
 ```

@@ -18,7 +18,7 @@
           "value": "Hello123!!!!!"
     }, 
         "_artifactsLocation": {
-            "value": "https://staged6c4783fda66431b9bb.blob.core.windows.net/rg-am-eastus-poc-MSP-cep-oms-stageartifacts/CEP/OMS"
+            "value": "https://staged6c4783fda66431b9bb.blob.core.windows.net/rg-region1-poc-MSP-cep-oms-stageartifacts/CEP/OMS"
         }
     }
 }

@@ -34,14 +34,14 @@ function Assign-RoleDefinition {
 }
 
 
-$subId = '76ad4304-5346-4b50-a862-f652c40ee4a5'
+$subId = '00000000-0000-0000-0000-000000000000'
 $PrincipalID = @()
-$PrincipalID += (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalQA_All')[0].Id
-$PrincipalID += (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalQA_Fin')[0].Id
-$PrincipalID += (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalQA_DTC')[0].Id
-$PrincipalID += (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalQA_HR')[0].Id
-$PrincipalID += (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalQA_SC')[0].Id
-$PrincipalID += (Get-AzADGroup -SearchString 'U-CUST-A-EDLGlobalQA_CsMkt')[0].Id
+$PrincipalID += (Get-AzADGroup -SearchString 'U-Customer-EDLGlobalQA_All')[0].Id
+$PrincipalID += (Get-AzADGroup -SearchString 'U-Customer-EDLGlobalQA_Fin')[0].Id
+$PrincipalID += (Get-AzADGroup -SearchString 'U-Customer-EDLGlobalQA_DTC')[0].Id
+$PrincipalID += (Get-AzADGroup -SearchString 'U-Customer-EDLGlobalQA_HR')[0].Id
+$PrincipalID += (Get-AzADGroup -SearchString 'U-Customer-EDLGlobalQA_SC')[0].Id
+$PrincipalID += (Get-AzADGroup -SearchString 'U-Customer-EDLGlobalQA_CsMkt')[0].Id
 
 
 

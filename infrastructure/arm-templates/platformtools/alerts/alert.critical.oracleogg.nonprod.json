@@ -25,7 +25,7 @@
                 {
                     "alertName": "MSP-oracle-ogg-nonprod-critical-alert",
                     "alertDescription": "[concat('NONPROD Oracle GoldenGate Error Alert. ', parameters('version'))]",
-                    "query": "//nonprod oracle goldengate query\r\n GoldenGate_CL\r\n | where TimeGenerated > now(-1h)\r\n | where _ResourceId contains 'fea13a4d-5f74-44cc-8611-0cbc35235413'\r\n | where RawData contains 'ERROR  '\r\n | summarize by Error=RawData, Computer, TimeGenerated",
+                    "query": "//nonprod oracle goldengate query\r\n GoldenGate_CL\r\n | where TimeGenerated > now(-1h)\r\n | where _ResourceId contains '00000000-0000-0000-0000-000000000000'\r\n | where RawData contains 'ERROR  '\r\n | summarize by Error=RawData, Computer, TimeGenerated",
                     "frequencyInMinutes": 60,
                     "timeWindowInMinutes": 60,
                     "emailSubject": "[concat(parameters('customerId'),'-NONPROD-Critical-OGG-Alert')]",

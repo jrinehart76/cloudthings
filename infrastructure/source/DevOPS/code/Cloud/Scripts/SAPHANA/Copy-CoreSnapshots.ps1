@@ -9,7 +9,7 @@ param (
     [parameter(Mandatory=$true)]
     $StorageAccountName,
     [string]
-    $SAPResourceGroupName = "RG-AM-EastUS-SAP-NonProd-Compute",
+    $SAPResourceGroupName = "rg-region1-SAP-NonProd-Compute",
     [int]
     $SasTokenDuration = 36000
 )

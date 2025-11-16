@@ -9,5 +9,5 @@ The ARM template deploys a Basic ACR SKU with no admin user enabled.  However, t
 ## Example Azure CLI Deployment
 
 ```
-az group deployment create --template-file acr.json -g RG-AM-EastUS-POC-MSP-CEP-ACR
+az group deployment create --template-file acr.json -g rg-region1-POC-MSP-CEP-ACR
 ```

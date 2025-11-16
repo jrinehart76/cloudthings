@@ -41,7 +41,7 @@ param (
 
 ##Variable definitions **commented out to allow for dynamic input**
 <#
-$workspaceSubscriptionId = "fbdc42a6-8a13-4ba2-820f-d57c78ae80e4"
+$workspaceSubscriptionId = "00000000-0000-0000-0000-000000000000"
 $workspaceResourceGroupName  = "MSP-prod-mgmt-01"
 $workspaceName     = "la-prod-01"
 $workspaceLocation = "East US"

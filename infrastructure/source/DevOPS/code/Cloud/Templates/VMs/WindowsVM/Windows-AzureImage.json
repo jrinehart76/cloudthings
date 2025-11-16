@@ -5,29 +5,29 @@
     "existingMGMTRG": {
       "type": "string",
       "allowedValues": [
-        "rg-am-eastus-nonprod-paas-mgmt",
-        "rg-am-eastus-myelc-mgmt",
-        "rg-am-eastus-bobbibrown-mgmt",
-        "rg-am-eastus-devopspoc-mgmt",
-        "rg-am-eastus-nonprod-ceplatam-mgmt",
-        "rg-am-eastus-nonprod-cornerstone-mgmt",
-        "rg-am-eastus-nonprod-datalake-mgmt",
-        "rg-am-eastus-nonprod-e2e-mgmt",
-        "rg-am-eastus-nonprod-O9-mgmt",
-        "rg-am-eastus-nonprod-paas-mgmt",
-        "rg-am-eastus-prod-ceplatam-mgmt",
-        "rg-am-eastus-prod-edlna-mgmt",
-        "rg-am-eastus-prod-O9-mgmt",
-        "rg-am-eastus-prod-paas-mgmt",
-        "rg-am-eastus-public-mgmt",
-        "rg-am-eastus-sap-mgmt",
-        "rg-am-eastus-poc-mgmt",
-        "rg-ap-southeastasia-nonprod-DataLake-mgmt",
-        "rg-ap-southeastasia-nonprod-v2-mgmt",
-        "rg-ap-southeastasia-prod-DataLake-mgmt",
-        "rg-ap-southeastasia-prod-v2-mgmt",
-        "rg-eu-uksouth-nonprod-v2-mgmt",
-        "rg-eu-uksouth-prod-v2-mgmt",
+        "rg-region1-nonprod-paas-mgmt",
+        "rg-region1-myelc-mgmt",
+        "rg-region1-bobbibrown-mgmt",
+        "rg-region1-devopspoc-mgmt",
+        "rg-region1-nonprod-ceplatam-mgmt",
+        "rg-region1-nonprod-cornerstone-mgmt",
+        "rg-region1-nonprod-datalake-mgmt",
+        "rg-region1-nonprod-e2e-mgmt",
+        "rg-region1-nonprod-O9-mgmt",
+        "rg-region1-nonprod-paas-mgmt",
+        "rg-region1-prod-ceplatam-mgmt",
+        "rg-region1-prod-edlna-mgmt",
+        "rg-region1-prod-O9-mgmt",
+        "rg-region1-prod-paas-mgmt",
+        "rg-region1-public-mgmt",
+        "rg-region1-sap-mgmt",
+        "rg-region1-poc-mgmt",
+        "rg-region2-nonprod-DataLake-mgmt",
+        "rg-region2-nonprod-v2-mgmt",
+        "rg-region2-prod-DataLake-mgmt",
+        "rg-region2-prod-v2-mgmt",
+        "rg-region3-nonprod-v2-mgmt",
+        "rg-region3-prod-v2-mgmt",
         "rg-nonprod-learn-mgmt",
         "rg-nonprod-sap-mgmt",
         "rg-prod-cornerstone-mgmt",
@@ -412,7 +412,7 @@
         "rg-am-eastus",
         "rg-ap-southeastasia",
         "rg-eu-uksouth",
-        "rg-am-eastus-devopspoc-mgmt"
+        "rg-region1-devopspoc-mgmt"
 
       ],
       "metadata": {
@@ -589,10 +589,10 @@
             "typeHandlerVersion": "1.0",
             "autoUpgradeMinorVersion": true,
             "settings": {
-              "workspaceId": "[reference(resourceId('0ffde392-0ea6-4c28-b315-92e6417ab377', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
+              "workspaceId": "[reference(resourceId('00000000-0000-0000-0000-000000000000', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
             },
             "protectedSettings": {
-              "workspaceKey": "[listKeys(resourceId('0ffde392-0ea6-4c28-b315-92e6417ab377', parameters('laResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
+              "workspaceKey": "[listKeys(resourceId('00000000-0000-0000-0000-000000000000', parameters('laResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
             }
           }
         },

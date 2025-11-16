@@ -43,15 +43,15 @@ function Get-RoleDefinition {
 
 <#
 devops poc sub id
-d6c4783f-da66-431b-9bb7-ce719b946537
+00000000-0000-0000-0000-000000000000
 
 test-rbac-01 group id
-75b32280-27e5-4073-879c-9803b33f8753
+00000000-0000-0000-0000-000000000000
 #>
 
 [Array]$ResourceGroup = Get-AzureRmResourceGroup | Where ResourceGroupName -match "^perm*" | foreach ResourceGroupName
-$subId = 'd6c4783f-da66-431b-9bb7-ce719b946537'
-[array]$PrincipalId = "75b32280-27e5-4073-879c-9803b33f8753"
+$subId = '00000000-0000-0000-0000-000000000000'
+[array]$PrincipalId = "00000000-0000-0000-0000-000000000000"
 
 # set subscription to datalake
 Select-AzureRmSubscription -Subscription $subId

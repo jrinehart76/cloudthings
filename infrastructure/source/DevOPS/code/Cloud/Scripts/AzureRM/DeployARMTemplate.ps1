@@ -1,4 +1,4 @@
-$subName = "CUST-A-AM-POC-DevOps"
+$subName = "subscription-dev-001"
 $newRG = "False"
 $ResourceGroupName = "test-netapp-arm"
 $ResourceGroupLocation = "EastUS2"

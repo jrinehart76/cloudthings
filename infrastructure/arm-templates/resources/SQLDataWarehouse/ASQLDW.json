@@ -57,7 +57,7 @@
       "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
-        "databaseId": "242ba428-1d4d-4634-8964-e6fa7a76e65a",
+        "databaseId": "00000000-0000-0000-0000-000000000000",
         "edition": "DataWarehouse",
         "status": "Pausing",
         "serviceLevelObjective": "[parameters('requestedServiceObjectiveName')]",

@@ -28,7 +28,7 @@
 ##gather parameters
 param (
     [Parameter(Mandatory=$false)]
-    [String]$WorkspaceCustomerId = '9a69c16a-19bc-447c-aac5-19c664091b58',
+    [String]$WorkspaceCustomerId = '00000000-0000-0000-0000-workspace002',
 
     [Parameter(Mandatory=$false)]
     [String]$WorkspaceSharedKey = 'SH6YmIAtKhZwdKLWjzBPTLFyTc68N7RNYXTmNDTYylZrsmfS1kz2V6xfRnDhQf38wE7/sOjIWrPK7jtv/uLdtw==',

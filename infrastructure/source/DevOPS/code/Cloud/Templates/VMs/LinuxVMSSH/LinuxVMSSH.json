@@ -85,7 +85,7 @@
     },
     "virtualNetworkRGName": {
       "type": "string",
-      "defaultValue": "RG-AM-EastUS-DevOpsPOC-Mgmt",
+      "defaultValue": "rg-region1-DevOpsPOC-Mgmt",
       "metadata": {
         "description": "The name of the resource group that contians the vnet that the VM will be attached to"
       }
@@ -245,7 +245,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "[concat('/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-SS-Images/providers/Microsoft.Compute/galleries/SharedImageGalleryAMEastUSSS/images/', parameters('sharedImage'),'/versions/', parameters('sharedImageVersion'))]"
+            "id": "[concat('/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-SS-Images/providers/Microsoft.Compute/galleries/SharedImageGalleryAMEastUSSS/images/', parameters('sharedImage'),'/versions/', parameters('sharedImageVersion'))]"
           },                  
       "osDisk": {
             "createOption": "FromImage",

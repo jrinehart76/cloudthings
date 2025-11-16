@@ -1,10 +1,10 @@
 ﻿
 Param(
-[string]$cosmosRGName = "RG-AM-EastUS-POC-MSP-CEP-CosmosDB",
+[string]$cosmosRGName = "rg-region1-POC-MSP-CEP-CosmosDB",
 [string]$apiVersion = "2015-04-08",
 [string]$acctName = "cosdb-am-eastus-poc",
 [string]$isVirtualNetworkFilterEnabled ="True",
-[string]$subnetid = "/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust"
+[string]$subnetid = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust"
 )
 
 #$vnProp = Get-AzureRmVirtualNetwork -Name $vnName  -ResourceGroupName $vnRGName

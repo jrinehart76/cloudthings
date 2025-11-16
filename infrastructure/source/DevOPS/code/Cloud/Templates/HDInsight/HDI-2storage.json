@@ -94,7 +94,7 @@
               "isDefault": true,
               "container": "twostorageclust01-2018-07-31t12-25-54-826z",
               "key": "TtufEm6p0oGsNXDChltb/iWGu3oEUvPhblmt3tGxLCD8+iCfol9i7YKKiJSF1xMp3qPp5Hl4a9xggldDzjfwrw=="
-              /*"key": "[listKeys('/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/ARM_Deploy_Staging/providers/Microsoft.Storage/storageAccounts/staged6c4783fda66431b9bb', '2015-05-01-preview').key1]"*/
+              /*"key": "[listKeys('/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM_Deploy_Staging/providers/Microsoft.Storage/storageAccounts/staged6c4783fda66431b9bb', '2015-05-01-preview').key1]"*/
 
             },
             {

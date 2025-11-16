@@ -155,17 +155,17 @@
     },
     "laResourceGroup": {
       "type": "string",
-      "defaultValue": "RG-AM-EastUS-DevOpsPOC-Mgmt",
+      "defaultValue": "rg-region1-DevOpsPOC-Mgmt",
       "allowedValues": [
-        "RG-AM-EastUS-MYELX-Mgmt",
-        "RG-AM-EastUS-NonProd-PaaS-Mgmt",
-        "RG-AM-EastUS-Prod-PaaS-Mgmt",
-        "RG-AP-SoutheastAsia-NONPROD-V2-Mgmt",
-        "RG-AP-SoutheastAsia-Prod-V2-MGMT",
-        "RG-EU-UKSouth-NonProd-V2-MGMT",
-        "RG-EU-UKSouth-Prod-V2-MGMT",
-        "RG-AM-EastUS-DevOpsPOC-Mgmt",
-        "RG-AM-EastUS-NonProd-CEPLATAM-Mgmt",
+        "rg-region1-MYELX-Mgmt",
+        "rg-region1-NonProd-PaaS-Mgmt",
+        "rg-region1-Prod-PaaS-Mgmt",
+        "rg-region2-SoutheastAsia-NONPROD-V2-Mgmt",
+        "rg-region2-SoutheastAsia-Prod-V2-MGMT",
+        "rg-region3-UKSouth-NonProd-V2-MGMT",
+        "rg-region3-UKSouth-Prod-V2-MGMT",
+        "rg-region1-DevOpsPOC-Mgmt",
+        "rg-region1-NonProd-CEPLATAM-Mgmt",
         "RG-CN-ChinaEast2-NonProd-Mgmt",
         "RG-CN-ChinaEast2-Prod-Mgmt",
         "RG-PROD-LEARN-MGMT",
@@ -196,7 +196,7 @@
     },
     "sharedServiceSubnetResourceID": {
       "type": "string",
-      "defaultValue": "/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust",
+      "defaultValue": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust",
       "metadata": {
         "description": "Range of allowed IPs to access cosmosdb"
       }

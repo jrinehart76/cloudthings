@@ -42,7 +42,7 @@
       "location": "[parameters('location')]",
       "properties": {
         "provisioningState": "Succeeded",
-        "resourceGuid": "c69523b5-4c50-44ea-8515-8059b1db3888",
+        "resourceGuid": "00000000-0000-0000-0000-000000000000",
         "securityRules": [
           {
             "name": "databricks-control-plane-ssh",

@@ -1,6 +1,6 @@
 az login --username devuser@msp.com 
 
-az account set --subscription CUST-A-AM-POC-DevOps
+az account set --subscription subscription-dev-001
 az account list
 
 az group create --name rgTestDave --location "eastus"

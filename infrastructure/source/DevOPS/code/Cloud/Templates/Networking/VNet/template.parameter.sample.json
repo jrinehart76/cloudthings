@@ -30,10 +30,10 @@
           "properties": {
             "addressPrefix": "192.168.0.64/28",
             "networkSecurityGroup": {
-              "id": "/subscriptions/226b94b2-329b-4b42-a392-de0c8b78fa36/resourceGroups/RG-EastUS-SS-Networking/providers/Microsoft.Network/networkSecurityGroups/NSG-Subnet-EastUS-SS-NVAUnTrust"
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RG-EastUS-SS-Networking/providers/Microsoft.Network/networkSecurityGroups/NSG-Subnet-EastUS-SS-NVAUnTrust"
             },
             "routeTable": {
-              "id": "/subscriptions/226b94b2-329b-4b42-a392-de0c8b78fa36/resourceGroups/RG-EastUS-SS-Networking/providers/Microsoft.Network/routeTables/RouteTable-EastUS-SS-SubnetsToNVA"
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RG-EastUS-SS-Networking/providers/Microsoft.Network/routeTables/RouteTable-EastUS-SS-SubnetsToNVA"
             },
             "serviceEndpoints": [
               {
@@ -53,7 +53,7 @@
           "name": "VNetPeer-EastUS-Prod",
           "properties": {
             "remoteVirtualNetwork": {
-              "id": "/subscriptions/226b94b2-329b-4b42-a392-de0c8b78fa36/resourceGroups/RG-EastUS-Prod-Networking/providers/Microsoft.Network/virtualNetworks/VNet-EastUS-Prod"
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RG-EastUS-Prod-Networking/providers/Microsoft.Network/virtualNetworks/VNet-EastUS-Prod"
             },
             "allowVirtualNetworkAccess": true,
             "allowForwardedTraffic": false,
@@ -65,7 +65,7 @@
           "name": "VNetPeer-EastUS-NonProd",
           "properties": {
             "remoteVirtualNetwork": {
-              "id": "/subscriptions/226b94b2-329b-4b42-a392-de0c8b78fa36/resourceGroups/RG-EastUS-NonProd-Networking/providers/Microsoft.Network/virtualNetworks/VNet-EastUS-NonProd"
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RG-EastUS-NonProd-Networking/providers/Microsoft.Network/virtualNetworks/VNet-EastUS-NonProd"
             },
             "allowVirtualNetworkAccess": true,
             "allowForwardedTraffic": false,

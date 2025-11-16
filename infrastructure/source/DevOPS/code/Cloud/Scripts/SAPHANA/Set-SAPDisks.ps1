@@ -18,7 +18,7 @@ param (
     $ServerNameSearchString = "EWD1"
 )
 #Select-AzureRMSubscription -SubscriptionName SAP
-#$snapshots = Get-AzureRmSnapshot -ResourceGroupName "RG-AM-EastUS-SAP-NonProd-Compute" | ? { $_.Name -like "*EWM*" -and $_.Name -notlike "*-os.*" }
+#$snapshots = Get-AzureRmSnapshot -ResourceGroupName "rg-region1-SAP-NonProd-Compute" | ? { $_.Name -like "*EWM*" -and $_.Name -notlike "*-os.*" }
 
 Select-AzureRMSubscription -SubscriptionName $SubscriptionName
 $vms = Get-AzureRmVM -ResourceGroupName $ResourceGroupName

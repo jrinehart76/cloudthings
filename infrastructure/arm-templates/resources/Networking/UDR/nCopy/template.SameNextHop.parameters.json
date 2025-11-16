@@ -6,23 +6,23 @@
       "value": [
         {
           "routeTableName": "RouteTable-AM-EastUS-POC-StandardSubnets",
-          "resourceGroup": "RG-AM-EastUS-POC-SS",
-          "subscriptionId": "314d5655-9d37-4818-8ca3-5e0f40ad675f"
+          "resourceGroup": "rg-region1-POC-SS",
+          "subscriptionId": "00000000-0000-0000-0000-000000000000"
         },
         {
           "routeTableName": "RouteTable-AM-EastUS-Dev-StandardSubnets",
-          "resourceGroup": "RG-AM-EastUS-Dev-SS",
-          "subscriptionId": "b202964a-6e48-4b7f-985b-3ae314297a5a"
+          "resourceGroup": "rg-region1-Dev-SS",
+          "subscriptionId": "00000000-0000-0000-0000-000000000000"
         },
         {
           "routeTableName": "RouteTable-AM-EastUS-QA-StandardSubnets",
-          "resourceGroup": "RG-AM-EastUS-QA-SS",
-          "subscriptionId": "b202964a-6e48-4b7f-985b-3ae314297a5a"
+          "resourceGroup": "rg-region1-QA-SS",
+          "subscriptionId": "00000000-0000-0000-0000-000000000000"
         },
         {
           "routeTableName": "RouteTable-AM-EastUS-Prod-StandardSubnets",
-          "resourceGroup": "RG-AM-EastUS-Prod-SS",
-          "subscriptionId": "48264701-1c9f-4c70-b78c-8ea57b94538d"
+          "resourceGroup": "rg-region1-Prod-SS",
+          "subscriptionId": "00000000-0000-0000-0000-000000000000"
         }
       ]
     },

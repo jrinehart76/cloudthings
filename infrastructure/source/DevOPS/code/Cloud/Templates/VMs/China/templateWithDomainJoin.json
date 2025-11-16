@@ -109,7 +109,7 @@
     },
     "virtualNetworkRGName": {
       "type": "string",
-      "defaultValue": "RG-AM-EastUS-DevOpsPOC-Mgmt",
+      "defaultValue": "rg-region1-DevOpsPOC-Mgmt",
       "metadata": {
         "description": "The name of the resource group that contians the vnet that the VM will be attached to"
       }
@@ -438,10 +438,10 @@
             "typeHandlerVersion": "1.0",
             "autoUpgradeMinorVersion": true,
             "settings": {
-              "workspaceId": "[reference(resourceId('0ffde392-0ea6-4c28-b315-92e6417ab377', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
+              "workspaceId": "[reference(resourceId('00000000-0000-0000-0000-000000000000', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
             },
             "protectedSettings": {
-              "workspaceKey": "[listKeys(resourceId('0ffde392-0ea6-4c28-b315-92e6417ab377', parameters('laResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
+              "workspaceKey": "[listKeys(resourceId('00000000-0000-0000-0000-000000000000', parameters('laResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
             }
           }
         }

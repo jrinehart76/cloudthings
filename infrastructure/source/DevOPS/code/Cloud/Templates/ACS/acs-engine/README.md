@@ -17,7 +17,7 @@ An acs-engine Kubernetes cluster deployment is a two step process:
 ```
 acs-engine generate poc-k8s-azurenet.json
 
-az group create --name RG-AM-EastUS-POC-MSP-CEP-ACS-ENGINE --location EastUS
+az group create --name rg-region1-POC-MSP-CEP-ACS-ENGINE --location EastUS
 
-az group deployment create --name "acs-engine-1" --resource-group RG-AM-EastUS-POC-MSP-CEP-ACS-ENGINE --template-file "./_output/CUST-A-am-eastus-cep-k8s/azuredeploy.json" --parameters "./_output/CUST-A-am-eastus-cep-k8s/azuredeploy.parameters.json"
+az group deployment create --name "acs-engine-1" --resource-group rg-region1-POC-MSP-CEP-ACS-ENGINE --template-file "./_output/CUST-A-am-eastus-cep-k8s/azuredeploy.json" --parameters "./_output/CUST-A-am-eastus-cep-k8s/azuredeploy.parameters.json"
 ```

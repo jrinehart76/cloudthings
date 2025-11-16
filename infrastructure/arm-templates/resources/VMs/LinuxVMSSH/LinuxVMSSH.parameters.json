@@ -37,7 +37,7 @@
       "value": ""
     },
     "virtualNetworkRGName": {
-      "value": "RG-AM-EastUS-DevOpsPOC-Mgmt"
+      "value": "rg-region1-DevOpsPOC-Mgmt"
     },
     "virtualNetworkName": {
       "value": "VNET-AM-EastUS-POC-MSP"

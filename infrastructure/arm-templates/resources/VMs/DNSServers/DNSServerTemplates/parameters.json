@@ -28,13 +28,13 @@
     "adminPassword": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-SS-KeyVaults/providers/Microsoft.KeyVault/vaults/kvameastussstemplates"
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-SS-KeyVaults/providers/Microsoft.KeyVault/vaults/kvameastussstemplates"
         },
         "secretName": "cloudadmin"
       }
     },
     "virtualNetworkRGName": {
-      "value": "RG-AM-EastUS-Prod-PaaS-Networking"
+      "value": "rg-region1-Prod-PaaS-Networking"
     },
     "virtualNetworkName": {
       "value": "VNet-AM-EastUS-Prod-PaaS"

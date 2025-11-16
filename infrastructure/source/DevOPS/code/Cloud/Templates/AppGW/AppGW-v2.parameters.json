@@ -6,7 +6,7 @@
       "value": "Subnet-AM-EastUS-NonProd-PaaS-AppGWv2-Testing"
     },
     "virtualNetworkRGName": {
-      "value": "rg-am-eastus-nonprod-paas-networking"
+      "value": "rg-region1-nonprod-paas-networking"
     },
     "virtualNetworkName": {
       "value": "VNet-AM-EastUS-NonProd-PaaS"

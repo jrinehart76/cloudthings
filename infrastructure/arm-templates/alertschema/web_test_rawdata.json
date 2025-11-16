@@ -12,16 +12,16 @@
         "schemaId": "azureMonitorCommonAlertSchema",
         "data": {
             "essentials": {
-                "alertId": "/subscriptions/7db5d31d-9662-466e-abad-1feba79ff2af/providers/Microsoft.AlertsManagement/alerts/f68214e2-3958-4f5d-b464-01594deeceb3",
+                "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/00000000-0000-0000-0000-000000000000",
                 "alertRule": "rmd-site-availability-rookmcdonald",
                 "severity": "Sev0",
                 "signalType": "Metric",
                 "monitorCondition": "Fired",
                 "monitoringService": "Platform",
                 "alertTargetIDs": [
-                    "/subscriptions/7db5d31d-9662-466e-abad-1feba79ff2af/resourcegroups/rg-web/providers/microsoft.insights/webtests/rmd-site-availability-rookmcdonald"
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-web/providers/microsoft.insights/webtests/rmd-site-availability-rookmcdonald"
                 ],
-                "originAlertId": "7db5d31d-9662-466e-abad-1feba79ff2af_rg-web_microsoft.insights_metricalerts_rmd-site-availability-rookmcdonald_1488742787",
+                "originAlertId": "00000000-0000-0000-0000-000000000000_rg-web_microsoft.insights_metricalerts_rmd-site-availability-rookmcdonald_1488742787",
                 "firedDateTime": "2019-12-20T18:58:18.9171899Z",
                 "description": "Automatically created alert rule for availability test \"rmd-site-availability-rookmcdonald\"",
                 "essentialsVersion": "1.0",

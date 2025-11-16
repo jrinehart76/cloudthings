@@ -158,7 +158,7 @@
         "rg-am-eastus",
         "rg-ap-southeastasia",
         "rg-eu-uksouth",
-        "rg-am-eastus-devopspoc-mgmt",
+        "rg-region1-devopspoc-mgmt",
         "RG-CN-ChinaEast2-NonProd-Mgmt",
         "RG-CN-ChinaEast2-Prod-Mgmt"
       ],
@@ -173,7 +173,7 @@
     "storageAccountName": "[tolower(concat('sa', parameters('region'), parameters('locationAbv'), parameters('environment'), parameters('application'), 'redis'))]",
     "subnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('existingVNetRG'), '/providers/Microsoft.Network/virtualNetworks/', parameters('existingVNet'), '/subnets/', parameters('existingSubnet'))]",
     "listKeys": "[concat('/subscriptions/',subscription().subscriptionid,'/resourceGroups/',resourcegroup().name,'/providers/Microsoft.Storage/storageAccounts/',variables('storageAccountName'))]",
-    "nonChinaWorkspaceID": "[resourceId('d6c4783f-da66-431b-9bb7-ce719b946537', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+    "nonChinaWorkspaceID": "[resourceId('00000000-0000-0000-0000-000000000000', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
     "chinaWorkspaceID": "[resourceId(parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
   },
 

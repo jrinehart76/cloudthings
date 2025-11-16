@@ -99,7 +99,7 @@
               "name": "saameastuspocakvlogs.blob.core.windows.net",
               "isDefault": true,
               "container": "hdihivetest0724-2018-07-24t16-18-24-266z",
-              "key": "[listKeys('/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/RG-AM-EastUS-POC-MSP-CEP-AKV/providers/Microsoft.Storage/storageAccounts/saameastuspocakvlogs', '2015-05-01-preview').key1]"
+              "key": "[listKeys('/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-POC-MSP-CEP-AKV/providers/Microsoft.Storage/storageAccounts/saameastuspocakvlogs', '2015-05-01-preview').key1]"
             }
           ]
         },
@@ -119,8 +119,8 @@
                 }
               },
               "virtualNetworkProfile": {
-                "id": "/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02",
-                "subnet": "/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/hdi-base"
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02",
+                "subnet": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/hdi-base"
               },
               "scriptActions": []
             },
@@ -138,8 +138,8 @@
                 }
               },
               "virtualNetworkProfile": {
-                "id": "/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02",
-                "subnet": "/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/hdi-base"
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02",
+                "subnet": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/hdi-base"
               },
               "scriptActions": []
             },
@@ -157,8 +157,8 @@
                 }
               },
               "virtualNetworkProfile": {
-                "id": "/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02",
-                "subnet": "/subscriptions/d6c4783f-da66-431b-9bb7-ce719b946537/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/hdi-base"
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02",
+                "subnet": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-vnet02/providers/Microsoft.Network/virtualNetworks/test-vnet02/subnets/hdi-base"
               },
               "scriptActions": []
             }

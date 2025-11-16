@@ -168,7 +168,7 @@
                                                         }
                                                     },
                                                     "method": "post",
-                                                    "path": "/v3/beta/teams/@{encodeURIComponent('8d882c79-227d-42c4-b50b-3750f6d7c469')}/channels/@{encodeURIComponent('19:d7f684e92a604b3c9a33bd4e8787dd7b@thread.skype')}/messages"
+                                                    "path": "/v3/beta/teams/@{encodeURIComponent('00000000-0000-0000-0000-000000000000')}/channels/@{encodeURIComponent('19:d7f684e92a604b3c9a33bd4e8787dd7b@thread.skype')}/messages"
                                                 }
                                             }
                                         }

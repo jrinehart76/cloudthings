@@ -11,16 +11,16 @@
         "schemaId": "azureMonitorCommonAlertSchema",
         "data": {
             "essentials": {
-                "alertId": "/subscriptions/0ffde392-0ea6-4c28-b315-92e6417ab377/providers/Microsoft.AlertsManagement/alerts/13ff0cbca0062c3c4c669efd6d9783cf8bd5c56ef43663767ab34eec0151f3b4",
+                "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/13ff0cbca0062c3c4c669efd6d9783cf8bd5c56ef43663767ab34eec0151f3b4",
                 "alertRule": "MSP-azure-service-alert",
                 "severity": "Sev4",
                 "signalType": "Activity Log",
                 "monitorCondition": "Fired",
                 "monitoringService": "ServiceHealth",
                 "alertTargetIDs": [
-                    "/subscriptions/0ffde392-0ea6-4c28-b315-92e6417ab377"
+                    "/subscriptions/00000000-0000-0000-0000-000000000000"
                 ],
-                "originAlertId": "ee0ea8b0-9db8-279f-1bcd-76d3187b669b",
+                "originAlertId": "00000000-0000-0000-0000-000000000000",
                 "firedDateTime": "2020-02-17T13:19:12.423814",
                 "description": "Resolved: Log Analytics - UK South - Mitigated",
                 "essentialsVersion": "1.0",
@@ -31,14 +31,14 @@
                 "channels": 1,
                 "claims": null,
                 "caller": null,
-                "correlationId": "77c8bb95-ebca-4938-a30d-0918ddb2203b",
+                "correlationId": "00000000-0000-0000-0000-000000000000",
                 "eventSource": 2,
                 "eventTimestamp": "2020-02-17T13:19:09.4581529+00:00",
                 "httpRequest": null,
-                "eventDataId": "ee0ea8b0-9db8-279f-1bcd-76d3187b669b",
+                "eventDataId": "00000000-0000-0000-0000-000000000000",
                 "level": 3,
                 "operationName": "Microsoft.ServiceHealth/incident/action",
-                "operationId": "77c8bb95-ebca-4938-a30d-0918ddb2203b",
+                "operationId": "00000000-0000-0000-0000-000000000000",
                 "properties": {
                     "title": "Log Analytics - UK South - Mitigated",
                     "service": "Log Analytics",

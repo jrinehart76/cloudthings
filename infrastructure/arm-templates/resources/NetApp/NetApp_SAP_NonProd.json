@@ -138,8 +138,8 @@
         "mountTargets": [
           {
             "provisioningState": "Succeeded",
-            "mountTargetId": "bd509d5a-9ae3-7158-61c6-e4a7383c05a0",
-            "fileSystemId": "bd509d5a-9ae3-7158-61c6-e4a7383c05a0",
+            "mountTargetId": "00000000-0000-0000-0000-000000000000",
+            "fileSystemId": "00000000-0000-0000-0000-000000000000",
             "startIp": "10.252.124.164",
             "endIp": "10.252.124.164",
             "gateway": "",
@@ -185,8 +185,8 @@
         "mountTargets": [
           {
             "provisioningState": "Succeeded",
-            "mountTargetId": "181753d3-ae17-7827-bfb7-73ce9f9c4838",
-            "fileSystemId": "181753d3-ae17-7827-bfb7-73ce9f9c4838",
+            "mountTargetId": "00000000-0000-0000-0000-000000000000",
+            "fileSystemId": "00000000-0000-0000-0000-000000000000",
             "startIp": "10.252.124.164",
             "endIp": "10.252.124.164",
             "gateway": "",
@@ -232,8 +232,8 @@
         "mountTargets": [
           {
             "provisioningState": "Succeeded",
-            "mountTargetId": "749a2838-e9d4-336d-784a-8403d25c1e24",
-            "fileSystemId": "749a2838-e9d4-336d-784a-8403d25c1e24",
+            "mountTargetId": "00000000-0000-0000-0000-000000000000",
+            "fileSystemId": "00000000-0000-0000-0000-000000000000",
             "startIp": "10.252.124.164",
             "endIp": "10.252.124.164",
             "gateway": "",
@@ -279,8 +279,8 @@
         "mountTargets": [
           {
             "provisioningState": "Succeeded",
-            "mountTargetId": "ab00a0a4-221e-32e1-c896-bce8de7a963a",
-            "fileSystemId": "ab00a0a4-221e-32e1-c896-bce8de7a963a",
+            "mountTargetId": "00000000-0000-0000-0000-000000000000",
+            "fileSystemId": "00000000-0000-0000-0000-000000000000",
             "startIp": "10.252.124.165",
             "endIp": "10.252.124.165",
             "gateway": "",

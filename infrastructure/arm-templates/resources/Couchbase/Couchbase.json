@@ -83,7 +83,7 @@
                 "description": "The base URL for dependent assets",
                 "artifactsBaseUrl": ""
             },
-            "defaultValue": "https://mprpdfartifactstore.azureedge.net/publicartifacts/couchbase.couchbase-enterprise-118d0850-4f46-49f6-b388-45c358ef073b-couchbase-enterprise-byol/Artifacts"
+            "defaultValue": "https://mprpdfartifactstore.azureedge.net/publicartifacts/couchbase.couchbase-enterprise-00000000-0000-0000-0000-000000000000-couchbase-enterprise-byol/Artifacts"
         },
         "virtualNetworkName": {
             "type": "string",
@@ -118,7 +118,7 @@
         {
             "apiVersion": "2017-05-10",
             "type": "Microsoft.Resources/deployments",
-            "name": "pid-bac94ebc-cc78-4dbd-bc39-4b5433e1014c",
+            "name": "pid-00000000-0000-0000-0000-000000000000",
             "properties": {
                 "mode": "Incremental",
                 "template": {

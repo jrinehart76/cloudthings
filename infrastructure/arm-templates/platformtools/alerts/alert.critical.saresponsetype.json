@@ -74,7 +74,7 @@
                 "targetResourceType": "Microsoft.Storage/storageAccounts",
                 "actions": [
                     {
-                        "actionGroupId": "/subscriptions/987c15f0-5fa8-4216-9c10-8f3c8f5bd319/resourcegroups/prod-eus2-mt-us-proknow-rg/providers/microsoft.insights/actiongroups/MSP-alert-dev-proknow",
+                        "actionGroupId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/prod-eus2-mt-us-proknow-rg/providers/microsoft.insights/actiongroups/MSP-alert-dev-proknow",
                         "webHookProperties": {
                         }
                     }

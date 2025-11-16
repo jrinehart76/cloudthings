@@ -12,16 +12,16 @@
         "schemaId": "azureMonitorCommonAlertSchema",
         "data": {
             "essentials": {
-                "alertId": "/subscriptions/7ab6c981-15d8-44aa-a555-0f2ca122f747/providers/Microsoft.AlertsManagement/alerts/935f261c-995f-464b-9602-3200a9cab944",
+                "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/00000000-0000-0000-0000-000000000000",
                 "alertRule": "MSP-azure-resource-alert",
                 "severity": "Sev4",
                 "signalType": "Activity Log",
                 "monitorCondition": "Fired",
                 "monitoringService": "Resource Health",
                 "alertTargetIDs": [
-                    "/subscriptions/7ab6c981-15d8-44aa-a555-0f2ca122f747/resourcegroups/rg-ap-southeastasia-uat-cepa/providers/microsoft.hdinsight/clusters/hdisomuat-ap-southeastasia-cepa"
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-region2-uat-cepa/providers/microsoft.hdinsight/clusters/hdi-cluster-001"
                 ],
-                "originAlertId": "3213de62-3968-41b2-83a3-1ce26d51789b",
+                "originAlertId": "00000000-0000-0000-0000-000000000000",
                 "firedDateTime": "2020-02-17T23:32:22.4042289Z",
                 "description": null,
                 "essentialsVersion": "1.0",
@@ -29,13 +29,13 @@
             },
             "alertContext": {
                 "channels": "Admin, Operation",
-                "correlationId": "1782823f-45ba-4e00-b480-e05f6aa79d37",
+                "correlationId": "00000000-0000-0000-0000-000000000000",
                 "eventSource": "ResourceHealth",
                 "eventTimestamp": "2020-02-17T23:31:37.5161131+00:00",
-                "eventDataId": "3213de62-3968-41b2-83a3-1ce26d51789b",
+                "eventDataId": "00000000-0000-0000-0000-000000000000",
                 "level": "Critical",
                 "operationName": "Microsoft.Resourcehealth/healthevent/Activated/action",
-                "operationId": "3213de62-3968-41b2-83a3-1ce26d51789b",
+                "operationId": "00000000-0000-0000-0000-000000000000",
                 "properties": {
                     "title": "Spark2 thrift server on your HDInsight cluster is currently not working. If you have stopped this service on your side, you can ignore this.",
                     "details": null,

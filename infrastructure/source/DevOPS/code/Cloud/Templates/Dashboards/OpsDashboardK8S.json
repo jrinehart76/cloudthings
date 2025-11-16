@@ -186,7 +186,7 @@
                   "inputs": [
                     {
                       "name": "id",
-                      "value": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-Public-SS-KeyVaults/providers/Microsoft.KeyVault/vaults/AKV-AM-EastUS-MACVTO"
+                      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-Public-SS-KeyVaults/providers/Microsoft.KeyVault/vaults/AKV-AM-EastUS-MACVTO"
                     }
                   ],
                   "type": "Extension/Microsoft_Azure_KeyVault/PartType/VaultPart",
@@ -264,7 +264,7 @@
                   "inputs": [
                     {
                       "name": "id",
-                      "value": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-Public-Mgmt/providers/Microsoft.Automation/automationAccounts/aa-am-eastus2-Public"
+                      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-Public-Mgmt/providers/Microsoft.Automation/automationAccounts/aa-am-eastus2-Public"
                     }
                   ],
                   "type": "Extension/Microsoft_Azure_Automation/PartType/AccountDashboardBladePinnedPart",
@@ -346,7 +346,7 @@
                     },
                     {
                       "name": "PartId",
-                      "value": "72e12018-5f40-4d40-b930-6dd3232f6dd7"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -432,7 +432,7 @@
                     },
                     {
                       "name": "PartId",
-                      "value": "6532dfea-1f25-4b5f-bca3-dac125c1814c"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -522,7 +522,7 @@
                     },
                     {
                       "name": "PartId",
-                      "value": "4b802ad4-900e-470a-9b94-9f42c9a909db"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -613,7 +613,7 @@
                     },
                     {
                       "name": "PartId",
-                      "value": "2ec576f3-c845-4891-8056-07eb92fbde6f"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -692,7 +692,7 @@
                               {
                                 "name": "TotalRequests",
                                 "resourceMetadata": {
-                                  "resourceId": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-uat-MACVTO/providers/Microsoft.ApiManagement/service/apim-am-eastus-uat-macvto"
+                                  "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-uat-MACVTO/providers/Microsoft.ApiManagement/service/apim-am-eastus-uat-macvto"
                                 },
                                 "aggregationType": 4
                               }
@@ -714,7 +714,7 @@
                                 {
                                   "id": {
                                     "resourceDefinition": {
-                                      "id": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-uat-MACVTO/providers/Microsoft.ApiManagement/service/apim-am-eastus-uat-macvto"
+                                      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-uat-MACVTO/providers/Microsoft.ApiManagement/service/apim-am-eastus-uat-macvto"
                                     },
                                     "name": {
                                       "id": "TotalRequests",
@@ -785,7 +785,7 @@
                               {
                                 "name": "TotalRequests",
                                 "resourceMetadata": {
-                                  "resourceId": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-uat-MACVTO/providers/Microsoft.Network/applicationGateways/AppGw-AM-eastus-uat-macvto"
+                                  "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-uat-MACVTO/providers/Microsoft.Network/applicationGateways/AppGw-AM-eastus-uat-macvto"
                                 },
                                 "aggregationType": 4
                               }
@@ -807,7 +807,7 @@
                                 {
                                   "id": {
                                     "resourceDefinition": {
-                                      "id": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-uat-MACVTO/providers/Microsoft.Network/applicationGateways/AppGw-AM-eastus-uat-macvto"
+                                      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-uat-MACVTO/providers/Microsoft.Network/applicationGateways/AppGw-AM-eastus-uat-macvto"
                                     },
                                     "name": {
                                       "id": "TotalRequests",
@@ -878,7 +878,7 @@
                               {
                                 "name": "TotalPullCount",
                                 "resourceMetadata": {
-                                  "resourceId": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-uat-MACVTO/providers/Microsoft.ContainerRegistry/registries/acrameastusuatvto"
+                                  "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-uat-MACVTO/providers/Microsoft.ContainerRegistry/registries/acrameastusuatvto"
                                 },
                                 "aggregationType": 1
                               }
@@ -900,7 +900,7 @@
                                 {
                                   "id": {
                                     "resourceDefinition": {
-                                      "id": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-uat-MACVTO/providers/Microsoft.ContainerRegistry/registries/acrameastusuatvto"
+                                      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-uat-MACVTO/providers/Microsoft.ContainerRegistry/registries/acrameastusuatvto"
                                     },
                                     "name": {
                                       "id": "TotalPullCount",
@@ -971,7 +971,7 @@
                               {
                                 "name": "TotalRequestUnits",
                                 "resourceMetadata": {
-                                  "resourceId": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-uat-MACVTO/providers/Microsoft.DocumentDB/databaseAccounts/cosdb-am-eastus-uat-macvto"
+                                  "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-uat-MACVTO/providers/Microsoft.DocumentDB/databaseAccounts/cosdb-am-eastus-uat-macvto"
                                 },
                                 "aggregationType": 1
                               }
@@ -993,7 +993,7 @@
                                 {
                                   "id": {
                                     "resourceDefinition": {
-                                      "id": "/subscriptions/b03431b3-0b86-4a28-b453-6a521bb13c90/resourceGroups/RG-AM-EastUS-uat-MACVTO/providers/Microsoft.DocumentDB/databaseAccounts/cosdb-am-eastus-uat-macvto"
+                                      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-uat-MACVTO/providers/Microsoft.DocumentDB/databaseAccounts/cosdb-am-eastus-uat-macvto"
                                     },
                                     "name": {
                                       "id": "TotalRequestUnits",
@@ -1117,7 +1117,7 @@
                     },
                     {
                       "name": "PartId",
-                      "value": "38e5291a-379d-400a-afa5-fc5662db3251"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -1207,7 +1207,7 @@
                     },
                     {
                       "name": "PartId",
-                      "value": "06ee30c3-07a4-4e70-9fd7-6f6db89bacbf"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -1297,7 +1297,7 @@
                     },
                     {
                       "name": "PartId",
-                      "value": "515b6869-0020-4c5e-aa7c-a6d4d1d52d46"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",
@@ -1388,7 +1388,7 @@
                     },
                     {
                       "name": "PartId",
-                      "value": "2d97a108-cbad-4404-8087-f2aa7042084c"
+                      "value": "00000000-0000-0000-0000-000000000000"
                     },
                     {
                       "name": "PartTitle",

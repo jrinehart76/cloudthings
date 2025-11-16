@@ -1,7 +1,7 @@
 {
   "resourceGroups": [
-    "RG-AM-EastUS-QA-CEPLATAM",
-    "MC_RG-AM-EastUS-QA-CEPLATAM_AKS-AM-EastUS-QA-CEPLATAM_eastus"
+    "rg-region1-QA-CEPLATAM",
+    "MC_rg-region1-QA-CEPLATAM_AKS-AM-EastUS-QA-CEPLATAM_eastus"
   ],
   "tags": {
     "ApplicationName": "CEP LATAM",

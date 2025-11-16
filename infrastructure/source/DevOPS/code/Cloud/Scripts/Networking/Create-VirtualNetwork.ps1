@@ -64,10 +64,10 @@ $ErrorActionPreference = "Stop"
 Select-AzSubscription -Subscription GCCS
 Switch ($location)
 {
-    'EastUS' {$DNSVMNamePrefix = 'US-AZR'; $HubVNetResourceGroupName = 'RG-AM-EastUS-Prod-SS'}
+    'EastUS' {$DNSVMNamePrefix = 'US-AZR'; $HubVNetResourceGroupName = 'rg-region1-Prod-SS'}
     'WestUS' {$DNSVMNamePrefix = 'US-AZ2'; $HubVNetResourceGroupName = 'RG-AM-WestUS-SS-Networking'}
-    'SoutheastAsia' {$DNSVMNamePrefix = 'SG-AZR'; $HubVNetResourceGroupName = 'RG-AP-SoutheastAsia-SS-Networking'}
-    'UKSouth' {$DNSVMNamePrefix = 'GB-AZR'; $HubVNetResourceGroupName = 'RG-EU-UKSouth-SS-Networking'}
+    'SoutheastAsia' {$DNSVMNamePrefix = 'SG-AZR'; $HubVNetResourceGroupName = 'rg-region2-SoutheastAsia-SS-Networking'}
+    'UKSouth' {$DNSVMNamePrefix = 'GB-AZR'; $HubVNetResourceGroupName = 'rg-region3-UKSouth-SS-Networking'}
     'ChinaEast2' {$DNSVMNamePrefix = 'CN-AZR'; $HubVNetResourceGroupName = 'RG-CN-ChinaEast2-SS-Networking'}
 }
 

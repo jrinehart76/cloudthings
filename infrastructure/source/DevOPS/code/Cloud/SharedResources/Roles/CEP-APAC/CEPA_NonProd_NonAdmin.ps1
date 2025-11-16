@@ -35,19 +35,19 @@ function Assign-RoleDefinition {
 }
 #>
 <#
-CUST-A-AP-NONPROD-V2
-7ab6c981-15d8-44aa-a555-0f2ca122f747
+subscription-nonprod-002
+00000000-0000-0000-0000-000000000000
 
-U-CUST-A-CEPAPAC-Admins
-7aa941b5-dd3b-4160-837b-b7c953874067
+U-Customer-CEPAPAC-Admins
+00000000-0000-0000-0000-000000000000
 
-U-CUST-A-CEPAPAC-Devs
-f01c092b-c095-442d-9780-44365c726456
+U-Customer-CEPAPAC-Devs
+00000000-0000-0000-0000-000000000000
 
 #>
 
-$subId = '7ab6c981-15d8-44aa-a555-0f2ca122f747'
-[array]$PrincipalId = "f01c092b-c095-442d-9780-44365c726456"
+$subId = '00000000-0000-0000-0000-000000000000'
+[array]$PrincipalId = "00000000-0000-0000-0000-000000000000"
 
 # set subscription to CUST-A-ap-nonprod-v2
 Select-AzureRmSubscription -Subscription $subId
@@ -55,7 +55,7 @@ Select-AzureRmSubscription -Subscription $subId
 foreach($p in $PrincipalId){
 
 # Dev 
-New-AzureRmRoleAssignment -ObjectId $p -ResourceGroupName "RG-AP-SoutheastAsia-Dev-CEPA" `
+New-AzureRmRoleAssignment -ObjectId $p -ResourceGroupName "rg-region2-SoutheastAsia-Dev-CEPA" `
 -RoleDefinitionName "Reader"
 
 }

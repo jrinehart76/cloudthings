@@ -18,7 +18,7 @@
       "value": "panadmin"
     },
     "virtualNetworkRGName": {
-      "value": "RG-AM-EastUS-Prod-SS"
+      "value": "rg-region1-Prod-SS"
     },
     "virtualNetworkName": {
       "value": "VNET-AM-EastUS-Prod-SS"

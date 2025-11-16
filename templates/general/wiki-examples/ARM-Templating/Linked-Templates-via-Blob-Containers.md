@@ -167,6 +167,6 @@ Fortunately VSTS makes the deployment really easy once you have the linked templ
 1. Create a new Release Definition
 1. Add the repo containing templates as an artifact
 1. Add an `Azure File Copy` task and set the parameters similar to this:
-   ![image.png](.attachments/image-df6cba45-24fe-4c85-8f3f-084b6bec6e72.png)
+   ![image.png](.attachments/image-00000000-0000-0000-0000-000000000000.png)
 1. Add an `Azure Resource Group Deployment` task and use the `containerUri` and `containerSasToken` variables:
-   ![image.png](.attachments/image-66818e1c-b134-4efa-8dd1-10ccee64c079.png)
+   ![image.png](.attachments/image-00000000-0000-0000-0000-000000000000.png)

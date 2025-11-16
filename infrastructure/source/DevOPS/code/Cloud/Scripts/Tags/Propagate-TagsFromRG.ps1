@@ -1,5 +1,5 @@
-﻿$subName = "CUST-A-AM-POC"
-$rgName = "RG-AM-EastUS-POC-CEP-China"
+﻿$subName = "subscription-poc-001"
+$rgName = "rg-region1-POC-CEP-China"
 $purgeOldTags = $false
 $verboseOutput = $true
 

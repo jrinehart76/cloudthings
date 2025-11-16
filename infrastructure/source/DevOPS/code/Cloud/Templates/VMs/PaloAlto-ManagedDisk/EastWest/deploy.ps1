@@ -1,5 +1,5 @@
 $subName = "GCCS"
-$rgName = "RG-AM-EastUS-Prod-PaloAltoEastWest"
+$rgName = "rg-region1-Prod-PaloAltoEastWest"
 $deploymentPrefix = "VM-EastUS-SS-Palo03"
 $templateFile = ".\Templates\VM\PaloAlto-ManagedDisk\EastWest\template.PasswordAuth.json"
 $parameterFile = ".\Templates\VM\PaloAlto-ManagedDisk\EastWest\template.parameter.sample.json"

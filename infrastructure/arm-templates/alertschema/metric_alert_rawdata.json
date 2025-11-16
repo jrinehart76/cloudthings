@@ -12,7 +12,7 @@
         "schemaId": "azureMonitorCommonAlertSchema",
         "data": {
             "essentials": {
-                "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/0a08fc35-2bd6-4403-b9a4-bd7b5d7c42d0",
+                "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/00000000-0000-0000-0000-000000000000",
                 "alertRule": "MSP-test-alert-[app-prod-asp-300]-cpu-alert",
                 "severity": "Sev3",
                 "signalType": "Metric",

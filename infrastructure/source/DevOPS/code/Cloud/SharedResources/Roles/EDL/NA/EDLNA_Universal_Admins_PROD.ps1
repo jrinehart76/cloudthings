@@ -33,10 +33,10 @@ function Assign-RoleDefinition {
 	}
 }
 
-#edl prod sub ae50a9d1-78af-4030-a26c-57d46a2afd06
+#edl prod sub 00000000-0000-0000-0000-000000000000
 
-$subId = 'ae50a9d1-78af-4030-a26c-57d46a2afd06'
-[array]$PrincipalId = "7cf7eb34-6083-4942-b525-686edb5a0fc3", "b1d6dada-f046-4e18-b489-94c1016bb9b3"
+$subId = '00000000-0000-0000-0000-000000000000'
+[array]$PrincipalId = "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000"
 
 # set subscription to datalake
 Select-AzureRmSubscription -Subscription $subId

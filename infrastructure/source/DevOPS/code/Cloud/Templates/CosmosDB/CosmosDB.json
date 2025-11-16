@@ -41,7 +41,7 @@
     },
     "sharedServiceSubnetResourceID": {
       "type": "string",
-      "defaultValue": "/subscriptions/8a00b99b-04e8-474d-a318-397385dc07a4/resourceGroups/RG-AM-EastUS-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust",
+      "defaultValue": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-region1-Prod-SS/providers/Microsoft.Network/virtualNetworks/VNET-AM-EastUS-Prod-SS/subnets/Subnet-AM-EastUS-Prod-SS-PANUnTrust",
       "metadata": {
         "description": "Range of allowed IPs to access cosmosdb"
       }
@@ -101,7 +101,7 @@
         "rg-am-eastus",
         "rg-ap-southeastasia",
         "rg-eu-uksouth",
-        "rg-am-eastus-devopspoc-mgmt",
+        "rg-region1-devopspoc-mgmt",
         "RG-CN-ChinaEast2-NonProd-Mgmt",
         "RG-CN-ChinaEast2-Prod-Mgmt"
       ],
@@ -116,7 +116,7 @@
     "pairedLocation": "[toLower(parameters('pairedLocation'))]",
     "locationsSingleRegion": [{"failoverPriority":0,"locationName":"[parameters('location')]"}],
     "locationsDoubleRegion": [{"failoverPriority":0,"locationName":"[parameters('location')]"},{"failoverPriority":1,"locationName":"[variables('pairedLocation')]"}],
-    "nonChinaWorkspaceID": "[resourceId('0ffde392-0ea6-4c28-b315-92e6417ab377', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+    "nonChinaWorkspaceID": "[resourceId('00000000-0000-0000-0000-000000000000', parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
     "chinaWorkspaceID": "[resourceId(parameters('laResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
   },
   "resources": [

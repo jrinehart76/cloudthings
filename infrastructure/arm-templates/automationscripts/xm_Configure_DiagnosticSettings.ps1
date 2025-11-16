@@ -36,7 +36,7 @@ param(
     [string]$location = 'eastus',
 
     [Parameter(Mandatory = $false)]
-    [string]$workspaceId = '/subscriptions/0ffde392-0ea6-4c28-b315-92e6417ab377/resourceGroups/rg-am-eastus/providers/Microsoft.OperationalInsights/workspaces/laws-am-eastus'
+    [string]$workspaceId = '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-am-eastus/providers/Microsoft.OperationalInsights/workspaces/laws-am-eastus'
 )
 
 $requiredDiagnosticName = "MSPDiagnosticsLog"

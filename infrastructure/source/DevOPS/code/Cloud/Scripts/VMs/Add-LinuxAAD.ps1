@@ -16,7 +16,7 @@ param (
 )
 
 # Add in the default groups for access - MSP DevOps, MSP Support, SRE
-$groups = "576f05b2-09e4-4246-aa10-53538aab1dd0","bc6f093e-2526-4361-b639-7f179cd7d70c","c65be177-dda6-4bd9-bd1b-31630fbd794a","61f29c52-1f39-4ed7-94bc-4933c6f87e2b"
+$groups = "00000000-0000-0000-0000-000000000000","00000000-0000-0000-0000-000000000000","00000000-0000-0000-0000-000000000000","00000000-0000-0000-0000-000000000000"
 if($AadGroups -ne $null) {
     $groups = $groups + $AadGroups
 }

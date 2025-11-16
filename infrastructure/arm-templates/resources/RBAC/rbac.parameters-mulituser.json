@@ -6,12 +6,12 @@
         "value": [
           {
             "name": "Jennifer Morris",
-            "principalId": "6287d023-281b-42b8-929a-c29ba2b231ec",
+            "principalId": "00000000-0000-0000-0000-000000000000",
             "roleDefinitionId": "Reader"
           },
           {
             "name": "Erik Epstein",
-            "principalId": "1ce201dc-880c-4a5a-840c-115d6f00d13d",
+            "principalId": "00000000-0000-0000-0000-000000000000",
             "roleDefinitionId": "Reader"
           }
         ]

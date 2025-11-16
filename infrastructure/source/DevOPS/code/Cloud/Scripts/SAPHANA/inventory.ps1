@@ -1,5 +1,5 @@
-$sub = Select-AzSubscription -SubscriptionName CUST-A-EU-NONPROD-V2
-$vms = Get-AzVM -ResourceGroupName "RG-EU-UKSouth-Dev-SAPTND"
+$sub = Select-AzSubscription -SubscriptionName subscription-nonprod-003
+$vms = Get-AzVM -ResourceGroupName "rg-region3-UKSouth-Dev-SAPTND"
 # Create dynamic hosts file for Ansible
 $sb = New-Object System.Text.StringBuilder
 $sb.AppendLine("all:") | Out-Null
