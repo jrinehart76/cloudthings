@@ -32,14 +32,14 @@
     },
     "adminEmail": {
       "type": "string",
-      "defaultValue": "username@estee.com",
+      "defaultValue": "username@customer-a.com",
       "metadata": {
         "description": "Admin email adress"
       }
     },
     "orgName": {
       "type": "string",
-      "defaultValue": "Estee",
+      "defaultValue": "CustomerA",
       "metadata": {
         "description": "Organization Name"
       }

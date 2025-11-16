@@ -16,7 +16,7 @@
       "name": "MSP-action-exec-s2",
       "location": "Global",
       "properties": {
-        "groupShortName": "10mES2",
+        "groupShortName": "MSPES2",
         "enabled": true,
         "logicAppReceivers": [
           {

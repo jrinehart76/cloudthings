@@ -605,7 +605,7 @@
             "[concat(variables('vmname'),padLeft(copyIndex(parameters('startNumber')),2,'0'))]" 
           ],
           "tags": {
-            "displayName": "10mdiagnosticsetting"
+            "displayName": "MSPdiagnosticsetting"
           },
           "properties": {
             "publisher": "Microsoft.Azure.Diagnostics",

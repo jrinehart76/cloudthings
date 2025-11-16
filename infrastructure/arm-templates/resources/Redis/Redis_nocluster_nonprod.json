@@ -169,7 +169,7 @@
       "resources": [
         {
           "type": "providers/diagnosticSettings",
-          "name": "Microsoft.Insights/10mdiagnosticsetting",
+          "name": "Microsoft.Insights/mspdiagnosticsetting",
           "dependsOn": [
             "[variables('redisCacheName')]"
           ],

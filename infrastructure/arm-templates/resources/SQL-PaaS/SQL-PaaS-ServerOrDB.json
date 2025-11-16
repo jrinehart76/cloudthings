@@ -187,7 +187,7 @@
 			"properties": {
 				"state": "Enabled",
 				"disabledAlerts": [],
-				"emailAddresses": ["kbrinkle@estee.com"],
+				"emailAddresses": ["admin@customer-a.com"],
 				"emailAccountAdmins": false
 			}
 		}

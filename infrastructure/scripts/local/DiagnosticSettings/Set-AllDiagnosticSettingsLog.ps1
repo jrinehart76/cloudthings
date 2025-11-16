@@ -52,7 +52,7 @@ param (
 
 $jobs = @()
 
-$diagnosticSettingName = "10mDiagnosticsLog"
+$diagnosticSettingName = "MSPDiagnosticsLog"
 
 $odataFilter = "Location eq '" + $region + "'"
 

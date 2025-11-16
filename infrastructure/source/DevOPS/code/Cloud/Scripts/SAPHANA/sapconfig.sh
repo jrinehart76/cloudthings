@@ -8,7 +8,7 @@ timedatectl set-timezone UTC
 #
 # Update hosts
 #
-echo "$IPADDRESS $HOSTNAME.#{RegionLower}#.elcompanies.net $HOSTNAME" >> /etc/hosts
+echo "$IPADDRESS $HOSTNAME.#{RegionLower}#.customer-a-domain.local $HOSTNAME" >> /etc/hosts
 #
 # Update iptables
 #
@@ -76,9 +76,9 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 #
 # Update email Settings
 #
-echo "hostname = $HOSTNAME.elcompanies.net" >> /etc/postfix/main.cf
-echo "mydomain = am.elcompanies.net" >> /etc/postfix/main.cf
-echo "relayhost = [mailrelay.am.elcompanies.net]" >> /etc/postfix/main.cf
+echo "hostname = $HOSTNAME.customer-a-domain.local" >> /etc/postfix/main.cf
+echo "mydomain = am.customer-a-domain.local" >> /etc/postfix/main.cf
+echo "relayhost = [mailrelay.am.customer-a-domain.local]" >> /etc/postfix/main.cf
 sed -i 's/smtp      inet  n       -       n       -       -       smtpd/8025      inet  n       -       n       -       -       smtpd/g' /etc/postfix/master.cf
 #
 # Enable NFS and Automounter

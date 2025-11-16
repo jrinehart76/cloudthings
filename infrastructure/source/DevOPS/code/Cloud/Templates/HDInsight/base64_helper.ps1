@@ -2,10 +2,10 @@
 
 # variables
 $vaultName = "AKV-AM-EastUS-DevOps-POC"
-$certificateName = 'elc10mHdiTemplate'
-$secretName = "elc10mHdiTemplate-pfx"
+$certificateName = 'custa-msp-HdiTemplate'
+$secretName = "custa-msp-HdiTemplate-pfx"
 $password = '7F1R&vYLIegy71*t'  # this is the cert password.  This can also be generated from keyvault if desired
-$pfxPath = "C:\Users\dave\Downloads\akv-am-eastus-devops-poc-elc10mHdiTemplate-withpassword.pfx"
+$pfxPath = "C:\Users\dave\Downloads\akv-am-eastus-devops-poc-custa-msp-HdiTemplate-withpassword.pfx"
 $pfxBaseSixtyFour = "C:\Users\dave\Downloads\pfx_with_password.txt"
 
 # pull the pfx directly from keyvault

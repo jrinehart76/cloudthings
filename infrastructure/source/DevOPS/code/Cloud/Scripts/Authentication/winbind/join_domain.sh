@@ -1,7 +1,7 @@
 #!/bin/bash 
 # MSP
 # Domain join realmd/sssd
-# Example: ./join_domain.sh EU.ELCOMPANIES.NET sa-us-svcmycloud@AM.ELCOMPANIES.NET <password> g-am-cloudops@am.elcompanies.net "OU=Azure,OU=CUST-A Servers,DC=eu,DC=elcompanies,DC=net"
+# Example: ./join_domain.sh EU.CUSTOMER-A-DOMAIN.LOCAL sa-us-svcmycloud@AM.CUSTOMER-A-DOMAIN.LOCAL <password> g-am-cloudops@am.customer-a-domain.local "OU=Azure,OU=CUST-A Servers,DC=eu,DC=customer-a-domain,DC=net"
 
 set -xe
 IFS='|'

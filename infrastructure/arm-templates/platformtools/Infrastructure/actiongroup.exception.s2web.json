@@ -16,7 +16,7 @@
       "name": "MSP-action-exec-s2web",
       "location": "Global",
       "properties": {
-        "groupShortName": "10mE2Web",
+        "groupShortName": "MSPE2Web",
         "enabled": true,
         "logicAppReceivers": [
           {

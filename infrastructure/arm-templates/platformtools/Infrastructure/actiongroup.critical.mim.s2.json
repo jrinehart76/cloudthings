@@ -9,13 +9,13 @@
       "name": "MSP-alert-critmim-s2",
       "location": "Global",
       "properties": {
-        "groupShortName": "10mCMIMS2",
+        "groupShortName": "MSPCMIMS2",
         "enabled": true,
         "logicAppReceivers": [],
         "emailReceivers": [
           {
             "name": "MSP Support Alert Shadow",
-            "emailAddress": "supportalerts@10thmagnitude.com",
+            "emailAddress": "supportalerts@msp.com",
             "useCommonAlertSchema": true
           }
         ]

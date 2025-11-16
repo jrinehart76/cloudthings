@@ -6,7 +6,7 @@
      "value": "APP2"
    },
    "ISEResourceGroupName": {
-     "value": "10mresources"
+     "value": "MSPresources"
    },
    "ISEName": {
      "value": "ISE-AM-EastUS-Dev-APP"

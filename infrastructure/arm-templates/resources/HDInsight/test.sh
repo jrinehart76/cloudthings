@@ -1,4 +1,4 @@
-az login --username dwentzel@10thmagnitude.com 
+az login --username devuser@msp.com 
 
 az account set --subscription CUST-A-AM-POC-DevOps
 az account list
@@ -20,7 +20,7 @@ az group deployment create --resource-group rgTestKafka2 --template-file code/Cu
 az group deployment create --resource-group rgTestKafka2 --template-file code/CustomerA-Cloud/Data/HDInsight/HDI-base.json
 
 #SPN info, this must be known ahead of time and is not part of keyvault
-cert:  elc10mHdiTemplate
+cert:  custa-msp-HdiTemplate
 Application ID: da0cad21-e902-45d5-b97f-17cfad11c656
 Service Principal Id: 0e504239-2e81-43ce-a1c3-f098ea01119d 
 7F1R&vYLIegy71*t

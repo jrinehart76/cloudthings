@@ -16,7 +16,7 @@
       "name": "MSP-action-servicehealth",
       "location": "Global",
       "properties": {
-        "groupShortName": "10mSVC",
+        "groupShortName": "MSPSVC",
         "enabled": true,
         "logicAppReceivers": [
           {

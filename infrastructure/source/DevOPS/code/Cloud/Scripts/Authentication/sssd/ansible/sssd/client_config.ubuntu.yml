@@ -62,7 +62,7 @@
       lineinfile:
         path: /etc/chrony/chrony.conf
         state: present
-        line: 'server dc.am.elcompanies.net'
+        line: 'server dc.am.customer-a-domain.local'
         
     - name: Restart chrony service
       when: ansible_os_family == "Debian" and ansible_distribution_major_version == "18"
@@ -72,7 +72,7 @@
       lineinfile:
         path: /etc/auto.direct
         state: present
-        line: '/usr/home/ -rw,soft,timeo=5,intr us-smy-nas2:/Linux_home'
+        line: '/usr/home/ -rw,soft,timeo=5,intr nas-server:/Linux_home'
 
 
     - name: Updating sudoers file
@@ -100,4 +100,4 @@
 
     - name: Establish kerberos session and domain join (16.04LTS)
       when: ansible_os_family == "Debian" and ansible_distribution_major_version == "16"
-      shell: kinit Administrator && klist && realm --verbose join am.elcompanies.net
+      shell: kinit Administrator && klist && realm --verbose join am.customer-a-domain.local

@@ -1,4 +1,4 @@
-az login --username dwentzel@10thmagnitude.com 
+az login --username devuser@msp.com 
 
 az account set --subscription CUST-A-AM-POC-DevOps
 az account list

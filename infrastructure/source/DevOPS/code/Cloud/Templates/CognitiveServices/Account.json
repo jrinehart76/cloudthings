@@ -154,7 +154,7 @@
       "resources": [
         {
           "type": "providers/diagnosticSettings",
-          "name": "Microsoft.Insights/10mdiagnosticsettings",
+          "name": "Microsoft.Insights/mspdiagnosticsettings",
           "dependsOn": [
             "[concat(variables('name'), padleft(copyIndex(1), 4, '0'))]"
           ],

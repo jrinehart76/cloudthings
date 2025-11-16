@@ -48,7 +48,7 @@
       lineinfile:
         path: /etc/auto.direct
         state: present
-        line: '/usr/home/ -rw,soft,timeo=5,intr us-smy-nas2:/Linux_home'
+        line: '/usr/home/ -rw,soft,timeo=5,intr nas-server:/Linux_home'
 
 
     - name: Updating sudoers file

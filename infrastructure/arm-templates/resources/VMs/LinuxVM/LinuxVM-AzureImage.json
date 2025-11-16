@@ -446,7 +446,7 @@
         "virtualMachineLoop"
       ],
       "tags": {
-        "displayName": "10mdiagnosticsetting"
+        "displayName": "MSPdiagnosticsetting"
       },
       "copy": {
         "name": "diagnosticsLoop",

@@ -42,7 +42,7 @@ param(
 #    [string]$subscription
 )
 
-$requiredDiagnosticName = "10mDiagnosticsLog"
+$requiredDiagnosticName = "MSPDiagnosticsLog"
 <#
 $ConnectionName = 'AzureRunAsConnection'
 $AutomationConnection = Get-AutomationConnection -Name $ConnectionName

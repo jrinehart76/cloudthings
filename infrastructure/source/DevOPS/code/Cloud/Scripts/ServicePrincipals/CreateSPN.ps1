@@ -7,7 +7,7 @@ Param(
 Select-AzSubscription -Subscription $KeyVaultSubscription
 
 #authenticate
-$Username = "SVC-ServicePrincipalCreator@elcompanies.onmicrosoft.com"
+$Username = "SVC-ServicePrincipalCreator@customer-a-domain.onmicrosoft.com"
 $securePassword = ConvertTo-SecureString -String $SvcAcctPass -AsPlainText -Force
 $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $Username,$securePassword
 Connect-AzAccount -Credential $Credentials

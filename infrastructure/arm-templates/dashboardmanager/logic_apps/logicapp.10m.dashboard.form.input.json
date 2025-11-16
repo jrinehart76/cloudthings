@@ -17,7 +17,7 @@
     },
     "variables": {
         "deployment_dashboard": "[concat(subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Logic/workflows/',parameters('deploymentLogicApp'))]",
-        "connectionName": "10mDBMFormConnection"
+        "connectionName": "MSPDBMFormConnection"
     },
     "resources": [
       {
@@ -26,7 +26,7 @@
         "name": "[variables('connectionName')]",
         "location": "[parameters('logicAppLocation')]",
         "properties": {
-            "displayName": "sa-msbot@10thmagnitude.com",
+            "displayName": "sa-msbot@msp.com",
             "customParameterValues": {},
             "api": {
                 "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/microsoftforms')]"
@@ -366,7 +366,7 @@
           "$connections": {
             "type": "Object",
             "value": {
-              "10mDBMFormConnection": {
+              "MSPDBMFormConnection": {
                 "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/microsoftforms')]",
                 "connectionId": "[resourceId('Microsoft.Web/connections', variables('connectionName'))]",
                 "connectionName": "[variables('connectionName')]"

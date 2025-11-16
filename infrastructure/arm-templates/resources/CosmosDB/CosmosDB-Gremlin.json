@@ -140,7 +140,7 @@
       "resources": [
         {
           "type": "providers/diagnosticSettings",
-          "name": "Microsoft.Insights/10mdiagnosticsettings",
+          "name": "Microsoft.Insights/mspdiagnosticsettings",
           "dependsOn": [
             "[variables('cosmosDBAcctName')]"
           ],

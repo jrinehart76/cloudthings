@@ -225,7 +225,7 @@
         },
         {
           "type": "providers/diagnosticSettings",
-          "name": "Microsoft.Insights/10mdiagnosticsetting",
+          "name": "Microsoft.Insights/mspdiagnosticsetting",
           "dependsOn": [
             "[concat(variables('mySqlServerName'),padLeft(copyIndex(parameters('startNumber')),2,'0'))]"
           ],

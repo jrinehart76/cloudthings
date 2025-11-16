@@ -21,7 +21,7 @@
         "name": "[parameters('connections_microsoftforms_name')]",
         "location": "[parameters('logicAppLocation')]",
         "properties": {
-            "displayName": "dnite@10thmagnitude.com",
+            "displayName": "dnite@msp.com",
             "customParameterValues": {},
             "api": {
                 "id": "[concat('/subscriptions/7db5d31d-9662-466e-abad-1feba79ff2af/providers/Microsoft.Web/locations/southcentralus/managedApis/', parameters('connections_microsoftforms_name'))]"

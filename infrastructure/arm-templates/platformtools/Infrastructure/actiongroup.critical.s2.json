@@ -16,7 +16,7 @@
       "name": "MSP-action-crit-s2",
       "location": "Global",
       "properties": {
-        "groupShortName": "10mCS2",
+        "groupShortName": "MSPCS2",
         "enabled": true,
         "logicAppReceivers": [
           {

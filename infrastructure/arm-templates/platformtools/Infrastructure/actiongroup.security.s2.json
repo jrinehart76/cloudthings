@@ -16,7 +16,7 @@
       "name": "MSP-action-highsec-s2",
       "location": "Global",
       "properties": {
-        "groupShortName": "10mHSS2",
+        "groupShortName": "MSPHSS2",
         "enabled": true,
         "logicAppReceivers": [
           {

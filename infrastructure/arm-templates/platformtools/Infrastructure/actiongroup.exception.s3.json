@@ -16,7 +16,7 @@
       "name": "MSP-action-exec-s3",
       "location": "Global",
       "properties": {
-        "groupShortName": "10mES3",
+        "groupShortName": "MSPES3",
         "enabled": true,
         "logicAppReceivers": [
           {

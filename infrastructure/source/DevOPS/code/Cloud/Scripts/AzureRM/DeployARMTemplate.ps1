@@ -2,8 +2,8 @@ $subName = "CUST-A-AM-POC-DevOps"
 $newRG = "False"
 $ResourceGroupName = "test-netapp-arm"
 $ResourceGroupLocation = "EastUS2"
-$templateFile = "D:\repos\estee\cloudops\10thMagnitudeDevOps\code\CustomerA-Cloud\Templates\NetApp\NetApp.json"
-$parameterFile = "D:\repos\estee\cloudops\10thMagnitudeDevOps\code\CustomerA-Cloud\Templates\NetApp\NetApp.parameters.json"
+$templateFile = "D:\repos\customer-a\cloudops\10thMagnitudeDevOps\code\CustomerA-Cloud\Templates\NetApp\NetApp.json"
+$parameterFile = "D:\repos\customer-a\cloudops\10thMagnitudeDevOps\code\CustomerA-Cloud\Templates\NetApp\NetApp.parameters.json"
 $verboseOutput = $true
 
 if($newRG -eq "True"){

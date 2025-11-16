@@ -1,8 +1,8 @@
 #!/bin/bash
-DOMAIN='am.elcompanies.net'
-DC1='us-smy-dc02.am.elcompanies.net'
+DOMAIN='am.customer-a-domain.local'
+DC1='dc-server.am.customer-a-domain.local'
 DCIP1='10.230.36.23'
-DC2='us-smy-dc03.eu.elcompanies.net'
+DC2='dc-server.eu.customer-a-domain.local'
 DC2IP='10.230.36.24'
 RMV_EXT=${DOMAIN%.*}
 RMV_EXT_UPPER=${RMV_EXT^^}

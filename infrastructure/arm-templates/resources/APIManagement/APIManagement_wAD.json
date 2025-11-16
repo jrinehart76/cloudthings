@@ -45,14 +45,14 @@
     },
     "adminEmail": {
       "type": "string",
-      "defaultValue": "username@estee.com",
+      "defaultValue": "username@customer-a.com",
       "metadata": {
         "description": "Admin email adress"
       }
     },
     "orgName": {
       "type": "string",
-      "defaultValue": "Estee",
+      "defaultValue": "CustomerA",
       "metadata": {
         "description": "Organization Name"
       }
@@ -156,7 +156,7 @@
         "clientSecret": "[parameters('clientSecret')]",
         "type": "aad",
         "allowedTenants": [
-          "elcompanies.onmicrosoft.com"
+          "customer-a-domain.onmicrosoft.com"
         ]
       },
       "dependsOn": [

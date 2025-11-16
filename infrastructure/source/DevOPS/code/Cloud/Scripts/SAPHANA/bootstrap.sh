@@ -26,7 +26,7 @@ sudo mv NetworkManager.conf /etc/NetworkManager/NetworkManager.conf -f
 #
 # Update Azure Agent conf
 #
-echo "HttpProxy.Host=elcproxy.elcompanies.net" >> /etc/waagent.conf
+echo "HttpProxy.Host=elcproxy.customer-a-domain.local" >> /etc/waagent.conf
 echo "HttpProxy.Port=9480" >> /etc/waagent.conf
 # Need to figure out how to get ResourceDisk.SwapSizeMB= 
 #
