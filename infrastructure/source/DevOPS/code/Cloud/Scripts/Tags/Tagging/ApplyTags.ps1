@@ -49,7 +49,7 @@ if ($SupportContact -cnotmatch '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}|^NA$') {
     throw "ERROR: $SupportContact is not valid. Please enter a valid email address"
 }
 
-#Validate 10MNotificationDL is an email address or NA
+#Validate MSPNotificationDL is an email address or NA
 if ($NotificationDL -cnotmatch '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}|^NA$') {
     throw "ERROR: $NotificationDL is not valid. Please enter a valid email address"
 }

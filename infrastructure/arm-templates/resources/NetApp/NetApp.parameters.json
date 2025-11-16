@@ -9,10 +9,10 @@
       "value": "cappool1"
     },
     "existingVnet": {
-      "value": "10MResources"
+      "value": "MSPResources"
     },
     "existingVnetRG": {
-      "value": "10MResources "
+      "value": "MSPResources "
     },
     "existingSubnet": {
       "value": "netapp"

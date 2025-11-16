@@ -1,9 +1,9 @@
 #!/bin/bash
 DOMAIN='am.customer-a-domain.local'
 DC1='dc-server.am.customer-a-domain.local'
-DCIP1='10.230.36.23'
+DCIP1='10.10.10.23'
 DC2='dc-server.eu.customer-a-domain.local'
-DC2IP='10.230.36.24'
+DC2IP='10.10.10.24'
 RMV_EXT=${DOMAIN%.*}
 RMV_EXT_UPPER=${RMV_EXT^^}
 FULL_DOMAIN_UPPER=${DOMAIN^^}

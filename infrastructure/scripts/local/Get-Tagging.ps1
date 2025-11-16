@@ -13,7 +13,7 @@
         Comments
 
     .NOTES
-        AUTHOR: 10MOps Team - jrinehart
+        AUTHOR: MSP Ops Team
         LASTEDIT: May 22, 2019
 
     .VERSION
