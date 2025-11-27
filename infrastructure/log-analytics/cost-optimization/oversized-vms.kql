@@ -3,7 +3,10 @@
 // Impact: Typical savings of 15-25% on compute costs
 // Author: Jason Rinehart
 // Blog: https://technicalanxiety.com
-// Last Updated: 2025-01-15
+// Last Updated: 2025-11-26
+// 
+// UPDATED: Migrated from deprecated Perf table to AzureMetrics table
+// The Perf table has been replaced by AzureMetrics for Azure VM metrics
 //
 // This query identifies VMs where the allocated resources significantly
 // exceed actual usage patterns. Right-sizing is one of the fastest ways
@@ -24,47 +27,50 @@ let memoryThreshold = 50.0;  // Average memory below 50%
 let peakCpuThreshold = 70.0;  // Even peak CPU below 70%
 let peakMemoryThreshold = 75.0;  // Even peak memory below 75%
 
-// Get CPU utilization
-let CPUData = Perf
+// Get CPU utilization from AzureMetrics
+let CPUData = AzureMetrics
 | where TimeGenerated > ago(timeRange)
-| where ObjectName == "Processor" and CounterName == "% Processor Time"
-| where InstanceName == "_Total"
+| where MetricName == "Percentage CPU"
+| where ResourceProvider == "MICROSOFT.COMPUTE"
 | summarize 
-    AvgCPU = avg(CounterValue),
-    MaxCPU = max(CounterValue),
-    P95CPU = percentile(CounterValue, 95),
+    AvgCPU = avg(Average),
+    MaxCPU = max(Maximum),
+    P95CPU = percentile(Average, 95),
     SampleCount = count()
-    by Computer, _ResourceId
+    by Resource, _ResourceId
 | where SampleCount > 100  // Ensure sufficient data points
 | where AvgCPU < cpuThreshold and MaxCPU < peakCpuThreshold;
 
-// Get Memory utilization
-let MemoryData = Perf
+// Get Memory utilization from AzureMetrics
+// Note: Available Memory Bytes is reported, so we calculate percentage used
+let MemoryData = AzureMetrics
 | where TimeGenerated > ago(timeRange)
-| where ObjectName == "Memory" and CounterName == "% Committed Bytes In Use"
+| where MetricName == "Available Memory Bytes"
+| where ResourceProvider == "MICROSOFT.COMPUTE"
+| extend MemoryUsedPercent = 100 - ((Average / 1073741824) * 100)  // Convert bytes to GB and calculate used %
 | summarize 
-    AvgMemory = avg(CounterValue),
-    MaxMemory = max(CounterValue),
-    P95Memory = percentile(CounterValue, 95),
+    AvgMemory = avg(MemoryUsedPercent),
+    MaxMemory = max(MemoryUsedPercent),
+    P95Memory = percentile(MemoryUsedPercent, 95),
     SampleCount = count()
-    by Computer, _ResourceId
+    by Resource, _ResourceId
 | where SampleCount > 100
 | where AvgMemory < memoryThreshold and MaxMemory < peakMemoryThreshold;
 
-// Get disk utilization for context
-let DiskData = Perf
+// Get disk utilization from AzureMetrics for context
+let DiskData = AzureMetrics
 | where TimeGenerated > ago(timeRange)
-| where ObjectName == "LogicalDisk" and CounterName == "% Free Space"
-| where InstanceName !in ("_Total", "HarddiskVolume1")  // Exclude system volumes
+| where MetricName in ("Disk Read Bytes", "Disk Write Bytes")
+| where ResourceProvider == "MICROSOFT.COMPUTE"
 | summarize 
-    AvgFreeSpace = avg(CounterValue),
-    MinFreeSpace = min(CounterValue)
-    by Computer, _ResourceId;
+    AvgDiskReadMB = avg(Average) / 1048576,
+    AvgDiskWriteMB = avg(Average) / 1048576
+    by Resource, _ResourceId;
 
 // Combine metrics and calculate recommendations
 CPUData
-| join kind=inner (MemoryData) on Computer, _ResourceId
-| join kind=leftouter (DiskData) on Computer, _ResourceId
+| join kind=inner (MemoryData) on Resource, _ResourceId
+| join kind=leftouter (DiskData) on Resource, _ResourceId
 | extend UtilizationScore = (AvgCPU + AvgMemory) / 2
 | extend Recommendation = case(
     UtilizationScore < 20, "Downsize by 2 SKU levels (50% cost reduction)",
@@ -84,7 +90,7 @@ CPUData
 )
 | project 
     Priority,
-    Computer,
+    VMName = Resource,
     AvgCPU = round(AvgCPU, 1),
     MaxCPU = round(MaxCPU, 1),
     P95CPU = round(P95CPU, 1),
