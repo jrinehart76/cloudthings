@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (33 of 97)
+## Scripts Updated (35 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -321,7 +321,29 @@ This audit reviewed all PowerShell scripts in the repository for:
     - Improved: Parameter documentation and validation
     - Note: Designed for Azure Automation runbook execution
 
-## Scripts Requiring Updates (64 remaining)
+34. **infrastructure/scripts/local/VmExtension/Diagnostics/ta-install-vm-diagnostics.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Azure Automation runbook usage notes
+    - Added: Diagnostic storage account management documentation
+    - Added: Configuration file requirements
+    - Added: Author attribution to Jason Rinehart (enhanced from dnite original)
+    - Added: Cost considerations and ROI analysis
+    - Improved: Parameter documentation and validation
+    - Note: Complex runbook with automatic storage account creation
+
+35. **infrastructure/scripts/local/DiagnosticSettings/ta-set-diagnostics-sql.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: SQL-specific diagnostic configuration
+    - Added: Deadlock detection and query performance monitoring
+    - Added: Workspace validation
+    - Added: Parallel job execution with throttling
+    - Added: Author attribution to Jason Rinehart
+    - Added: Query Store and performance tuning use cases
+    - Improved: Better error handling and progress tracking
+
+## Scripts Requiring Updates (62 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -536,15 +558,15 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 33 of 97 (34%)
-- **Scripts Remaining:** 64 (66%)
+- **Scripts Updated:** 35 of 97 (36%)
+- **Scripts Remaining:** 62 (64%)
 - **Estimated Time per Script:** 15-30 minutes
-- **Total Estimated Time:** 16-32 hours remaining
+- **Total Estimated Time:** 15.5-31 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
-- **Progress:** Excellent - 24 scripts updated in this session
+- **Progress:** Excellent - 26 scripts updated in this session
   * Infrastructure deployment scripts: COMPLETE (3/3 - 100%)
-  * VM extension scripts: 4 of 6 complete (67%)
-  * DiagnosticSettings scripts: 7 of 8 complete (87.5%)
+  * VM extension scripts: COMPLETE (6/6 - 100%)
+  * DiagnosticSettings scripts: COMPLETE (8/8 - 100%)
   * Ondemand scripts: COMPLETE (4/4 - 100%)
 
 ## Benefits of Completion
