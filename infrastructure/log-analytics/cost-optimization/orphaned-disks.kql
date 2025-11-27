@@ -13,7 +13,6 @@
 // with hundreds of orphaned disks costing thousands monthly.
 
 let timeRange = 30d;
-
 AzureDiagnostics
 | where ResourceType == "DISKS"
 | where TimeGenerated > ago(timeRange)

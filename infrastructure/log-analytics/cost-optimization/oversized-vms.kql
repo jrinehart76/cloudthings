@@ -1,138 +1,269 @@
-// Query: Identify Oversized Virtual Machines
-// Purpose: Find VMs that can be downsized to save costs
-// Impact: Typical savings of 15-25% on compute costs
+// Query: Identify Oversized Virtual Machines with Specific SKU Recommendations
+// Purpose: Find VMs that can be downsized to save costs with actionable SKU targets
+// Impact: Typical savings of 15-50% on compute costs depending on downsize level
 // Author: Jason Rinehart
 // Blog: https://technicalanxiety.com
-// Last Updated: 2025-11-26
+// Last Updated: 2025-11-27
 // 
-// UPDATED: Migrated from deprecated Perf table to AzureMetrics table
-// The Perf table has been replaced by AzureMetrics for Azure VM metrics
+// This query performs multi-dimensional analysis of VM utilization across CPU, disk,
+// network, and memory to identify oversized VMs. Unlike simple threshold queries,
+// this provides specific SKU recommendations using both explicit mappings and
+// intelligent fallback logic.
 //
-// This query identifies VMs where the allocated resources significantly
-// exceed actual usage patterns. Right-sizing is one of the fastest ways
-// to reduce cloud costs without impacting performance.
+// Key Features:
+// - Rate-based metrics (bytes/sec) for accurate disk and network analysis
+// - Time-binned aggregation to capture usage patterns over time
+// - Explicit SKU mapping table for common VM families
+// - Regex-based fallback logic to suggest half-size SKUs
+// - Multi-factor decision making (all metrics must be low to recommend downsize)
+// - Guest memory metrics from Perf table (requires Azure Monitor Agent)
 //
-// Common patterns:
-// - VMs sized for peak load that rarely occurs
-// - Over-provisioned during migration "just to be safe"
-// - Legacy sizing that hasn't been reviewed
-// - Development VMs sized like production
-//
-// Real-world impact: Organizations typically find 30-40% of VMs can be
-// downsized by at least one SKU level, saving 15-25% on compute costs.
+// Real-world impact: Organizations typically find 30-40% of VMs can be downsized,
+// with specific SKU targets making implementation straightforward.
 
-let timeRange = 14d;  // Two weeks of data for reliable patterns
-let cpuThreshold = 40.0;  // Average CPU below 40%
-let memoryThreshold = 50.0;  // Average memory below 50%
-let peakCpuThreshold = 70.0;  // Even peak CPU below 70%
-let peakMemoryThreshold = 75.0;  // Even peak memory below 75%
+// ===== Configuration Parameters =====
+// Adjust these thresholds based on your organization's risk tolerance and workload patterns
 
-// Get CPU utilization from AzureMetrics
-let CPUData = AzureMetrics
-| where TimeGenerated > ago(timeRange)
-| where MetricName == "Percentage CPU"
-| where ResourceProvider == "MICROSOFT.COMPUTE"
-| summarize 
-    AvgCPU = avg(Average),
-    MaxCPU = max(Maximum),
-    P95CPU = percentile(Average, 95),
-    SampleCount = count()
-    by Resource, _ResourceId
-| where SampleCount > 100  // Ensure sufficient data points
-| where AvgCPU < cpuThreshold and MaxCPU < peakCpuThreshold;
+let timeWindow = 7d;            // Analysis window - 7 days provides good pattern visibility
+let grain = 15m;                // Time bin size for rate calculations - 15min balances granularity and performance
+let cpuThresholdPct = 20.0;     // Average CPU below this percentage indicates low utilization
+let diskThresholdBps = 1024.0 * 1024.0;  // Disk I/O below 1 MB/s (both read & write) indicates low usage
+let netThresholdBps  = 100.0 * 1024.0;   // Network below 100 KB/s (both in & out) indicates low usage
+let memPctThreshold  = 40.0;    // Memory committed bytes in use below this percentage indicates low usage
+let memAvailMBThreshold = 8192.0; // Available memory above 8 GB indicates low usage
 
-// Get Memory utilization from AzureMetrics
-// Note: Available Memory Bytes is reported, so we calculate percentage used
-let MemoryData = AzureMetrics
-| where TimeGenerated > ago(timeRange)
-| where MetricName == "Available Memory Bytes"
-| where ResourceProvider == "MICROSOFT.COMPUTE"
-| extend MemoryUsedPercent = 100 - ((Average / 1073741824) * 100)  // Convert bytes to GB and calculate used %
-| summarize 
-    AvgMemory = avg(MemoryUsedPercent),
-    MaxMemory = max(MemoryUsedPercent),
-    P95Memory = percentile(MemoryUsedPercent, 95),
-    SampleCount = count()
-    by Resource, _ResourceId
-| where SampleCount > 100
-| where AvgMemory < memoryThreshold and MaxMemory < peakMemoryThreshold;
+// ===== Explicit SKU Mapping Table =====
+// This table defines specific downsize recommendations for common VM families.
+// Format: Current SKU -> Recommended smaller SKU (typically half the cores/memory)
+// Note: Using 'Standard_*' prefix because AzureVMInventory.VMSize includes it
 
-// Get disk utilization from AzureMetrics for context
-let DiskData = AzureMetrics
-| where TimeGenerated > ago(timeRange)
-| where MetricName in ("Disk Read Bytes", "Disk Write Bytes")
-| where ResourceProvider == "MICROSOFT.COMPUTE"
-| summarize 
-    AvgDiskReadMB = avg(Average) / 1048576,
-    AvgDiskWriteMB = avg(Average) / 1048576
-    by Resource, _ResourceId;
+let explicitMap = datatable(VMSize:string, SkuRecommendation:string)[
+    // Dsv5 / Dv5 family (general purpose, disk optimized)
+    "Standard_D64s_v5", "Standard_D32s_v5",
+    "Standard_D32s_v5", "Standard_D16s_v5",
+    "Standard_D16s_v5", "Standard_D8s_v5",
+    "Standard_D8s_v5",  "Standard_D4s_v5",
+    "Standard_D4s_v5",  "Standard_D2s_v5",
+    "Standard_D2s_v5",  "Standard_D1s_v5",
+    
+    // Esv5 / Ev5 family (memory optimized)
+    "Standard_E64s_v5", "Standard_E32s_v5",
+    "Standard_E32s_v5", "Standard_E16s_v5",
+    "Standard_E16s_v5", "Standard_E8s_v5",
+    "Standard_E8s_v5",  "Standard_E4s_v5",
+    "Standard_E4s_v5",  "Standard_E2s_v5",
+    "Standard_E2s_v5",  "Standard_E1s_v5",
+    
+    // Fsv2 family (compute optimized)
+    "Standard_F64s_v2", "Standard_F32s_v2",
+    "Standard_F32s_v2", "Standard_F16s_v2",
+    "Standard_F16s_v2", "Standard_F8s_v2",
+    "Standard_F8s_v2",  "Standard_F4s_v2",
+    "Standard_F4s_v2",  "Standard_F2s_v2",
+    "Standard_F2s_v2",  "Standard_F1s_v2",
+    
+    // B-series (burstable, cost-optimized)
+    "Standard_B32ms",   "Standard_B16ms",
+    "Standard_B16ms",   "Standard_B8ms",
+    "Standard_B8ms",    "Standard_B4ms",
+    "Standard_B4ms",    "Standard_B2ms",
+    "Standard_B2ms",    "Standard_B1ms"
+];
 
-// Combine metrics and calculate recommendations
-CPUData
-| join kind=inner (MemoryData) on Resource, _ResourceId
-| join kind=leftouter (DiskData) on Resource, _ResourceId
-| extend UtilizationScore = (AvgCPU + AvgMemory) / 2
+// ===== VM Platform Metrics (CPU/Disk/Network) from AzureMetrics =====
+// These metrics are collected by Azure platform and don't require guest agents.
+// We calculate rates (bytes/sec) by binning time and converting totals.
+
+let vmMetrics = 
+    AzureMetrics
+    | where TimeGenerated > ago(timeWindow)
+    | where ResourceProvider has "MICROSOFT.COMPUTE" and ResourceId has "/VIRTUALMACHINES/"
+    | where MetricName in ("Percentage CPU", "Disk Read Bytes", "Disk Write Bytes",
+                           "Network In Total", "Network Out Total")
+    // Bin time into intervals for rate calculation
+    | extend tbin = bin(TimeGenerated, grain)
+    // Aggregate metrics per time bin per VM
+    // CPU uses Average, disk/network use Total (cumulative over the bin)
+    | summarize
+        AvgCpuPct     = avgif(Average, MetricName == "Percentage CPU"),
+        DiskReadBytes = sumif(Total,   MetricName == "Disk Read Bytes"),
+        DiskWriteBytes= sumif(Total,   MetricName == "Disk Write Bytes"),
+        NetInBytes    = sumif(Total,   MetricName == "Network In Total"),
+        NetOutBytes   = sumif(Total,   MetricName == "Network Out Total")
+        by ResourceId, Resource, tbin
+    // Convert cumulative totals per bin into bytes/sec rates
+    | extend seconds = toreal(grain) / 1s
+    | extend 
+        DiskReadBps  = DiskReadBytes  / seconds,
+        DiskWriteBps = DiskWriteBytes / seconds,
+        NetInBps     = NetInBytes     / seconds,
+        NetOutBps    = NetOutBytes    / seconds
+    // Average the rates across all time bins to get overall average rates
+    | summarize
+        AvgCpuPct        = avg(AvgCpuPct),
+        AvgDiskReadBps   = avg(DiskReadBps),
+        AvgDiskWriteBps  = avg(DiskWriteBps),
+        AvgNetInBps      = avg(NetInBps),
+        AvgNetOutBps     = avg(NetOutBps)
+        by ResourceId, Resource;
+
+// ===== Guest Memory Metrics from Perf Table =====
+// Memory metrics require Azure Monitor Agent (AMA) and Data Collection Rules (DCR).
+// If not configured, this will return no data and memory checks will use fallback logic.
+// % Committed Bytes In Use: Percentage of committed virtual memory in use
+// Available MBytes: Physical memory available to processes
+
+let vmMem = 
+    Perf
+    | where TimeGenerated > ago(timeWindow)
+    | where ObjectName has "Memory"
+    | where CounterName in ("% Committed Bytes In Use", "Available MBytes")
+    | summarize
+        MemPctUsed = avgif(CounterValue, CounterName == "% Committed Bytes In Use"),
+        MemAvailMB = avgif(CounterValue, CounterName == "Available MBytes")
+        by Computer;
+
+// ===== VM Inventory (Name/Size/Metadata) =====
+// Get the most recent inventory record for each VM to determine current SKU
+
+let vmInv = 
+    AzureVMInventory
+    | summarize arg_max(TimeGenerated, *) by ResourceId
+    | project ResourceId, VMName, VMSize, ResourceGroup, SubscriptionId;
+
+// ===== Join All Data Sources and Apply Analysis Logic =====
+
+vmMetrics
+// Join with VM inventory to get SKU and metadata
+| join kind=leftouter vmInv on ResourceId
+// Join with memory metrics (may be empty if AMA not configured)
+// Match on Resource name (from AzureMetrics) to Computer name (from Perf)
+| join kind=leftouter (vmMem | project Computer, MemPctUsed, MemAvailMB) 
+    on $left.Resource == $right.Computer
+
+// ===== Apply Threshold Logic to Determine Low Utilization =====
+// Each metric is evaluated independently, then combined for final decision
+
+| extend 
+    // CPU is low if average is below threshold
+    CpuLow  = iff(AvgCpuPct < cpuThresholdPct, 1, 0),
+    // Disk is low if BOTH read and write are below threshold
+    DiskLow = iff(AvgDiskReadBps < diskThresholdBps and AvgDiskWriteBps < diskThresholdBps, 1, 0),
+    // Network is low if BOTH inbound and outbound are below threshold
+    NetLow  = iff(AvgNetInBps < netThresholdBps and AvgNetOutBps < netThresholdBps, 1, 0),
+    // Memory is low if EITHER % used is low OR available MB is high
+    // Use coalesce to handle missing memory data (assumes high usage if no data)
+    MemLow  = iff(coalesce(MemPctUsed, 100.0) < memPctThreshold 
+                  or coalesce(MemAvailMB, 0.0) > memAvailMBThreshold, 1, 0)
+
+// VM is oversized only if ALL metrics indicate low utilization
+| extend Oversized = iff(CpuLow==1 and DiskLow==1 and NetLow==1 and MemLow==1, "Oversized", "Normal")
+
+// ===== Generate Generic Recommendation =====
 | extend Recommendation = case(
-    UtilizationScore < 20, "Downsize by 2 SKU levels (50% cost reduction)",
-    UtilizationScore < 30, "Downsize by 1 SKU level (25% cost reduction)",
-    UtilizationScore < 40, "Consider downsizing (15% cost reduction)",
-    "Monitor - borderline case"
+    Oversized == "Oversized",
+    strcat("Downsize within ", coalesce(VMSize, "current"), " family by one tier. Validate with workload owner."),
+    "Maintain current size"
 )
-| extend Priority = case(
-    UtilizationScore < 20, "High",
-    UtilizationScore < 30, "Medium",
-    "Low"
-)
-| extend EstimatedMonthlySavings = case(
-    UtilizationScore < 20, 200.0,  // Approximate, adjust for your VM sizes
-    UtilizationScore < 30, 100.0,
-    50.0
-)
-| project 
-    Priority,
-    VMName = Resource,
-    AvgCPU = round(AvgCPU, 1),
-    MaxCPU = round(MaxCPU, 1),
-    P95CPU = round(P95CPU, 1),
-    AvgMemory = round(AvgMemory, 1),
-    MaxMemory = round(MaxMemory, 1),
-    P95Memory = round(P95Memory, 1),
-    UtilizationScore = round(UtilizationScore, 1),
-    Recommendation,
-    EstimatedMonthlySavings,
-    _ResourceId
-| order by UtilizationScore asc, EstimatedMonthlySavings desc
 
-// USAGE NOTES:
-// 1. Review recommendations during low-usage periods (weekends/nights)
-// 2. Consider workload patterns - batch jobs may show low average but high peak
-// 3. Test downsizing in dev/test first
-// 4. Use Azure Advisor for specific SKU recommendations
-// 5. Document current SKU before changes for easy rollback
+// ===== Generate Specific SKU Recommendation =====
+// Step 1: Try to find explicit mapping in the datatable
+| join kind=leftouter explicitMap on VMSize
+
+// Step 2: If no explicit mapping, use regex-based fallback logic to suggest half-size SKU
+// This works for most standard naming patterns (e.g., Standard_D8s_v5 -> Standard_D4s_v5)
+
+// Normalize the VM size by removing 'Standard_' prefix
+| extend VMSizeNorm = replace(@"^Standard_", "", tostring(VMSize))
+// Remove any whitespace
+| extend VMSizeNorm = replace(@"\\s+", "", VMSizeNorm)
+// Extract version suffix (_v#) if present
+| extend VersionSuffix = extract(@"(_v\\d+)$", 0, VMSizeNorm)
+// Detect 's' suffix (premium storage capable)
+| extend HasS = iff(VMSizeNorm matches regex @"\\d+s", 1, 0)
+// Detect 'ms' suffix (B-series memory optimized)
+| extend HasMS = iff(VMSizeNorm matches regex @"\\d+ms", 1, 0)
+// Extract base family (letters before first digit, e.g., "D", "E", "F")
+| extend Family = extract(@"^([A-Za-z]+)", 1, VMSizeNorm)
+// Extract numeric size (e.g., 8 from D8s_v5)
+| extend SizeNum = toint(extract(@"(\\d+)", 1, VMSizeNorm))
+// Calculate half the size (minimum 1)
+| extend HalfNum = case(
+    SizeNum >= 4, toint(SizeNum / 2),
+    SizeNum == 2, 1,
+    SizeNum  // For 1 or unknown, keep same
+)
+// Reconstruct suffix based on detected patterns
+| extend Suffix = case(
+    HasMS == 1, "ms",
+    HasS  == 1, "s",
+    ""  // Other patterns handled by explicit map only
+)
+// Build the fallback SKU name
+| extend FallbackNormalized = strcat(Family, tostring(HalfNum), Suffix, VersionSuffix)
+| extend FallbackSku = strcat("Standard_", FallbackNormalized)
+
+// Use explicit mapping if available, otherwise use fallback
+| extend SkuRecommendation = coalesce(SkuRecommendation, FallbackSku)
+
+// ===== Final Projection and Formatting =====
+| project
+    SubscriptionId,
+    ResourceGroup,
+    VMName = coalesce(VMName, Resource),
+    VMSize,
+    AvgCpuPct,
+    AvgDiskReadMBps = round(AvgDiskReadBps / (1024.0*1024.0), 3),
+    AvgDiskWriteMBps = round(AvgDiskWriteBps / (1024.0*1024.0), 3),
+    AvgNetInKBps  = round(AvgNetInBps  / 1024.0, 1),
+    AvgNetOutKBps = round(AvgNetOutBps / 1024.0, 1),
+    MemPctUsed,
+    MemAvailMB,
+    Oversized,
+    Recommendation,
+    SkuRecommendation,
+    ResourceId
+| order by Oversized desc, AvgCpuPct asc
+
+// ===== USAGE NOTES =====
 //
-// VALIDATION STEPS:
-// Before downsizing:
-// 1. Verify application performance requirements
-// 2. Check if VM is part of availability set (may require downtime)
-// 3. Review any licensing constraints (SQL Server, etc.)
-// 4. Confirm with application owner
-// 5. Schedule change during maintenance window
+// Prerequisites:
+// - Azure Monitor Agent (AMA) and Data Collection Rules for memory metrics
+// - At least 7 days of metric history for reliable analysis
+// - Appropriate RBAC permissions to read AzureMetrics, Perf, and AzureVMInventory
 //
-// AUTOMATION:
-// This query can trigger:
-// - ServiceNow tickets for VM owners
-// - Azure Advisor recommendations
-// - Automated downsizing for dev/test (with approval)
+// Interpreting Results:
+// - "Oversized" VMs meet ALL low utilization criteria (CPU, disk, network, memory)
+// - SkuRecommendation provides specific target SKU (typically half the current size)
+// - Review recommendations during representative workload periods (not during maintenance)
+//
+// Before Downsizing:
+// 1. Validate with application owner - low average doesn't mean no peaks
+// 2. Check for batch jobs or scheduled workloads that may spike usage
+// 3. Review application performance requirements and SLAs
+// 4. Verify VM is not part of availability set (may require downtime)
+// 5. Check licensing constraints (SQL Server, Oracle, etc.)
+// 6. Test in dev/test environment first
+// 7. Schedule change during maintenance window
+// 8. Document current SKU for easy rollback
+//
+// Customization:
+// - Adjust threshold variables at top of query for your risk tolerance
+// - Add more VM families to explicitMap datatable
+// - Exclude specific VMs or resource groups:
+//   | where VMName !contains "prod-sql"
+//   | where ResourceGroup !contains "critical"
+//
+// Automation Opportunities:
+// - Generate ServiceNow tickets for VM owners
+// - Create Azure Advisor custom recommendations
+// - Automated downsizing for dev/test (with approval workflow)
 // - Monthly cost optimization reports
+// - Integration with FinOps dashboards
 //
-// EXPECTED RESULTS:
-// - VMs sorted by optimization opportunity
-// - Specific downsizing recommendations
-// - Estimated monthly savings
-// - Resource IDs for automation
-//
-// COMMON EXCLUSIONS:
-// Add these filters if needed:
-// | where Computer !contains "prod-sql"  // Exclude production SQL servers
-// | where Computer !contains "dc-"       // Exclude domain controllers
-// | where _ResourceId !contains "/rg-critical/"  // Exclude critical resource groups
+// Limitations:
+// - Memory metrics require AMA/DCR configuration
+// - Fallback SKU logic may not work for all VM families (use explicit map)
+// - Does not account for licensing costs that may change with SKU
+// - Does not consider reserved instance or spot pricing implications
+// - Assumes consistent workload patterns over the analysis window
