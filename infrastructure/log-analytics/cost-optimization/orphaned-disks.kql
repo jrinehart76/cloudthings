@@ -1,64 +1,196 @@
-// Query: Find Orphaned Managed Disks
-// Purpose: Identify unattached disks consuming storage costs
-// Impact: Typical savings of 5-10% on storage costs
+// Query: Find Orphaned Managed Disks with Cost Analysis
+// Purpose: Identify unattached disks consuming storage costs with accurate sizing and savings
+// Impact: Typical savings of 5-10% on storage costs, often thousands per month
 // Author: Jason Rinehart
 // Blog: https://technicalanxiety.com
-// Last Updated: 2025-01-15
+// Last Updated: 2025-11-27
 //
 // Orphaned disks are one of the most common sources of waste in Azure.
 // They're created when VMs are deleted but disks aren't, or when disks
 // are detached for troubleshooting and forgotten.
 //
-// At $5-50/month per disk, these add up quickly. I've seen organizations
-// with hundreds of orphaned disks costing thousands monthly.
+// At $5-50/month per disk (depending on size and tier), these add up quickly.
+// Organizations commonly have hundreds of orphaned disks costing thousands monthly.
+//
+// This query provides:
+// - Accurate disk size extraction from properties
+// - Time-based priority (how long unattached)
+// - Cost estimates (monthly and annual)
+// - Subscription-level summary for executive reporting
+// - Actionable recommendations based on age
 
-let timeRange = 30d;
-AzureDiagnostics
-| where ResourceType == "DISKS"
-| where TimeGenerated > ago(timeRange)
-| where Category == "Disk"
-| extend DiskState = tostring(parse_json(properties_s).diskState)
-| where DiskState == "Unattached"
-| summarize 
-    FirstSeen = min(TimeGenerated),
-    LastSeen = max(TimeGenerated),
-    DaysUnattached = datetime_diff('day', now(), min(TimeGenerated))
-    by Resource, ResourceId, ResourceGroup
-| extend DiskSizeGB = 128  // Default, adjust based on your environment
-| extend EstimatedMonthlyCost = case(
-    DiskSizeGB <= 128, 10.0,
-    DiskSizeGB <= 512, 25.0,
-    DiskSizeGB <= 1024, 50.0,
-    100.0
-)
-| extend Priority = case(
-    DaysUnattached > 90, "High - Delete immediately",
-    DaysUnattached > 30, "Medium - Verify and delete",
-    "Low - Monitor"
-)
-| project 
-    Priority,
-    DiskName = Resource,
-    ResourceGroup,
-    DaysUnattached,
-    EstimatedMonthlyCost,
-    FirstSeen,
-    _ResourceId = ResourceId
+// ===== Configuration Parameters =====
+let timeRange = 30d;  // Analysis window - 30 days captures recent orphans
+
+// ===== Main Query with Materialization =====
+// Using materialize() allows us to reuse the same dataset for both detail and summary
+// without re-executing the expensive query twice
+
+let diskCosts = materialize(
+    AzureDiagnostics
+    | where ResourceType has "DISKS"
+    | where TimeGenerated > ago(timeRange)
+    | where Category has "Disk"
+    // Extract disk state from JSON properties
+    // DiskState can be: Attached, Unattached, Reserved, ActiveSAS
+    | extend DiskState = tostring(parse_json(properties_s).diskState)
+    | where DiskState has "Unattached"
+    // Extract actual disk size from properties (critical for accurate cost estimates)
+    | extend DiskSizeGB = toint(parse_json(properties_s).diskSizeGb)
+    // Calculate time metrics
+    | summarize
+        FirstSeen = min(TimeGenerated),      // When we first detected it as unattached
+        LastSeen = max(TimeGenerated),       // Most recent observation
+        DaysUnattached = datetime_diff('day', now(), min(TimeGenerated))  // Total days orphaned
+        by Resource, ResourceId, ResourceGroup, DiskSizeGB, SubscriptionId
+    // Estimate monthly cost based on disk size
+    // These are approximate costs for Standard SSD (adjust for your environment)
+    // Premium SSD costs would be higher
+    | extend EstimatedMonthlyCost = case(
+        DiskSizeGB <= 128, 10.0,    // Small disks (OS disks, small data)
+        DiskSizeGB <= 512, 25.0,    // Medium disks
+        DiskSizeGB <= 1024, 50.0,   // Large disks (1TB)
+        100.0                        // Very large disks (>1TB)
+    )
+    // Calculate annual cost for executive reporting
+    | extend EstimatedAnnualCost = EstimatedMonthlyCost * 12
+    // Assign priority based on how long disk has been orphaned
+    // Longer orphaned = higher confidence it's safe to delete
+    | extend Priority = case(
+        DaysUnattached > 90, "High - Delete immediately",      // 3+ months = very safe
+        DaysUnattached > 30, "Medium - Verify and delete",     // 1-3 months = probably safe
+        "Low - Monitor"                                         // <1 month = may be temporary
+    )
+    // Generate specific recommendations based on priority
+    | extend Recommendation = case(
+        Priority startswith "High", "Delete immediately after validation",
+        Priority startswith "Medium", "Review with owner before deletion",
+        "Monitor usage"
+    )
+    // Final projection for individual disk records
+    | project
+        SubscriptionId,
+        Priority,
+        Recommendation,
+        DiskName = Resource,
+        ResourceGroup,
+        DiskSizeGB,
+        DaysUnattached,
+        EstimatedMonthlyCost,
+        EstimatedAnnualCost,
+        FirstSeen,
+        _ResourceId = ResourceId
+);
+
+// ===== Output: Individual Disks =====
+// Show all orphaned disks sorted by age and cost impact
+diskCosts
 | order by DaysUnattached desc, EstimatedMonthlyCost desc
 
-// USAGE NOTES:
-// 1. Disks unattached > 90 days are almost always safe to delete
-// 2. Check for snapshots before deletion (may indicate backup strategy)
+// ===== Output: Subscription Summary =====
+// Add aggregated summary rows for each subscription
+// This is useful for executive reporting and FinOps dashboards
+| union (
+    diskCosts
+    | summarize
+        TotalMonthlySavings = sum(EstimatedMonthlyCost),
+        TotalAnnualSavings = sum(EstimatedAnnualCost),
+        DiskCount = count()
+        by SubscriptionId
+    | project
+        SubscriptionId,
+        Priority = "Summary",
+        Recommendation = strcat("Aggregate for ", SubscriptionId),
+        DiskName = strcat("Total Disks: ", tostring(DiskCount)),
+        ResourceGroup = "-",
+        DiskSizeGB = "-",
+        DaysUnattached = "-",
+        EstimatedMonthlyCost = TotalMonthlySavings,
+        EstimatedAnnualCost = TotalAnnualSavings,
+        FirstSeen = "-",
+        _ResourceId = "-"
+)
+
+
+// ===== USAGE NOTES =====
+//
+// Prerequisites:
+// - Azure Diagnostics logs enabled for managed disks
+// - At least 30 days of diagnostic history
+// - Appropriate RBAC permissions to read AzureDiagnostics
+//
+// Interpreting Results:
+// - Individual disk rows show specific orphaned disks with cost estimates
+// - Summary rows (Priority = "Summary") show total potential savings per subscription
+// - DaysUnattached indicates confidence level for safe deletion
+// - EstimatedMonthlyCost and EstimatedAnnualCost help prioritize cleanup efforts
+//
+// Safe Deletion Process:
+// 1. Identify disk owner via tags or resource group naming
+// 2. Confirm disk is not needed (check with application owner)
 // 3. Verify disk isn't part of disaster recovery plan
-// 4. Consider creating snapshot before deletion for safety
+// 4. Check for existing snapshots (may indicate backup strategy)
+// 5. Create snapshot before deletion if any uncertainty exists
+// 6. Delete the disk using Azure Portal or CLI
+// 7. Monitor for 30 days to ensure no issues
+// 8. Delete the safety snapshot after monitoring period
 //
-// SAFE DELETION PROCESS:
-// 1. Identify disk owner via tags or resource group
-// 2. Confirm disk is not needed (check with owner)
-// 3. Create snapshot if any uncertainty
-// 4. Delete disk
-// 5. Monitor for 30 days, then delete snapshot
+// Deletion Guidelines by Priority:
+// - High Priority (>90 days): Almost always safe to delete after basic validation
+// - Medium Priority (30-90 days): Verify with owner, likely safe to delete
+// - Low Priority (<30 days): Monitor, may be temporarily detached for maintenance
 //
-// AUTOMATION:
-// az disk list --query "[?diskState=='Unattached']" -o table
-// az disk delete --name <disk-name> --resource-group <rg-name>
+// Azure CLI Commands:
+// List all unattached disks:
+//   az disk list --query "[?diskState=='Unattached']" -o table
+//
+// Create snapshot before deletion:
+//   az snapshot create --resource-group <rg> --source <disk-id> --name <snapshot-name>
+//
+// Delete disk:
+//   az disk delete --name <disk-name> --resource-group <rg-name> --yes
+//
+// Customization:
+// - Adjust cost estimates in EstimatedMonthlyCost calculation for your disk tiers
+// - Modify priority thresholds (90/30 days) based on your organization's risk tolerance
+// - Add exclusions for specific resource groups or naming patterns:
+//   | where ResourceGroup !contains "backup"
+//   | where DiskName !contains "snapshot"
+//
+// Automation Opportunities:
+// - Generate ServiceNow tickets for disk owners
+// - Automated snapshot creation for high-priority orphans
+// - Scheduled deletion of disks orphaned >180 days (with approval)
+// - Monthly cost optimization reports
+// - Integration with FinOps dashboards and chargeback systems
+// - Alert on new orphaned disks (catch them early)
+//
+// Cost Estimate Accuracy:
+// - Estimates assume Standard SSD pricing (adjust for your environment)
+// - Premium SSD costs are typically 2-3x higher
+// - Ultra Disk costs can be 5-10x higher
+// - Actual costs vary by region and disk tier
+// - Use Azure Pricing Calculator for precise estimates
+//
+// Common Causes of Orphaned Disks:
+// - VM deletion without "Delete with VM" option enabled
+// - Disk detached for troubleshooting and forgotten
+// - Failed VM deployments leaving disks behind
+// - Manual disk swaps during maintenance
+// - Automated scaling operations that don't clean up
+// - Migration projects that leave old disks behind
+//
+// Best Practices to Prevent Orphans:
+// - Enable "Delete with VM" option on disk creation
+// - Use Azure Policy to enforce disk deletion with VMs
+// - Implement tagging strategy with owner and expiration dates
+// - Regular automated scans (weekly or monthly)
+// - Include disk cleanup in VM decommissioning procedures
+// - Use Infrastructure as Code (IaC) with proper lifecycle management
+//
+// Limitations:
+// - Cost estimates are approximate and should be validated
+// - Does not account for disk tier (Standard HDD/SSD, Premium, Ultra)
+// - Does not consider snapshot costs (which may also be orphaned)
+// - Requires Azure Diagnostics to be enabled
+// - May not capture disks orphaned within the last 24-48 hours
