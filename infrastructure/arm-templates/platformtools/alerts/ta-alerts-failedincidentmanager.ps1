@@ -1,43 +1,81 @@
 <#
-    .DESCRIPTION
-        Deploys Application Gateway Backend Health alert
+.SYNOPSIS
+    Deploys Logic App incident manager failure monitoring alerts.
 
-    .PREREQUISITES
-        Log Analytics Workspace
-        Action Groups
+.DESCRIPTION
+    Deploys Azure Monitor alerts for Logic App incident manager failures.
+    Monitors: Logic App run failures, incident processing errors
+    Essential for: Incident management automation health, ITSM integration
 
-    .TODO
+.PARAMETER resourceGroup
+    Resource group
 
-    .NOTES
+.PARAMETER subscriptionId
+    Subscription ID
 
-    .CHANGELOG
-        
+.PARAMETER workspaceResourceId
+    Workspace resource ID
+
+.PARAMETER workspaceLocation
+    Workspace location
+
+.EXAMPLE
+    .\ta-alerts-failedincidentmanager.ps1 -resourceGroup 'rg-monitoring' -subscriptionId '67890' -workspaceResourceId '/subscriptions/.../workspaces/laws' -workspaceLocation 'eastus'
+
+.NOTES
+    Author: Jason Rinehart aka Technical Anxiety
+    Last Updated: 2025-01-15
+    Prerequisites: Logic App diagnostics, action group MSP-alert-crit-s1
+    Impact: Critical for incident management automation and ITSM integration
+
+.VERSION
+    2.0.0
 #>
 
-##Parameter input
 param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Resource group")]
+    [ValidateNotNullOrEmpty()]
     [string]$resourceGroup,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Subscription ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$subscriptionId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace resource ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$workspaceResourceId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace location")]
+    [ValidateNotNullOrEmpty()]
     [string]$workspaceLocation
+)
 
- )
+Write-Output "=========================================="
+Write-Output "Deploy Incident Manager Failure Alerts"
+Write-Output "=========================================="
+Write-Output "Resource Group: $resourceGroup"
+Write-Output ""
 
-##Create resource id variables
-$actionGroupS1   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-crit-s1"
+$actionGroupS1 = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-crit-s1"
 
-##Deploy AppGW Critical Backend Health Alert
-New-AzResourceGroupDeployment `
-    -Name "deploy-failed-logicapp-critical-alert" `
-    -ResourceGroupName $resourceGroup `
-    -TemplateFile ./alert.critical.incidentmanager.json `
-    -workspaceLocation $workspaceLocation `
-    -workspaceResourceId $workspaceResourceId `
-    -actionGroupId $actionGroupS1 `
+Write-Output "Deploying Logic App incident manager failure alert..."
+Try {
+    New-AzResourceGroupDeployment `
+        -Name "deploy-failed-logicapp-critical-alert" `
+        -ResourceGroupName $resourceGroup `
+        -TemplateFile ./alert.critical.incidentmanager.json `
+        -workspaceLocation $workspaceLocation `
+        -workspaceResourceId $workspaceResourceId `
+        -actionGroupId $actionGroupS1 `
+        -ErrorAction Stop
+    Write-Output "✓ Incident manager failure alert deployed"
+}
+Catch {
+    Write-Error "Failed: $_"
+    throw
+}
+
+Write-Output ""
+Write-Output "=========================================="
+Write-Output "Deployment Complete"
+Write-Output "=========================================="

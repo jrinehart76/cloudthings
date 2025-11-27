@@ -1,66 +1,97 @@
 <#
-    .DESCRIPTION
-        Deploys AKS POD Status Alerts
+.SYNOPSIS
+    Deploys AKS pod status monitoring alerts (targeted namespaces).
 
-    .PREREQUISITES
-        Log Analytics Workspace
-        Action Groups
+.DESCRIPTION
+    Deploys Azure Monitor alerts for AKS pod status monitoring in specific targeted namespaces.
+    Uses custom action group for SRE/application teams.
+    Monitors: Pod failures, CrashLoopBackOff, ImagePullBackOff, pending pods
+    Essential for: Application-specific monitoring, team-based alerting
 
-    .TODO
+.PARAMETER customerId
+    Workspace ID
 
-    .NOTES
+.PARAMETER resourceGroup
+    Resource group
 
-    .CHANGELOG
-        
+.PARAMETER subscriptionId
+    Subscription ID
+
+.PARAMETER workspaceResourceId
+    Workspace resource ID
+
+.PARAMETER workspaceLocation
+    Workspace location
+
+.PARAMETER version
+    Alert version
+
+.EXAMPLE
+    .\ta-alerts-akspodtargeted.ps1 -customerId '12345' -resourceGroup 'rg-monitoring' -subscriptionId '67890' -workspaceResourceId '/subscriptions/.../workspaces/laws' -workspaceLocation 'eastus' -version 'v1'
+
+.NOTES
+    Author: Jason Rinehart aka Technical Anxiety
+    Last Updated: 2025-01-15
+    Prerequisites: AKS Container Insights, action group MSP-sre-app
+    Impact: Enables targeted alerting for specific application teams
+
+.VERSION
+    2.0.0
 #>
 
-##Parameter input
 param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$customerId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Resource group")]
+    [ValidateNotNullOrEmpty()]
     [string]$resourceGroup,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Subscription ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$subscriptionId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace resource ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$workspaceResourceId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace location")]
+    [ValidateNotNullOrEmpty()]
     [string]$workspaceLocation,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Alert version")]
+    [ValidateNotNullOrEmpty()]
     [string]$version
- )
+)
 
-##Create resource id variables
-#$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s2"          #critical action group resource ID
-#$actionGroupS3   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s3"
-#$actionGroupS4   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-warn-s4"
-$actionGroupDev   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-sre-app"
+Write-Output "=========================================="
+Write-Output "Deploy AKS Pod Status Alerts (Targeted)"
+Write-Output "=========================================="
+Write-Output "Resource Group: $resourceGroup"
+Write-Output "Alert Version: $version"
+Write-Output ""
 
-##Deploy Kubernetes alert platform 
-New-AzResourceGroupDeployment `
-    -Name "deploy-aks-podstatus-critical-alert" `
-    -ResourceGroupName $resourceGroup `
-    -TemplateFile ./alert.critical.akspod.targeted.json `
-    -workspaceLocation $workspaceLocation `
-    -workspaceResourceId $workspaceResourceId `
-    -actionGroupId $actionGroupDev `
-    -customerId $customerId `
-    -version $version
+$actionGroupDev = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-sre-app"
 
-#Removing deployment of warning alert but leaving it here just in case
-<#
-New-AzResourceGroupDeployment `
-    -Name "deploy-aks-podstatus-warning-alert" `
-    -ResourceGroupName $resourceGroup `
-    -TemplateFile ./alert.warning.akspod.targeted.json `
-    -workspaceLocation $workspaceLocation `
-    -workspaceResourceId $workspaceResourceId `
-    -actionGroupId $actionGroupDev `
-    -customerId $customerId `
-    -version $version
-#>
+Write-Output "Deploying AKS pod status critical alert (targeted)..."
+Try {
+    New-AzResourceGroupDeployment `
+        -Name "deploy-aks-podstatus-critical-alert" `
+        -ResourceGroupName $resourceGroup `
+        -TemplateFile ./alert.critical.akspod.targeted.json `
+        -workspaceLocation $workspaceLocation `
+        -workspaceResourceId $workspaceResourceId `
+        -actionGroupId $actionGroupDev `
+        -customerId $customerId `
+        -version $version `
+        -ErrorAction Stop | Out-Null
+    Write-Output "✓ Targeted critical alert deployed"
+} Catch { Write-Error "Failed: $_"; throw }
+
+Write-Output ""
+Write-Output "=========================================="
+Write-Output "Deployment Complete"
+Write-Output "=========================================="
+Write-Output "Note: Warning alert deployment is disabled for targeted monitoring"
+Write-Output "=========================================="

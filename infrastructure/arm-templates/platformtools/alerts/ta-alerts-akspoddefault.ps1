@@ -1,63 +1,110 @@
 <#
-    .DESCRIPTION
-        Deploys AKS POD Status Alerts
+.SYNOPSIS
+    Deploys AKS pod status monitoring alerts (default namespaces).
 
-    .PREREQUISITES
-        Log Analytics Workspace
-        Action Groups
+.DESCRIPTION
+    Deploys Azure Monitor alerts for AKS pod status monitoring in default/system namespaces.
+    Monitors: Pod failures, CrashLoopBackOff, ImagePullBackOff, pending pods
+    Essential for: System pod health, kube-system monitoring, cluster stability
 
-    .TODO
+.PARAMETER customerId
+    Workspace ID
 
-    .NOTES
+.PARAMETER resourceGroup
+    Resource group
 
-    .CHANGELOG
-        
+.PARAMETER subscriptionId
+    Subscription ID
+
+.PARAMETER workspaceResourceId
+    Workspace resource ID
+
+.PARAMETER workspaceLocation
+    Workspace location
+
+.PARAMETER version
+    Alert version
+
+.EXAMPLE
+    .\ta-alerts-akspoddefault.ps1 -customerId '12345' -resourceGroup 'rg-monitoring' -subscriptionId '67890' -workspaceResourceId '/subscriptions/.../workspaces/laws' -workspaceLocation 'eastus' -version 'v1'
+
+.NOTES
+    Author: Jason Rinehart aka Technical Anxiety
+    Last Updated: 2025-01-15
+    Prerequisites: AKS Container Insights, action groups
+    Impact: Critical for detecting system pod failures and cluster issues
+
+.VERSION
+    2.0.0
 #>
 
-##Parameter input
 param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$customerId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Resource group")]
+    [ValidateNotNullOrEmpty()]
     [string]$resourceGroup,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Subscription ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$subscriptionId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace resource ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$workspaceResourceId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace location")]
+    [ValidateNotNullOrEmpty()]
     [string]$workspaceLocation,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Alert version")]
+    [ValidateNotNullOrEmpty()]
     [string]$version
- )
+)
 
-##Create resource id variables
-#$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s2"
-$actionGroupS3   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s3"
-$actionGroupS4   = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-warn-s4"
+Write-Output "=========================================="
+Write-Output "Deploy AKS Pod Status Alerts (Default)"
+Write-Output "=========================================="
+Write-Output "Resource Group: $resourceGroup"
+Write-Output "Alert Version: $version"
+Write-Output ""
 
-##Deploy Kubernetes alert platform 
+$actionGroupS3 = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s3"
+$actionGroupS4 = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-warn-s4"
 
-New-AzResourceGroupDeployment `
-    -Name "deploy-aks-podstatus-critical-alert" `
-    -ResourceGroupName $resourceGroup `
-    -TemplateFile ./alert.critical.akspod.default.json `
-    -workspaceLocation $workspaceLocation `
-    -workspaceResourceId $workspaceResourceId `
-    -actionGroupId $actionGroupS3 `
-    -customerId $customerId `
-    -version $version
+Write-Output "Deploying AKS pod status critical alert..."
+Try {
+    New-AzResourceGroupDeployment `
+        -Name "deploy-aks-podstatus-critical-alert" `
+        -ResourceGroupName $resourceGroup `
+        -TemplateFile ./alert.critical.akspod.default.json `
+        -workspaceLocation $workspaceLocation `
+        -workspaceResourceId $workspaceResourceId `
+        -actionGroupId $actionGroupS3 `
+        -customerId $customerId `
+        -version $version `
+        -ErrorAction Stop | Out-Null
+    Write-Output "✓ Critical alert deployed"
+} Catch { Write-Error "Failed: $_"; throw }
 
-New-AzResourceGroupDeployment `
-    -Name "deploy-aks-podstatus-warning-alert" `
-    -ResourceGroupName $resourceGroup `
-    -TemplateFile ./alert.warning.akspod.default.json `
-    -workspaceLocation $workspaceLocation `
-    -workspaceResourceId $workspaceResourceId `
-    -actionGroupId $actionGroupS4 `
-    -customerId $customerId `
-    -version $version
+Write-Output "Deploying AKS pod status warning alert..."
+Try {
+    New-AzResourceGroupDeployment `
+        -Name "deploy-aks-podstatus-warning-alert" `
+        -ResourceGroupName $resourceGroup `
+        -TemplateFile ./alert.warning.akspod.default.json `
+        -workspaceLocation $workspaceLocation `
+        -workspaceResourceId $workspaceResourceId `
+        -actionGroupId $actionGroupS4 `
+        -customerId $customerId `
+        -version $version `
+        -ErrorAction Stop | Out-Null
+    Write-Output "✓ Warning alert deployed"
+} Catch { Write-Error "Failed: $_"; throw }
+
+Write-Output ""
+Write-Output "=========================================="
+Write-Output "Deployment Complete"
+Write-Output "=========================================="

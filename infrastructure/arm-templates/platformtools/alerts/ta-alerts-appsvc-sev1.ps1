@@ -1,56 +1,90 @@
 <#
-    .DESCRIPTION
-        Deploys Microsoft SQL Alerts
+.SYNOPSIS
+    Deploys Severity 1 App Service Plan monitoring alerts.
 
-    .PREREQUISITES
-        Log Analytics Workspace
-        Action Groups
-        Diagnostics configured on each database
-    
-    .EXAMPLE
-        ./install-sqlAllAlerts.ps1
+.DESCRIPTION
+    Deploys Azure Monitor alerts for critical App Service Plan monitoring with Sev 1 escalation.
+    Uses critical MIM action group for highest priority alerting.
+    Monitors: Critical CPU, memory, HTTP errors for mission-critical App Service Plans
+    Essential for: Mission-critical application monitoring, executive escalation
 
-    .TODO
+.PARAMETER agResourceGroup
+    Resource group
 
-    .NOTES
+.PARAMETER subscriptionId
+    Subscription ID
 
-    .CHANGELOG
-        
+.PARAMETER workspaceLocation
+    Workspace location
+
+.PARAMETER workspaceResourceId
+    Workspace resource ID
+
+.PARAMETER customerId
+    Workspace ID
+
+.PARAMETER version
+    Alert version
+
+.PARAMETER planName
+    Specific App Service Plan name to monitor
+
+.EXAMPLE
+    .\ta-alerts-appsvc-sev1.ps1 -agResourceGroup 'rg-monitoring' -subscriptionId '12345' -workspaceLocation 'eastus' -workspaceResourceId '/subscriptions/.../workspaces/laws' -customerId '67890' -version 'v1' -planName 'asp-prod-critical'
+
+.NOTES
+    Author: Jason Rinehart aka Technical Anxiety
+    Last Updated: 2025-01-15
+    Prerequisites: App Service diagnostics, action group MSP-alert-critmim-s1
+    Impact: Highest priority alerting for mission-critical applications
+
+.VERSION
+    2.0.0
 #>
 
-##Parameter input
 param (
-
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Resource group")]
+    [ValidateNotNullOrEmpty()]
     [string]$agResourceGroup,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Subscription ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$subscriptionId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace location")]
+    [ValidateNotNullOrEmpty()]
     [string]$workspaceLocation,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace resource ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$workspaceResourceId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Workspace ID")]
+    [ValidateNotNullOrEmpty()]
     [string]$customerId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="Alert version")]
+    [ValidateNotNullOrEmpty()]
     [string]$version,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, HelpMessage="App Service Plan name")]
+    [ValidateNotNullOrEmpty()]
     [string]$planName
+)
 
- )
+Write-Output "=========================================="
+Write-Output "Deploy Severity 1 App Service Plan Alerts"
+Write-Output "=========================================="
+Write-Output "Resource Group: $agResourceGroup"
+Write-Output "App Service Plan: $planName"
+Write-Output "Alert Version: $version"
+Write-Output "Severity: 1 (Critical MIM)"
+Write-Output ""
 
-##Create resource id variables
-$actionCritMIMS1   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-critmim-s1"              
-#$actionGroupS2   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s2"              
-#$actionGroupS3   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-exec-s3"             
-#$actionGroupS4   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-warn-s4" 
+$actionCritMIMS1 = "/subscriptions/$subscriptionId/resourceGroups/$agResourceGroup/providers/microsoft.insights/actionGroups/MSP-alert-critmim-s1"
 
-##Deploy sql alerting
+Write-Output "Deploying Severity 1 App Service Plan alert..."
+Try {
     New-AzResourceGroupDeployment `
         -Name "deploy-appsvc-critical-alert" `
         -ResourceGroupName $agResourceGroup `
@@ -60,4 +94,16 @@ $actionCritMIMS1   = "/subscriptions/$subscriptionId/resourceGroups/$agResourceG
         -version $version `
         -actionGroupId $actionCritMIMS1 `
         -customerId $customerId `
-        -planName $planName
+        -planName $planName `
+        -ErrorAction Stop
+    Write-Output "✓ Severity 1 App Service Plan alert deployed"
+}
+Catch {
+    Write-Error "Failed: $_"
+    throw
+}
+
+Write-Output ""
+Write-Output "=========================================="
+Write-Output "Deployment Complete"
+Write-Output "=========================================="
