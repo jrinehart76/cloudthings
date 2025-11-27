@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (46 of 97)
+## Scripts Updated (50 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -427,7 +427,45 @@ This audit reviewed all PowerShell scripts in the repository for:
     - Improved: Error handling for each deployment
     - Improved: Clear output for each alert type
 
-## Scripts Requiring Updates (51 remaining)
+45. **infrastructure/arm-templates/platformtools/alerts/ta-alerts-linux.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Parameter validation and error handling
+    - Added: Deployment status output with checkmarks
+    - Added: Author attribution to Jason Rinehart
+    - Added: Threshold documentation (Critical >97%, Warning >85%)
+    - Improved: Summary output with all alert types
+
+46. **infrastructure/arm-templates/platformtools/alerts/ta-alerts-sql.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Diagnostic settings prerequisite documentation
+    - Added: Parameter validation and error handling
+    - Added: Deployment status output with checkmarks
+    - Added: Author attribution to Jason Rinehart
+    - Added: Next steps guidance for diagnostic settings
+    - Improved: Threshold documentation (Critical >90%, Warning >80%)
+
+47. **infrastructure/arm-templates/platformtools/alerts/ta-alerts-mysql.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Diagnostic settings prerequisite documentation
+    - Added: Parameter validation and error handling
+    - Added: Deployment status output with checkmarks
+    - Added: Author attribution to Jason Rinehart
+    - Added: Next steps guidance for diagnostic settings
+    - Improved: Threshold documentation (Critical >90%, Warning >80%)
+
+48. **infrastructure/arm-templates/platformtools/alerts/ta-alerts-postgresql.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Diagnostic settings prerequisite documentation
+    - Added: Parameter validation and error handling
+    - Added: Deployment status output with checkmarks
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Threshold documentation (Critical >90%, Warning >80%)
+
+## Scripts Requiring Updates (47 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -642,8 +680,8 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 46 of 97 (47%)
-- **Scripts Remaining:** 51 (53%)
+- **Scripts Updated:** 50 of 97 (52%)
+- **Scripts Remaining:** 47 (48%)
 - **Estimated Time per Script:** 15-30 minutes
 - **Total Estimated Time:** 15.5-31 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
