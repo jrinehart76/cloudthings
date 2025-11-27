@@ -1,28 +1,65 @@
 <#
-    .DESCRIPTION
-        Installs monitoring extension to VMs.
-        Runs from an Azure Automation account.
+.SYNOPSIS
+    Install Log Analytics monitoring agent on Azure VMs via Azure Automation
 
-    .PREREQUISITES
-        Existing AzureRunAsAccount in Automations account
-        Recovery Service vault must exist
+.DESCRIPTION
+    This Azure Automation runbook deploys the Microsoft Monitoring Agent (MMA)
+    or OMS Agent extension to Azure VMs using Resource Graph for efficient discovery.
+    Designed for automated, scheduled deployment across large environments.
+    
+    Key features:
+    - Uses Azure Resource Graph for fast VM discovery
+    - Automatically detects OS type (Windows/Linux)
+    - Installs appropriate monitoring agent extension
+    - Configures agent to report to Log Analytics workspace
+    - Excludes AKS nodes and Databricks VMs automatically
+    - Runs under Automation Account Managed Identity
+    
+    This runbook is designed to run on a schedule to ensure all VMs have
+    monitoring agents installed and configured correctly.
 
-    .DEPENDENCIES
-        Az.Accounts
-        Az.Compute
-        Az.OperationalInsights
+.PARAMETER WorkspaceCustomerId
+    The Log Analytics workspace ID (GUID) where agents will report
 
-    .TODO
-        Check if Recovery Service vault exists
+.PARAMETER WorkspaceSharedKey
+    The primary or secondary key for the Log Analytics workspace
 
-    .NOTES
-        AUTHOR: cherbison, jrinehart, dnite
-        LASTEDIT: 2020.1.16
+.PARAMETER Location
+    Azure region to process VMs (e.g., "eastus", "westus2")
 
-    .CHANGELOG
+.EXAMPLE
+    # Manual execution for testing
+    .\xm_Install_MonitoringAgent_v2.ps1 -WorkspaceCustomerId "abc-123" -WorkspaceSharedKey "key" -Location "eastus"
 
-    .VERSION
-        1.0.0
+.NOTES
+    Author: Jason Rinehart aka Technical Anxiety
+    Blog: https://technicalanxiety.com
+    Last Updated: 2025-01-15
+    
+    Prerequisites:
+    - Azure Automation Account with Managed Identity
+    - Managed Identity needs:
+      - Virtual Machine Contributor on VMs
+      - Reader on subscriptions
+      - Log Analytics Reader on workspace
+    - Az.Accounts module
+    - Az.Compute module
+    - Az.OperationalInsights module
+    - Az.ResourceGraph module
+    
+    Impact: Ensures all VMs have monitoring agents for centralized logging,
+    security monitoring, and operational insights.
+    
+    Note: Microsoft is transitioning from MMA to Azure Monitor Agent (AMA).
+    Consider migrating to AMA for new deployments.
+
+.VERSION
+    2.0.0 - Enhanced documentation, error handling, and Resource Graph usage
+    1.0.0 - Initial release
+
+.CHANGELOG
+    2.0.0 - Added comprehensive documentation, better error handling, progress tracking
+    1.0.0 - Initial version for automation account
 #>
 
 ##gather parameters

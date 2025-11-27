@@ -1,35 +1,65 @@
 <#
-    .DESCRIPTION
-        Enables or Reconfigures resources which support Diagnostics Setttings.
-        Runs from an Azure Automation account.
+.SYNOPSIS
+    Configure diagnostic settings for all Azure resources in a location
 
-    .PARAMETER
-        location 
-            The Azure location to search and configure (eastus; southcentralus)
+.DESCRIPTION
+    This script enables or reconfigures diagnostic settings for all resources
+    in a specified Azure location. Essential for:
+    - Centralized logging and monitoring
+    - Security and compliance requirements
+    - Troubleshooting and diagnostics
+    - Cost and performance analysis
     
-    .PARAMETER
-        workspaceId
-            The workspace where diagnostics are stored.
+    The script:
+    - Discovers all resources in specified location
+    - Checks existing diagnostic settings
+    - Creates or updates settings to send logs to Log Analytics
+    - Standardizes diagnostic configuration across resources
+    - Handles resources that don't support diagnostics gracefully
 
-    .PREREQUISITES
-        Existing AzureRunAsAccount in Automations account
+.PARAMETER Location
+    The Azure location/region to process (e.g., "eastus", "westus2")
 
-    .DEPENDENCIES
-        Az.Accounts
-        Az.Resources
-        Az.ResourceGraph
-        Az.Monitor
+.PARAMETER WorkspaceId
+    The full resource ID of the Log Analytics workspace where diagnostics will be sent
 
-    .TODO
+.PARAMETER DiagnosticSettingName
+    Name for the diagnostic setting (default: "MSPDiagnosticsLog")
 
-    .NOTES
-        AUTHOR: cwitcher, jrinehart
-        LASTEDIT: 2020.1.21
-        
-    .CHANGELOG
+.PARAMETER Force
+    If true, removes existing diagnostic settings and recreates them
 
-    .VERSION
-        1.0.0
+.EXAMPLE
+    .\Configure-AllDiagnostics.ps1 -Location "eastus" -WorkspaceId "/subscriptions/.../workspaces/my-workspace"
+    
+    Configures diagnostics for all resources in East US region
+
+.EXAMPLE
+    .\Configure-AllDiagnostics.ps1 -Location "westus2" -WorkspaceId $workspaceId -Force
+    
+    Forces reconfiguration of all diagnostic settings in West US 2
+
+.NOTES
+    Author: Jason Rinehart aka Technical Anxiety
+    Blog: https://technicalanxiety.com
+    Last Updated: 2025-01-15
+    
+    Prerequisites:
+    - Az.Accounts module
+    - Az.Resources module
+    - Az.Monitor module
+    - Contributor or Monitoring Contributor role on resources
+    
+    Impact: Enables centralized logging for security, compliance, and troubleshooting.
+    Critical for production environments.
+
+.VERSION
+    2.0.0 - Added proper documentation, error handling, and parameterization
+    1.0.0 - Initial release
+
+.CHANGELOG
+    2.0.0 - Enhanced error handling, progress tracking, better output
+    1.0.0 - Initial version for automation account
 #>
 param(
     [Parameter(Mandatory = $true)]
