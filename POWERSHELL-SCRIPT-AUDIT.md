@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (16 of 97)
+## Scripts Updated (23 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -200,7 +200,30 @@ This audit reviewed all PowerShell scripts in the repository for:
     - Improved: Compliance percentage calculation
     - Improved: Multiple filtering options (tag, type, region)
 
-## Scripts Requiring Updates (76 remaining)
+22. **infrastructure/scripts/local/Deployment/ta-install-alerts-all.ps1**
+    - ✅ UPDATED: Enhanced documentation and structure
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Progress tracking with deployment counter
+    - Added: Helper function for consistent deployment tracking
+    - Added: Detailed deployment summary with success/failure counts
+    - Added: Author attribution to Jason Rinehart
+    - Added: Extensive usage notes covering all alert categories
+    - Improved: Better error handling and logging
+    - Improved: Resource group validation
+    - Note: Deploys 30+ alerts across infrastructure, AKS, databases, security
+
+23. **infrastructure/scripts/local/Deployment/ta-install-alerts-metrics.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Progress tracking for each alert deployment
+    - Added: Detailed threshold documentation (CPU 85%/97%, Memory 85%/97%, Disk 20%/10%)
+    - Added: Deployment summary with timing
+    - Added: Author attribution to Jason Rinehart
+    - Added: Extensive usage notes on metric vs log alerts
+    - Improved: Better error handling per deployment
+    - Improved: Clear threshold rationale and tuning guidance
+
+## Scripts Requiring Updates (74 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -415,12 +438,12 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 21 of 97 (22%)
-- **Scripts Remaining:** 76 (78%)
+- **Scripts Updated:** 23 of 97 (24%)
+- **Scripts Remaining:** 74 (76%)
 - **Estimated Time per Script:** 15-30 minutes
-- **Total Estimated Time:** 19-38 hours remaining
+- **Total Estimated Time:** 18.5-37 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
-- **Progress:** On track - 12 scripts updated in this session
+- **Progress:** Excellent - 14 scripts updated in this session (infrastructure deployment scripts completed)
 
 ## Benefits of Completion
 
