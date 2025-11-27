@@ -1,27 +1,71 @@
 <#
-    .DESCRIPTION
-        Enable diagnostic extension for each Windows VM
+.SYNOPSIS
+    Installs Windows VM diagnostics extension via Azure Automation runbook.
 
-        Runs from an Azure Automation account.
+.DESCRIPTION
+    This Azure Automation runbook installs the Azure Diagnostics extension (IaaSDiagnostics)
+    on Windows virtual machines. The extension collects:
+    
+    - Performance counters (CPU, memory, disk, network)
+    - Windows Event Logs (Application, Security, System)
+    - Diagnostic infrastructure logs
+    - Metrics aggregated at 1-minute and 1-hour intervals
+    
+    The runbook:
+    - Validates the diagnostic storage account exists
+    - Discovers VMs in the specified resource group
+    - Checks for existing diagnostics extensions
+    - Installs the extension on running Windows VMs only
+    - Uses embedded XML configuration for standard metrics
+    
+    Note: Currently supports Windows VMs only. Linux support planned for future release.
+    
+    Designed for scheduled execution in Azure Automation.
 
-    .PREREQUISITES
-        Existing AzureRunAsAccount in Automations account
+.PARAMETER StorageAccountName
+    The name of the storage account where diagnostic data will be stored.
+    The storage account must already exist in the subscription.
 
-    .DEPENDENCIES
-        Az.Accounts
-        Az.Storage
-        Az.Compute
+.PARAMETER StorageAccountKey
+    The access key for the diagnostic storage account.
+    Used to authenticate the diagnostics extension.
 
-    .TODO
-        Store extension configs in blob and retrieve at runtime
-        Add Linux support
+.PARAMETER ResourceGroupName
+    Optional. The resource group containing VMs to process.
+    If not specified, processes all VMs in the subscription.
 
-    .NOTES
-        
-    .CHANGELOG
+.EXAMPLE
+    .\ta-install-diagnostics-runbook.ps1 -StorageAccountName 'sadiagprod' -StorageAccountKey 'key123...' -ResourceGroupName 'rg-prod-vms'
 
-    .VERSION
-        1.0.0
+.NOTES
+    Author: Jason Rinehart aka Technical Anxiety
+    Blog: https://technicalanxiety.com
+    Last Updated: 2025-01-15
+    
+    Prerequisites:
+    - Azure Automation Account with Run As Account configured
+    - Service Principal must have Contributor or VM Contributor role
+    - Required PowerShell modules: Az.Accounts, Az.Storage, Az.Compute
+    - Diagnostic storage account must exist
+    - VMs must be in running state
+    
+    Limitations:
+    - Windows VMs only (Linux support planned)
+    - VMs must be powered on for extension installation
+    
+    Future Enhancements:
+    - Store extension configs in blob storage for easier management
+    - Add Linux diagnostics support
+    
+    Impact: Enables detailed performance and event log collection for Windows VMs,
+    essential for troubleshooting, performance analysis, and compliance.
+
+.VERSION
+    2.0.0 - Enhanced documentation
+
+.CHANGELOG
+    2.0.0 - 2025-01-15 - Enhanced documentation
+    1.0.0 - Initial version
 #>
 
 param (
