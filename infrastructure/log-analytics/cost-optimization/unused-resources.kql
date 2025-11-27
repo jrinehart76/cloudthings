@@ -1,103 +1,300 @@
-// Query: Find Unused Azure Resources
+// Query: Find Unused Azure Resources Across Multiple Resource Types
 // Purpose: Identify resources consuming budget without delivering value
 // Impact: Typical savings of 20-30% of monthly cloud spend
 // Author: Jason Rinehart
 // Blog: https://technicalanxiety.com
-// Last Updated: 2025-01-15
+// Last Updated: 2025-11-27
 //
 // This query identifies resources that are running but not being used,
 // representing pure waste. Based on patterns seen across 100+ organizations.
 //
 // Common findings:
-// - Dev/test VMs left running 24/7
-// - Orphaned load balancers with no backend pools
-// - App Service Plans with no apps
-// - Storage accounts with no data
-// - Public IPs not attached to anything
+// - Dev/test VMs left running 24/7 with minimal CPU usage
+// - Orphaned load balancers with no backend traffic
+// - App Service Plans with no active apps
+// - Public IPs not attached or receiving no traffic
 //
 // Real example: One energy sector client was spending $40,000/month on
 // dev environments that should have cost $8,000 because nobody implemented
 // shutdown schedules.
-
-let timeRange = 30d;
-let cpuThreshold = 5.0;  // Less than 5% CPU usage
-let networkThreshold = 1000000;  // Less than 1MB network traffic
-
-// Find VMs with minimal CPU usage
-let UnusedVMs = Perf
-| where TimeGenerated > ago(timeRange)
-| where ObjectName == "Processor" and CounterName == "% Processor Time"
-| summarize AvgCPU = avg(CounterValue), MaxCPU = max(CounterValue) by Computer, _ResourceId
-| where AvgCPU < cpuThreshold and MaxCPU < (cpuThreshold * 2)
-| extend ResourceType = "Virtual Machine"
-| extend Reason = strcat("Avg CPU: ", round(AvgCPU, 2), "% (threshold: ", cpuThreshold, "%)")
-| extend EstimatedMonthlyCost = 200.0  // Approximate, adjust based on your VM sizes
-| project Computer, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId;
-
-// Find Load Balancers with no backend pools or inactive backends
-let UnusedLoadBalancers = AzureDiagnostics
-| where ResourceType == "LOADBALANCERS"
-| where TimeGenerated > ago(timeRange)
-| summarize TotalRequests = count() by Resource, ResourceId
-| where TotalRequests == 0
-| extend ResourceType = "Load Balancer"
-| extend Reason = "No traffic in last 30 days"
-| extend EstimatedMonthlyCost = 20.0
-| project Computer = Resource, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId = ResourceId;
-
-// Find Public IPs not attached to anything
-let UnusedPublicIPs = AzureMetrics
-| where ResourceType == "PUBLICIPADDRESSES"
-| where TimeGenerated > ago(timeRange)
-| where MetricName == "ByteCount"
-| summarize TotalBytes = sum(Total) by Resource, _ResourceId
-| where TotalBytes == 0
-| extend ResourceType = "Public IP"
-| extend Reason = "No network traffic"
-| extend EstimatedMonthlyCost = 3.0
-| project Computer = Resource, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId;
-
-// Find App Service Plans with no apps or stopped apps
-let UnusedAppServicePlans = AzureDiagnostics
-| where ResourceType == "SERVERFARMS"
-| where TimeGenerated > ago(timeRange)
-| summarize RequestCount = count() by Resource, ResourceId
-| where RequestCount == 0
-| extend ResourceType = "App Service Plan"
-| extend Reason = "No requests in last 30 days"
-| extend EstimatedMonthlyCost = 75.0
-| project Computer = Resource, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId = ResourceId;
-
-// Combine all unused resources
-UnusedVMs
-| union UnusedLoadBalancers
-| union UnusedPublicIPs
-| union UnusedAppServicePlans
-| extend Priority = case(
-    EstimatedMonthlyCost > 100, "High",
-    EstimatedMonthlyCost > 50, "Medium",
-    "Low"
-)
-| project-rename ResourceName = Computer
-| project Priority, ResourceName, ResourceType, Reason, EstimatedMonthlyCost, _ResourceId
-| order by EstimatedMonthlyCost desc
-
-// USAGE NOTES:
-// 1. Adjust thresholds based on your workload patterns
-// 2. Verify resources are truly unused before deletion
-// 3. Consider implementing auto-shutdown for dev/test resources
-// 4. Use tags to identify resources that should be excluded
-// 5. Run this query weekly to catch new waste early
 //
-// AUTOMATION:
-// This query can be used with Azure Automation to:
-// - Send weekly reports to cost center owners
-// - Automatically tag unused resources
-// - Trigger approval workflows for deletion
-// - Generate cost optimization recommendations
+// This query provides:
+// - Multi-resource type analysis (VMs, Load Balancers, Public IPs, App Service Plans)
+// - Individual resource details with cost estimates
+// - Subscription-level summaries for management reporting
+// - Grand total across all subscriptions for executive visibility
+// - Priority classification for remediation planning
+
+// ===== Configuration Parameters =====
+let timeRange       = 30d;          // Analysis window - 30 days captures usage patterns
+let cpuThreshold    = 5.0;          // VMs with avg CPU < 5% are considered unused
+let networkThreshold = 1000000;     // Public IPs with < 1 MB traffic in 30 days are unused
+
+// ===== Helper: Extract SubscriptionId =====
+// Some tables don't have SubscriptionId column, so we extract it from ResourceId
+let subRegex = @"subscriptions/([0-9a-fA-F-]+)";
+
+// ===== Unused Virtual Machines =====
+// Identifies VMs with consistently low CPU usage from guest metrics (Perf table)
+// Requires Azure Monitor Agent (AMA) or legacy Log Analytics agent
+// Low CPU + low max CPU indicates the VM is truly idle, not just averaging low
+
+let UnusedVMs =
+    Perf
+    | where TimeGenerated > ago(timeRange)
+    | where ObjectName has "Processor" and CounterName has "% Processor Time"
+    // Calculate average and max CPU per VM
+    | summarize AvgCPU = avg(CounterValue), MaxCPU = max(CounterValue) by Computer, _ResourceId
+    // Filter for VMs with both low average AND low peak CPU
+    // This avoids flagging VMs with occasional spikes
+    | where AvgCPU < cpuThreshold and MaxCPU < (cpuThreshold * 2)
+    | extend ResourceType = "Virtual Machine"
+    | extend Reason = strcat("Avg CPU: ", round(AvgCPU, 2), "% < ", tostring(cpuThreshold), "%")
+    // Adjust cost estimate based on your VM portfolio (Standard_D2s_v3 ~$70-200/month)
+    | extend EstimatedMonthlyCost = 200.0
+    | extend EstimatedAnnualCost  = EstimatedMonthlyCost * 12
+    // Extract subscription ID from resource ID
+    | extend SubscriptionId = extract(subRegex, 1, tostring(_ResourceId))
+    | project SubscriptionId, ResourceName = Computer, ResourceType, Reason, 
+              EstimatedMonthlyCost, EstimatedAnnualCost, ResourceId = _ResourceId;
+
+// ===== Unused Load Balancers =====
+// Identifies load balancers with no observed traffic in diagnostics logs
+// No traffic = no backend pools active or no requests being processed
+
+let UnusedLoadBalancers =
+    AzureDiagnostics
+    | where ResourceType has "LOADBALANCERS" and TimeGenerated > ago(timeRange)
+    // Count diagnostic log entries (each entry represents activity)
+    | summarize TotalRequests = count() by Resource, ResourceId, SubscriptionId
+    // Zero entries = no activity
+    | where TotalRequests == 0
+    | extend ResourceType = "Load Balancer", Reason = "No traffic in last 30 days"
+    // Basic load balancer ~$18/month, Standard ~$25/month
+    | extend EstimatedMonthlyCost = 20.0
+    | extend EstimatedAnnualCost  = EstimatedMonthlyCost * 12
+    // Use SubscriptionId from table or extract from ResourceId
+    | extend SubscriptionId = coalesce(SubscriptionId, extract(subRegex, 1, tostring(ResourceId)))
+    | project SubscriptionId, ResourceName = Resource, ResourceType, Reason, 
+              EstimatedMonthlyCost, EstimatedAnnualCost, ResourceId;
+
+// ===== Unused Public IPs =====
+// Identifies public IPs with minimal or no network traffic
+// Low byte count indicates IP is not being used or attached to inactive resource
+
+let UnusedPublicIPs =
+    AzureMetrics
+    | where ResourceType has "PUBLICIPADDRESSES" and TimeGenerated > ago(timeRange)
+    | where MetricName has "ByteCount"
+    // Sum total bytes transferred (in + out) over the time period
+    | summarize TotalBytes = sum(Total) by Resource, ResourceId, SubscriptionId
+    // Less than 1 MB in 30 days = effectively unused
+    | where TotalBytes < networkThreshold
+    | extend ResourceType = "Public IP", 
+             Reason = strcat("ByteCount < ", tostring(networkThreshold), " bytes in last 30d")
+    // Static public IP ~$3-4/month
+    | extend EstimatedMonthlyCost = 3.0
+    | extend EstimatedAnnualCost  = EstimatedMonthlyCost * 12
+    | extend SubscriptionId = coalesce(SubscriptionId, extract(subRegex, 1, tostring(ResourceId)))
+    | project SubscriptionId, ResourceName = Resource, ResourceType, Reason, 
+              EstimatedMonthlyCost, EstimatedAnnualCost, ResourceId;
+
+// ===== Unused App Service Plans =====
+// Identifies App Service Plans with no observed requests
+// No requests = no apps running or all apps are stopped
+
+let UnusedAppServicePlans =
+    AzureDiagnostics
+    | where ResourceType has "SERVERFARMS" and TimeGenerated > ago(timeRange)
+    // Count diagnostic log entries (requests, health checks, etc.)
+    | summarize RequestCount = count() by Resource, ResourceId, SubscriptionId
+    // Zero entries = no activity
+    | where RequestCount == 0
+    | extend ResourceType = "App Service Plan", Reason = "No requests in last 30 days"
+    // Basic tier ~$13/month, Standard ~$75/month, Premium ~$150+/month
+    | extend EstimatedMonthlyCost = 75.0
+    | extend EstimatedAnnualCost  = EstimatedMonthlyCost * 12
+    | extend SubscriptionId = coalesce(SubscriptionId, extract(subRegex, 1, tostring(ResourceId)))
+    | project SubscriptionId, ResourceName = Resource, ResourceType, Reason, 
+              EstimatedMonthlyCost, EstimatedAnnualCost, ResourceId;
+
+// ===== Combine All Resource Types =====
+// Union all unused resource queries into a single dataset with priority classification
+
+let Details =
+    UnusedVMs
+    | union UnusedLoadBalancers
+    | union UnusedPublicIPs
+    | union UnusedAppServicePlans
+    // Assign priority based on monthly cost impact
+    // High priority = biggest savings opportunity
+    | extend Priority = case(
+        EstimatedMonthlyCost > 100, "High",
+        EstimatedMonthlyCost > 50,  "Medium",
+        "Low"
+    )
+    | project SubscriptionId, Priority, ResourceName, ResourceType, Reason, 
+              EstimatedMonthlyCost, EstimatedAnnualCost, ResourceId
+    | order by EstimatedMonthlyCost desc;
+
+// ===== Subscription-Level Summary =====
+// Aggregate savings by subscription for management reporting
+// Useful for chargeback and cost center accountability
+
+let SummaryBySub =
+    Details
+    | summarize
+        TotalResources     = count(),
+        TotalMonthlySavings = sum(EstimatedMonthlyCost),
+        TotalAnnualSavings  = sum(EstimatedAnnualCost)
+        by SubscriptionId
+    | project
+        SubscriptionId,
+        Priority    = "Summary",
+        ResourceName= strcat("Total resources: ", tostring(TotalResources)),
+        ResourceType= "All",
+        Reason      = "Aggregate by subscription",
+        EstimatedMonthlyCost = TotalMonthlySavings,
+        EstimatedAnnualCost  = TotalAnnualSavings,
+        ResourceId  = "-";
+
+// ===== Grand Total Across All Subscriptions =====
+// Executive summary showing total waste across the entire organization
+
+let GrandTotal =
+    Details
+    | summarize
+        TotalResources     = count(),
+        TotalMonthlySavings = sum(EstimatedMonthlyCost),
+        TotalAnnualSavings  = sum(EstimatedAnnualCost)
+    | project
+        SubscriptionId      = "ALL",
+        Priority            = "Grand Total",
+        ResourceName        = strcat("Total resources: ", tostring(TotalResources)),
+        ResourceType        = "All",
+        Reason              = "Aggregate across all subscriptions",
+        EstimatedMonthlyCost= TotalMonthlySavings,
+        EstimatedAnnualCost = TotalAnnualSavings,
+        ResourceId          = "-";
+
+// ===== Final Output =====
+// Combine details, subscription summaries, and grand total
+// Results are sorted with grand total first, then subscription summaries, then details
+
+Details
+| union SummaryBySub
+| union GrandTotal
+
+
+// ===== USAGE NOTES =====
 //
-// EXPECTED RESULTS:
-// - List of resources sorted by cost impact
-// - Priority classification for remediation
-// - Resource IDs for automation
-// - Estimated monthly savings
+// Prerequisites:
+// - Azure Monitor Agent (AMA) or Log Analytics agent for VM CPU metrics
+// - Azure Diagnostics enabled for Load Balancers and App Service Plans
+// - Azure Metrics collection for Public IPs
+// - At least 30 days of metric/log history
+// - Appropriate RBAC permissions to read Perf, AzureDiagnostics, and AzureMetrics
+//
+// Interpreting Results:
+// - Grand Total row shows organization-wide waste (Priority = "Grand Total")
+// - Summary rows show per-subscription totals (Priority = "Summary")
+// - Detail rows show individual resources with specific reasons
+// - Priority (High/Medium/Low) helps focus on biggest savings opportunities
+// - EstimatedMonthlyCost and EstimatedAnnualCost are approximate (adjust for your environment)
+//
+// Before Deleting Resources:
+// 1. Verify with resource owner - low usage doesn't always mean unused
+// 2. Check for scheduled workloads (batch jobs, monthly reports, etc.)
+// 3. Review tags for business context (project status, owner, purpose)
+// 4. Consider seasonal usage patterns (tax season, year-end, etc.)
+// 5. Verify resource isn't part of disaster recovery or backup strategy
+// 6. Check dependencies (other resources that depend on this one)
+// 7. Create snapshots/backups before deletion if any uncertainty
+// 8. Schedule deletion during maintenance window
+//
+// Remediation by Resource Type:
+//
+// Virtual Machines:
+// - Implement auto-shutdown schedules for dev/test (Azure DevTest Labs)
+// - Downsize to smaller SKU if some usage exists
+// - Convert to Azure Reserved Instances if must stay running
+// - Consider Azure Spot VMs for non-critical workloads
+// - Delete if truly unused after validation
+//
+// Load Balancers:
+// - Check if backend pools are empty or all unhealthy
+// - Verify if this is a leftover from a migration
+// - Delete if no active backends or traffic
+// - Consider consolidating multiple LBs if possible
+//
+// Public IPs:
+// - Check if IP is reserved for future use (document if so)
+// - Verify IP isn't in DNS records or firewall rules
+// - Delete if not attached and no traffic
+// - Consider using Azure Bastion instead of public IPs for management
+//
+// App Service Plans:
+// - Check if apps are stopped vs deleted
+// - Verify if plan is reserved for upcoming deployment
+// - Delete plan if no apps exist
+// - Consolidate multiple plans to reduce costs
+//
+// Cost Estimate Accuracy:
+// - Estimates are approximate and vary by region and tier
+// - VM costs assume Standard_D2s_v3 equivalent (~$70-200/month)
+// - Load Balancer costs assume Standard tier (~$25/month)
+// - Public IP costs assume static IP (~$3-4/month)
+// - App Service Plan costs assume Standard tier (~$75/month)
+// - Adjust EstimatedMonthlyCost in each section for your environment
+// - Use Azure Pricing Calculator for precise estimates
+//
+// Customization:
+// - Adjust cpuThreshold (default 5%) based on your workload patterns
+// - Adjust networkThreshold (default 1MB) for Public IP sensitivity
+// - Modify cost estimates to match your resource tiers and regions
+// - Add exclusions for specific resources or patterns:
+//   | where ResourceName !contains "prod"
+//   | where SubscriptionId != "your-prod-subscription-id"
+// - Add more resource types (Storage Accounts, SQL Databases, etc.)
+//
+// Automation Opportunities:
+// - Weekly reports to subscription owners with unused resources
+// - Automated tagging of unused resources for review
+// - ServiceNow ticket creation for resource owners
+// - Auto-shutdown schedules for dev/test VMs
+// - Approval workflows for resource deletion
+// - Integration with FinOps dashboards
+// - Monthly cost optimization reports for executives
+// - Alerts when new unused resources are detected
+//
+// Common Causes of Unused Resources:
+// - Dev/test environments left running after hours/weekends
+// - Failed deployments leaving resources behind
+// - Migration projects not cleaning up old resources
+// - Lack of auto-shutdown policies
+// - No ownership or accountability for costs
+// - Forgotten POC/demo environments
+// - Over-provisioning "just in case"
+// - Lack of regular cost reviews
+//
+// Best Practices to Prevent Waste:
+// - Implement auto-shutdown for dev/test resources
+// - Use Azure Policy to enforce tagging (owner, expiration, purpose)
+// - Regular cost reviews (weekly for dev/test, monthly for production)
+// - Implement chargeback to create accountability
+// - Use Azure Advisor recommendations
+// - Set up budget alerts per subscription
+// - Require business justification for new resources
+// - Implement resource lifecycle management
+// - Use Infrastructure as Code (IaC) with proper cleanup
+// - Train teams on cost optimization practices
+//
+// Limitations:
+// - VM analysis requires guest agent (AMA or Log Analytics)
+// - Cost estimates are approximate and should be validated
+// - Does not account for reserved instances or spot pricing
+// - May not capture resources unused within last 24-48 hours
+// - Does not analyze all Azure resource types (focus on common waste)
+// - Seasonal workloads may appear unused during off-season
+// - Does not consider licensing costs (SQL Server, Windows, etc.)
+// - Requires diagnostic settings to be properly configured
