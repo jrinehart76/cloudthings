@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (23 of 97)
+## Scripts Updated (25 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -223,7 +223,29 @@ This audit reviewed all PowerShell scripts in the repository for:
     - Improved: Better error handling per deployment
     - Improved: Clear threshold rationale and tuning guidance
 
-## Scripts Requiring Updates (74 remaining)
+24. **infrastructure/scripts/local/VmExtension/Dependency/ta-install-vm-dependency.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Prerequisite checking (Log Analytics agent must be installed first)
+    - Added: Progress tracking and detailed status per VM
+    - Added: Parallel job execution with throttling
+    - Added: Author attribution to Jason Rinehart
+    - Added: Critical installation order documentation (Linux requirement)
+    - Improved: Better error handling and job result processing
+    - Improved: Clear explanation of VM Insights service map benefits
+
+25. **infrastructure/scripts/local/VmExtension/Monitor/ta-remove-vm-monitoring.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Workspace ID comparison logic
+    - Added: Progress tracking and detailed status per VM
+    - Added: AKS node automatic skipping
+    - Added: Author attribution to Jason Rinehart
+    - Added: Workspace migration workflow documentation
+    - Improved: Better error handling and validation
+    - Improved: Safety considerations and next steps guidance
+
+## Scripts Requiring Updates (72 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -438,12 +460,14 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 23 of 97 (24%)
-- **Scripts Remaining:** 74 (76%)
+- **Scripts Updated:** 25 of 97 (26%)
+- **Scripts Remaining:** 72 (74%)
 - **Estimated Time per Script:** 15-30 minutes
-- **Total Estimated Time:** 18.5-37 hours remaining
+- **Total Estimated Time:** 18-36 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
-- **Progress:** Excellent - 14 scripts updated in this session (infrastructure deployment scripts completed)
+- **Progress:** Excellent - 16 scripts updated in this session
+  * Infrastructure deployment scripts: COMPLETE
+  * VM extension scripts: 2 of 6 complete
 
 ## Benefits of Completion
 
