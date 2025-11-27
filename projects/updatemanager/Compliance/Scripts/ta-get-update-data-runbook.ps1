@@ -1,52 +1,148 @@
- <#
-    .DESCRIPTION
-        Used to troubleshoot update management configuration issues.
-        Gathers prerequisite data from Windows or Linux VMs
-        Connects to Azure SQL database for data storage
+<#
+.SYNOPSIS
+    Azure Automation runbook for Update Management compliance scanning across multiple subscriptions.
 
-    .PREREQUISITES
-        Account with access to customer Virtual Machines
-        Azure SQL Database for the customer being scanned
-        Azure Automation Hybrid Runbook Worker
+.DESCRIPTION
+    This runbook orchestrates Update Management compliance scanning across an entire
+    Azure environment. It performs the following operations:
+    
+    1. Authenticates to Azure using Automation Run As account
+    2. Connects to customer subscriptions using service principal
+    3. Discovers VMs across all subscriptions (filtered by resource group)
+    4. Executes diagnostic scripts on Windows and Linux VMs via Invoke-AzVMRunCommand
+    5. Collects compliance data (OS version, agent status, Windows Update config, etc.)
+    6. Stores results in Azure SQL Database for reporting
+    7. Processes multiple subscriptions in parallel with throttling
+    
+    The runbook handles:
+    - Multi-subscription scanning with parallel processing
+    - Both Windows and Linux VM diagnostics
+    - VM power state detection (skips stopped VMs)
+    - Error handling and timeout management
+    - SQL database INSERT and UPDATE operations
+    - Job queue management with throttling
+    
+    Diagnostic data collected includes:
+    - Operating system compatibility
+    - .NET Framework and WMF versions (Windows)
+    - TLS 1.2 configuration
+    - Microsoft Monitoring Agent status
+    - Log Analytics workspace connectivity
+    - Windows Update configuration
+    - Agent errors and permissions
+    
+    This runbook is designed to run on Hybrid Runbook Workers with access to:
+    - Customer Azure subscriptions
+    - Azure SQL Database
+    - Storage account with diagnostic scripts
 
-    .DEPENDENCIES
-        SqlServer
-        Az.Accounts
-        Az.Compute
-        Az.Storage
+.PARAMETER sqlInstance
+    The Azure SQL Server instance URL.
+    Format: <servername>.database.windows.net
+    Example: 'sql-updatemanagement-prod.database.windows.net'
 
-    .PARAMETER sqlInstance
-        The Azure SQL server instance 
+.PARAMETER sqlDatabase
+    The Azure SQL Database name for storing compliance data.
+    Example: 'sqldb-updatemanagement-prod'
 
-    .PARAMETER sqlDatabase
-        The Azure SQL database, specific to the customer being scanned
+.PARAMETER sqlCredentialName
+    The name of the Azure Automation PSCredential asset containing SQL credentials.
+    This credential must have INSERT and UPDATE permissions on the database.
+    Example: 'SQL-UpdateManagement-Credential'
 
-    .PARAMETER sqlCredential
-        The SQL server/database credentials, specific to the customer being scanned
+.PARAMETER CustomerConnectionName
+    The name of the Azure Automation Connection asset for the customer service principal.
+    This connection provides access to customer Azure subscriptions.
+    Example: 'AzureConnection-Customer1'
 
-    .PARAMETER CustomerConnectionName
-        The Azure Automation Connection name for the customer SPN
+.PARAMETER CustomerTenantId
+    The Azure AD Tenant ID for the customer being scanned.
+    Format: GUID (e.g., '12345678-1234-1234-1234-123456789012')
 
-    .PARAMETER CustomerTenantId
-        The Azure AD Tenand Id, specific to the customer being scanned
+.PARAMETER ResourceGroupFilter
+    Resource group name filter for VM discovery.
+    Use '*' to scan all resource groups, or specify a pattern.
+    Example: '*', 'rg-prod-*', 'rg-customer1-*'
 
-    .PARAMETER ResourceGroupFilter
-        Used to filter resource groups, usually set to "*"
+.PARAMETER Throttle
+    Maximum number of subscriptions to process simultaneously.
+    Controls parallel job execution to prevent resource exhaustion.
+    Recommended: 20 for most environments
+    Example: 20
 
-    .PARAMETER Throttle
-        Used to control the number of subscriptions scanned simultaneously, usually 20
-        
-    .TODO
-        None
+.EXAMPLE
+    # This runbook is typically executed via Azure Automation schedule
+    # Parameters are configured in the schedule or passed at runtime
+    
+    Start-AzAutomationRunbook -AutomationAccountName 'aa-updatemanagement-prod' -Name 'UpdateManagement_ComplianceScanner' -ResourceGroupName 'rg-automation-prod' -Parameters @{
+        sqlInstance = 'sql-updatemanagement-prod.database.windows.net'
+        sqlDatabase = 'sqldb-updatemanagement-prod'
+        sqlCredentialName = 'SQL-UpdateManagement-Credential'
+        CustomerConnectionName = 'AzureConnection-Customer1'
+        CustomerTenantId = '12345678-1234-1234-1234-123456789012'
+        ResourceGroupFilter = '*'
+        Throttle = 20
+    }
 
-    .NOTES
-        AUTHOR: David Nite
-        LASTEDIT: 2020.4.14
+.NOTES
+    Author: David Nite
+    Contributors: Jason Rinehart aka Technical Anxiety
+    Blog: https://technicalanxiety.com
+    Last Updated: 2025-01-15
+    
+    Prerequisites:
+    - Azure Automation Account with Hybrid Runbook Worker
+    - Hybrid Worker must have required PowerShell modules (Az, SqlServer)
+    - Azure Automation Run As account configured
+    - Customer service principal connection configured
+    - SQL Server credential asset configured
+    - Storage account with diagnostic scripts (Get-WindowsUMData.ps1, Get-LinuxUMData.py)
+    - Azure SQL Database with updateManagement table schema
+    
+    Execution Environment:
+    - Runs on: Hybrid Runbook Worker
+    - Execution time: Varies by VM count (typically 1-4 hours for 1000+ VMs)
+    - Timeout: 300 seconds per VM diagnostic execution
+    - Parallel processing: Controlled by Throttle parameter
+    
+    Storage Account Configuration:
+    - Resource Group: rg-oms-dev (hardcoded)
+    - Storage Account: platformautomationsa (hardcoded)
+    - Container: updatemanagement
+    - Scripts: Get-WindowsUMData.ps1, Get-LinuxUMData.py
+    
+    SQL Database Operations:
+    - INSERT: New VMs not in database
+    - UPDATE: Existing VMs with updated compliance data
+    - Query: Check for existing VM records
+    
+    Error Handling:
+    - VM extension errors: Flagged in errorstate column
+    - Timeout errors: Logged and flagged
+    - Stopped VMs: Recorded with power state
+    - Unsupported OS: Logged as error
+    
+    Performance Considerations:
+    - Throttle parameter controls subscription parallelism
+    - VM diagnostics run with 300-second timeout
+    - Jobs are queued and processed as workers become available
+    - Large environments may require multiple Hybrid Workers
+    
+    Related Scripts:
+    - ta-install-update-runbooks.ps1: Deploys this runbook
+    - ta-configure-update-worker.ps1: Configures Hybrid Workers
+    - Get-WindowsUMData.ps1: Windows VM diagnostic script
+    - Get-LinuxUMData.py: Linux VM diagnostic script
+    
+    Impact: Provides automated, scheduled Update Management compliance scanning and reporting.
 
-    .CHANGELOG
+.VERSION
+    2.0.0 - Enhanced documentation
 
-    .VERSION
-        1.1.0
+.CHANGELOG
+    2.0.0 - 2025-01-15 - Enhanced documentation and parameter validation
+    1.1.0 - 2020-04-14 - Added multi-subscription support (dnite)
+    1.0.0 - Initial version (dnite)
 #>
 
 param (

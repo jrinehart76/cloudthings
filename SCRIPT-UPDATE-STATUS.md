@@ -1,6 +1,6 @@
 # PowerShell Script Update Status by Category
 
-**Overall Progress: 86 of 97 scripts (89%)**
+**Overall Progress: 94 of 97 scripts (97%)**
 
 ## Category Breakdown
 
@@ -125,15 +125,15 @@
 - ⏳ ta-deploy-paloalto-dmz.ps1
 - ⏳ ta-deploy-paloalto-eastwest.ps1
 
-#### 15. Update Manager Scripts (0/8 - 0%)
-- ⏳ ta-get-update-data-windows.ps1
-- ⏳ ta-configure-update-worker.ps1
-- ⏳ ta-configure-update-database.ps1
-- ⏳ ta-install-update-database.ps1
-- ⏳ ta-install-update-runbooks.ps1
-- ⏳ ta-install-update-sql.ps1
-- ⏳ ta-install-update-worker.ps1
-- ⏳ ta-get-update-data-runbook.ps1
+#### 14. Update Manager Scripts (8/8 - 100%)
+- ✅ ta-get-update-data-windows.ps1
+- ✅ ta-configure-update-worker.ps1
+- ✅ ta-configure-update-database.ps1
+- ✅ ta-install-update-database.ps1
+- ✅ ta-install-update-runbooks.ps1
+- ✅ ta-install-update-sql.ps1
+- ✅ ta-install-update-worker.ps1
+- ✅ ta-get-update-data-runbook.ps1
 
 
 
@@ -141,20 +141,17 @@
 
 | Category | Status | Count | Percentage |
 |----------|--------|-------|------------|
-| ✅ Complete | 13 categories | 86 scripts | 89% |
+| ✅ Complete | 14 categories | 94 scripts | 97% |
 | 🔄 In Progress | 0 categories | 0 scripts | 0% |
-| ⏳ Not Started | 3 categories | 11 scripts | 11% |
-| **TOTAL** | **16 categories** | **97 scripts** | **100%** |
+| ⏳ Not Started | 1 category | 3 scripts | 3% |
+| **TOTAL** | **15 categories** | **97 scripts** | **100%** |
 
 ## Next Priority Areas
 
-1. **Update Manager** (8 scripts)
-   - Update management and compliance scripts
-   - Database and worker configuration
-
-2. **ARM Template Resources** (3 scripts)
+1. **ARM Template Resources** (3 scripts)
    - Network and firewall deployment scripts
    - DNS configuration
+   - Helper utilities
 
 ## Completion Milestones
 
@@ -163,4 +160,4 @@
 - ✅ **75% Complete** - Reached at 73 scripts
 - 🎯 **100% Complete** - Target: 97 scripts
 
-**Current Status: 86/97 scripts (89%) - NEARLY COMPLETE! 🎉**
+**Current Status: 94/97 scripts (97%) - ALMOST DONE! 🎉**

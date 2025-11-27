@@ -1,30 +1,115 @@
- <#
-    .DESCRIPTION
-        Gathers Update Management troubleshooting information from Windows VMs
+<#
+.SYNOPSIS
+    Gathers Update Management troubleshooting and compliance information from Windows VMs.
 
-    .PREREQUISITES
-        Minimum Operating - System Windows 2008 R2
+.DESCRIPTION
+    This script performs comprehensive diagnostics on Windows VMs to validate their
+    readiness for Azure Update Management. It checks:
+    
+    - Operating System version compatibility (Windows Server 2008 R2 SP1+)
+    - .NET Framework version (4.5+ required)
+    - Windows Management Framework (WMF) version (4.0+, 5.1+ preferred)
+    - TLS 1.2 enablement and configuration
+    - Microsoft Monitoring Agent (MMA) service status
+    - MMA event log errors (Event ID 4502)
+    - Crypto RSA MachineKeys folder permissions
+    - Log Analytics workspace connectivity
+    - Windows Update configuration and enablement
+    
+    The script is designed to be executed directly on Windows VMs via Invoke-AzVMRunCommand
+    and returns diagnostic data in JSON format for storage in the compliance database.
+    
+    This diagnostic data enables:
+    - Proactive identification of Update Management issues
+    - Compliance tracking across the VM estate
+    - Troubleshooting of failed update deployments
+    - Reporting on VM update readiness
 
-    .DEPENDENCIES
-        None
-        
-    .TODO
-        None
+.PARAMETER automationAccountLocation
+    The Azure region where the Automation Account is deployed.
+    Used to determine the appropriate Update Management endpoint.
+    Supported regions: australiasoutheast, canadacentral, centralindia, eastus2,
+    japaneast, northeurope, southcentralus, southeastasia, uksouth, westcentralus, westeurope
+    Default: eastus2
 
-    .NOTES
-        AUTHOR: dnite
-        LASTEDIT: 2020.2.26
+.PARAMETER returnCompactFormat
+    Switch parameter to return results in compact format (minimal data).
+    Compact format includes only RuleId, RuleGroupId, CheckResult, and message identifiers.
 
-    .CHANGELOG
+.PARAMETER returnAsJson
+    Switch parameter to return results as JSON string.
+    When not specified, returns formatted string output.
 
-    .VERSION
-        1.0.0
+.EXAMPLE
+    .\ta-get-update-data-windows.ps1 -automationAccountLocation 'eastus2'
+    
+    Runs all diagnostic checks and returns formatted string output.
 
-#> 
+.EXAMPLE
+    .\ta-get-update-data-windows.ps1 -automationAccountLocation 'westeurope' -returnAsJson
+    
+    Runs all diagnostic checks and returns results as JSON for parsing.
+
+.EXAMPLE
+    .\ta-get-update-data-windows.ps1 -returnCompactFormat -returnAsJson
+    
+    Returns compact JSON output suitable for database storage.
+
+.NOTES
+    Author: David Nite
+    Contributors: Jason Rinehart aka Technical Anxiety
+    Blog: https://technicalanxiety.com
+    Last Updated: 2025-01-15
+    
+    Prerequisites:
+    - Windows Server 2008 R2 SP1 or higher
+    - Script must be executed with sufficient permissions to read registry and services
+    - Microsoft Monitoring Agent must be installed (for workspace checks)
+    
+    Diagnostic Checks Performed:
+    1. Operating System version validation
+    2. .NET Framework 4.5+ presence
+    3. Windows Management Framework version
+    4. TLS 1.2 configuration
+    5. MMA service running status
+    6. MMA event log error detection
+    7. Crypto folder permissions
+    8. Log Analytics workspace connectivity
+    9. Windows Update enablement
+    10. Windows Update download options
+    11. Windows Update server location
+    
+    Usage Context:
+    - Typically invoked via Invoke-AzVMRunCommand from ta-get-update-data-runbook.ps1
+    - Results are stored in Azure SQL Database for compliance reporting
+    - Used by Update Management compliance dashboard
+    
+    Related Scripts:
+    - ta-get-update-data-runbook.ps1: Orchestrates execution across multiple VMs
+    - ta-configure-update-database.ps1: Creates the database schema for results
+    - Get-LinuxUMData.py: Linux equivalent of this script
+    
+    Impact: Enables proactive Update Management troubleshooting and compliance tracking.
+
+.VERSION
+    2.0.0 - Enhanced documentation
+
+.CHANGELOG
+    2.0.0 - 2025-01-15 - Enhanced documentation and parameter validation
+    1.0.0 - 2020-02-26 - Initial version (dnite)
+#>
 
 param(
-    [string]$automationAccountLocation,
+    [Parameter(HelpMessage="Azure region where the Automation Account is deployed")]
+    [ValidateSet("australiasoutheast", "canadacentral", "centralindia", "eastus2", 
+                 "japaneast", "northeurope", "southcentralus", "southeastasia", 
+                 "uksouth", "westcentralus", "westeurope")]
+    [string]$automationAccountLocation = "eastus2",
+    
+    [Parameter(HelpMessage="Return results in compact format")]
     [switch]$returnCompactFormat,
+    
+    [Parameter(HelpMessage="Return results as JSON string")]
     [switch]$returnAsJson
 )
 
