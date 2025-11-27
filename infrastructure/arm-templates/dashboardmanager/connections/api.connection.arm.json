@@ -10,7 +10,7 @@
             "name": "MSPDBMDeployConnection",
             "location": "eastus",
             "properties": {
-                "displayName": "10thMagnitudeCMP",
+                "displayName": "MSPDBMDeployConnection",
                 "customParameterValues": {},
                 "api": {
                     "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web/locations/eastus/managedApis/arm"
