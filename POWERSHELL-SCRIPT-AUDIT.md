@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (28 of 97)
+## Scripts Updated (31 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -275,7 +275,35 @@ This audit reviewed all PowerShell scripts in the repository for:
     - Added: Query performance monitoring use cases
     - Improved: Better error handling and progress tracking
 
-## Scripts Requiring Updates (69 remaining)
+29. **infrastructure/scripts/ondemand/ta-get-backup-status-ondemand.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Subscription filtering capability
+    - Added: Progress tracking and summary statistics
+    - Added: Compliance percentage calculation
+    - Added: Author attribution to Jason Rinehart (original by Erlin Tego)
+    - Improved: Better error handling and CSV export
+    - Improved: Identification of unprotected VMs
+
+30. **infrastructure/scripts/ondemand/ta-get-paas-extensions.ps1**
+    - ✅ UPDATED: Already had comprehensive documentation
+    - Verified: Complete comment-based help with all sections
+    - Verified: Author attribution to Jason Rinehart
+    - Verified: Real-world impact statements
+    - Note: Script was already at enterprise standard
+
+31. **infrastructure/scripts/ondemand/ta-get-update-compliance.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Output path parameter
+    - Added: Progress tracking and summary statistics
+    - Added: Helper function documentation
+    - Added: Author attribution to Jason Rinehart
+    - Added: Patch compliance use cases and statistics
+    - Improved: Better error handling and REST API integration
+    - Improved: CSV export with timestamp
+
+## Scripts Requiring Updates (66 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -490,15 +518,16 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 28 of 97 (29%)
-- **Scripts Remaining:** 69 (71%)
+- **Scripts Updated:** 31 of 97 (32%)
+- **Scripts Remaining:** 66 (68%)
 - **Estimated Time per Script:** 15-30 minutes
-- **Total Estimated Time:** 17-34.5 hours remaining
+- **Total Estimated Time:** 16.5-33 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
-- **Progress:** Excellent - 19 scripts updated in this session
-  * Infrastructure deployment scripts: COMPLETE
-  * VM extension scripts: 2 of 6 complete
-  * DiagnosticSettings scripts: 7 of 8 complete
+- **Progress:** Excellent - 22 scripts updated in this session
+  * Infrastructure deployment scripts: COMPLETE (3/3)
+  * VM extension scripts: 2 of 6 complete (33%)
+  * DiagnosticSettings scripts: 7 of 8 complete (87.5%)
+  * Ondemand scripts: COMPLETE (4/4)
 
 ## Benefits of Completion
 
