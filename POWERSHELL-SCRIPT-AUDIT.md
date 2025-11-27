@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (5 of 97)
+## Scripts Updated (16 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -80,7 +80,127 @@ This audit reviewed all PowerShell scripts in the repository for:
    - Added: Prerequisites and dependencies
    - Note: Code logic preserved for automation account compatibility
 
-## Scripts Requiring Updates (92 remaining)
+10. **infrastructure/scripts/local/ta-get-appgateway-listeners.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help
+    - Added: Proper parameter documentation with defaults
+    - Added: Progress tracking and error handling
+    - Added: CSV export with detailed information
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Removed hardcoded paths
+    - Improved: Subscription filtering capability
+
+11. **infrastructure/scripts/local/ServicePrincipals/ta-get-serviceprincipal-expiry.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help
+    - Added: Configurable expiration warning threshold
+    - Added: Progress tracking and summary statistics
+    - Added: Both password and certificate credential checking
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Removed hardcoded paths
+    - Improved: Better error handling and reporting
+
+12. **infrastructure/scripts/local/VmBackup/ta-enable-vm-backup.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help
+    - Added: Proper parameter validation
+    - Added: Parallel job execution with throttling
+    - Added: Progress tracking and summary statistics
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Regional validation
+    - Improved: Better error handling
+
+13. **infrastructure/scripts/local/Deployment/ta-install-alert-actions.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Proper parameter validation
+    - Added: Step-by-step progress tracking
+    - Added: Detailed error handling and verification
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better logging and status reporting
+    - Improved: Deployment summary with timing
+
+14. **infrastructure/scripts/local/StorageProtection/ta-get-fileshares.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help
+    - Added: Subscription filtering capability
+    - Added: Permission error handling
+    - Added: CSV export with detailed properties
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling
+    - Improved: Progress tracking
+
+15. **infrastructure/scripts/local/StorageProtection/ta-create-fileshare-snapshot.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help
+    - Added: Configurable retention period
+    - Added: Automatic old snapshot cleanup
+    - Added: Detailed logging and verification
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling
+    - Improved: Summary statistics
+
+16. **infrastructure/scripts/local/StorageProtection/ta-create-fileshare-backup.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help
+    - Added: Configurable retention period
+    - Added: Progress tracking for multiple containers
+    - Added: Detailed job status reporting
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling
+    - Improved: Summary statistics
+
+17. **infrastructure/scripts/local/VmBootDiagnostics/ta-enable-vm-bootdiag.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help
+    - Added: Parallel job execution with throttling
+    - Added: Storage account validation
+    - Added: Progress tracking and summary statistics
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling
+    - Improved: AllResourceGroups parameter option
+
+18. **infrastructure/scripts/ondemand/ta-get-vm-extensions.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help
+    - Added: Subscription filtering capability
+    - Added: Coverage percentage calculation
+    - Added: CSV export with extension details
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling
+    - Improved: Identification of VMs without extensions
+
+19. **infrastructure/scripts/local/DiagnosticSettings/ta-get-diagnostic-settings.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help
+    - Added: ShowUnconfigured switch for gap analysis
+    - Added: Compliance percentage calculation
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling
+    - Improved: CSV export
+
+20. **infrastructure/scripts/local/DiagnosticSettings/ta-remove-diagnostics-all.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help
+    - Added: WhatIf support for safety
+    - Added: Tag filtering for targeted removal
+    - Added: 10-second safety delay
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling
+    - Improved: Parallel job execution
+
+21. **infrastructure/scripts/local/DiagnosticSettings/ta-set-diagnostics-loganalytics.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Workspace validation
+    - Added: Progress tracking and summary statistics
+    - Added: Parallel job execution with throttling
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling
+    - Improved: Compliance percentage calculation
+    - Improved: Multiple filtering options (tag, type, region)
+
+## Scripts Requiring Updates (76 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -295,11 +415,12 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 9 of 97 (9%)
-- **Scripts Remaining:** 88 (91%)
+- **Scripts Updated:** 21 of 97 (22%)
+- **Scripts Remaining:** 76 (78%)
 - **Estimated Time per Script:** 15-30 minutes
-- **Total Estimated Time:** 22-44 hours
+- **Total Estimated Time:** 19-38 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
+- **Progress:** On track - 12 scripts updated in this session
 
 ## Benefits of Completion
 
