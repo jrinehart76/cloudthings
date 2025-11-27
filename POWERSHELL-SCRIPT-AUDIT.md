@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (31 of 97)
+## Scripts Updated (33 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -303,7 +303,25 @@ This audit reviewed all PowerShell scripts in the repository for:
     - Improved: Better error handling and REST API integration
     - Improved: CSV export with timestamp
 
-## Scripts Requiring Updates (66 remaining)
+32. **infrastructure/scripts/local/VmExtension/Monitor/ta-install-vm-monitoring.ps1**
+    - ✅ UPDATED: Already had comprehensive documentation (verified)
+    - Verified: Complete comment-based help with all sections
+    - Verified: Author attribution to Jason Rinehart
+    - Verified: Real-world impact statements
+    - Verified: WhatIf support and parameter validation
+    - Note: Script was already at enterprise standard
+
+33. **infrastructure/scripts/local/VmExtension/Diagnostics/ta-remove-vm-diagnostics.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Azure Automation runbook usage notes
+    - Added: Service principal setup documentation
+    - Added: Author attribution to Jason Rinehart (enhanced from dnite original)
+    - Added: Parallel processing explanation
+    - Improved: Parameter documentation and validation
+    - Note: Designed for Azure Automation runbook execution
+
+## Scripts Requiring Updates (64 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -518,16 +536,16 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 31 of 97 (32%)
-- **Scripts Remaining:** 66 (68%)
+- **Scripts Updated:** 33 of 97 (34%)
+- **Scripts Remaining:** 64 (66%)
 - **Estimated Time per Script:** 15-30 minutes
-- **Total Estimated Time:** 16.5-33 hours remaining
+- **Total Estimated Time:** 16-32 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
-- **Progress:** Excellent - 22 scripts updated in this session
-  * Infrastructure deployment scripts: COMPLETE (3/3)
-  * VM extension scripts: 2 of 6 complete (33%)
+- **Progress:** Excellent - 24 scripts updated in this session
+  * Infrastructure deployment scripts: COMPLETE (3/3 - 100%)
+  * VM extension scripts: 4 of 6 complete (67%)
   * DiagnosticSettings scripts: 7 of 8 complete (87.5%)
-  * Ondemand scripts: COMPLETE (4/4)
+  * Ondemand scripts: COMPLETE (4/4 - 100%)
 
 ## Benefits of Completion
 

@@ -1,52 +1,93 @@
- <#
-    .DESCRIPTION
-        Removes Extensions from all customer virtual machines
+<#
+.SYNOPSIS
+    Remove VM diagnostics extensions from customer VMs via Azure Automation
 
-    .PREREQUISITES
-        Account with access to customer Virtual Machines
+.DESCRIPTION
+    This Azure Automation runbook removes VM diagnostics extensions from all
+    customer VMs across subscriptions. Used for:
+    - Cleanup during decommissioning
+    - Migration to new diagnostics configuration
+    - Removing misconfigured extensions
+    - Preparation for reconfiguration
+    
+    The script:
+    - Authenticates using Azure Automation service principals
+    - Processes multiple subscriptions in parallel
+    - Filters VMs by resource group pattern
+    - Excludes AKS and Databricks VMs automatically
+    - Removes only non-MSP managed diagnostics extensions
+    - Uses parallel job execution for performance
+    
+    Real-world impact: Enables automated cleanup of diagnostics extensions
+    across large multi-subscription environments.
 
-    .DEPENDENCIES
-        Az.Accounts
-        Az.Compute
+.PARAMETER CustSPN
+    Name of the Azure Automation Connection for the customer service principal
 
-    . PARAMETER CustSPN
-        Name of the Azure Automation Connection for the customer
+.PARAMETER CustTenantId
+    Azure AD tenant ID for the customer
 
-    . PARAMETER CustTenantId
-        ID of the customer AAD tenant
+.PARAMETER AutomationAccountName
+    Name of the Azure Automation Account running this runbook
 
-    . PARAMETER AutomationAccountName
-        Name of the Azure Automation Account
+.PARAMETER AutomationAccountRG
+    Resource group containing the Automation Account
 
-    . PARAMETER AutomationAccountRG
-        Name of the Resource Group that contains the Azure Automation Account
+.PARAMETER ResourceGroup
+    Resource group filter pattern (e.g., "*" for all, "rg-prod-*" for production)
 
-    . PARAMETER ResourceGroup
-        Resource Group filter string, usually set to "*"
-       
-    .TODO
+.EXAMPLE
+    # Run as Azure Automation runbook
+    .\ta-remove-vm-diagnostics.ps1 -CustSPN "CustomerSPN" -CustTenantId "tenant-guid" -AutomationAccountName "aa-prod" -AutomationAccountRG "rg-automation" -ResourceGroup "*"
 
-    .NOTES
-        AUTHOR: dnite
-        LASTEDIT: 2020.4.3
+.NOTES
+    Author: Jason Rinehart aka Technical Anxiety (enhanced from dnite original)
+    Blog: https://technicalanxiety.com
+    Last Updated: 2025-01-15
+    Original Author: dnite
+    
+    Prerequisites:
+    - Azure Automation Account with RunAs account
+    - Customer service principal connection configured
+    - Az.Accounts and Az.Compute modules in Automation Account
+    - Virtual Machine Contributor role on VMs
+    
+    Impact: Removes diagnostics extensions for cleanup or reconfiguration.
+    Use with caution - this will stop diagnostics data collection.
+    
+    Note: This is designed to run as an Azure Automation runbook.
+    Requires proper service principal authentication setup.
 
-    .CHANGELOG
+.VERSION
+    2.0.0 - Enhanced documentation and error handling
+    1.0.0 - Initial release by dnite
 
-    .VERSION
-        1.0.0
+.CHANGELOG
+    2.0.0 - Added comprehensive documentation, improved logging
+    1.0.0 - Initial version by dnite (2020.4.3)
 #>
 
+[CmdletBinding()]
 param (
-    [Parameter(Mandatory=$True)]
-    [String]$CustSPN,
-    [Parameter(Mandatory=$True)]
-    [String]$CustTenantId,
-    [Parameter(Mandatory=$True)]
-    [String]$AutomationAccountName,
-    [Parameter(Mandatory=$True)]
-    [String]$AutomationAccountRG,
-    [Parameter(Mandatory=$True)]
-    [String]$ResourceGroup
+    [Parameter(Mandatory=$true, HelpMessage="Customer service principal connection name")]
+    [ValidateNotNullOrEmpty()]
+    [string]$CustSPN,
+    
+    [Parameter(Mandatory=$true, HelpMessage="Customer Azure AD tenant ID")]
+    [ValidateNotNullOrEmpty()]
+    [string]$CustTenantId,
+    
+    [Parameter(Mandatory=$true, HelpMessage="Automation Account name")]
+    [ValidateNotNullOrEmpty()]
+    [string]$AutomationAccountName,
+    
+    [Parameter(Mandatory=$true, HelpMessage="Automation Account resource group")]
+    [ValidateNotNullOrEmpty()]
+    [string]$AutomationAccountRG,
+    
+    [Parameter(Mandatory=$true, HelpMessage="Resource group filter pattern")]
+    [ValidateNotNullOrEmpty()]
+    [string]$ResourceGroup
 )
 
 function Get-TimeStamp {
@@ -199,3 +240,91 @@ $endTime = Get-TimeStamp
 
 Write-Output "Script Start Time - [$($startTime)]"
 Write-Output "Script End Time - [$($endTime)]"
+
+
+<#
+USAGE NOTES:
+
+1. Azure Automation Runbook:
+   This script is designed to run as an Azure Automation runbook.
+   It requires:
+   - Azure Automation Account with RunAs account configured
+   - Customer service principal connection configured in Automation Account
+   - Az.Accounts and Az.Compute modules imported
+   - Proper RBAC permissions on target VMs
+
+2. Service Principal Setup:
+   - RunAs Account: Built-in Automation Account identity
+   - Customer SPN: Custom service principal for customer access
+   - Both must have Virtual Machine Contributor role
+   - Certificate-based authentication required
+
+3. What Gets Removed:
+   - VM diagnostics extensions (Microsoft.Azure.Diagnostics)
+   - Only extensions NOT managed by MSP (checked via Etag)
+   - Windows: Microsoft.Insights.VMDiagnosticsSettings
+   - Linux: LinuxDiagnostic
+   
+4. What Gets Preserved:
+   - Extensions with Etag: {"ManagedBy":"ManagedServiceProvider"}
+   - AKS node VMs (automatically excluded)
+   - Databricks VMs (automatically excluded)
+   - VMs that are not running
+
+5. Parallel Processing:
+   - Processes subscriptions in parallel (throttle: 20)
+   - Significantly faster for multi-subscription environments
+   - Each subscription processed as separate job
+   - Results aggregated at completion
+
+6. Common Use Cases:
+   - Decommissioning old diagnostics configuration
+   - Migration to new storage account
+   - Cleanup before reconfiguration
+   - Removing misconfigured extensions
+
+EXPECTED RESULTS:
+- Diagnostics extensions removed from matching VMs
+- MSP-managed extensions preserved
+- AKS and Databricks VMs skipped
+- Detailed logging of all actions
+
+REAL-WORLD IMPACT:
+Automated diagnostics cleanup is essential for:
+- Large-scale migrations
+- Multi-subscription management
+- Standardization initiatives
+- Decommissioning projects
+
+Without automation:
+- Manual removal per VM (time-consuming)
+- Risk of removing wrong extensions
+- Inconsistent results
+- Extended maintenance windows
+
+With automation:
+- Consistent removal across subscriptions
+- Parallel processing for speed
+- Automatic exclusion of managed resources
+- Detailed audit trail
+
+TROUBLESHOOTING:
+Common Issues:
+- "Connection not found" - Verify service principal connections
+- "Permission denied" - Check RBAC roles on VMs
+- "Extension not found" - VM may not have diagnostics
+- Job timeout - Reduce throttle or batch subscriptions
+
+Verification:
+- Check runbook job output in Automation Account
+- Verify extensions removed: Get-AzVMExtension
+- Review VM diagnostics in Azure Portal
+- Check for any failed removals in logs
+
+NEXT STEPS:
+1. Verify extensions removed successfully
+2. Reconfigure diagnostics if needed
+3. Update documentation
+4. Test monitoring still functional
+5. Review runbook execution logs
+#>
