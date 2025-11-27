@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (25 of 97)
+## Scripts Updated (28 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -245,7 +245,37 @@ This audit reviewed all PowerShell scripts in the repository for:
     - Improved: Better error handling and validation
     - Improved: Safety considerations and next steps guidance
 
-## Scripts Requiring Updates (72 remaining)
+26. **infrastructure/scripts/local/DiagnosticSettings/ta-remove-diagnostics-byname.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Tag filtering for targeted removal
+    - Added: Parallel job execution with throttling
+    - Added: Progress tracking and summary statistics
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling and job result processing
+    - Improved: Safety through targeted removal by name
+
+27. **infrastructure/scripts/local/DiagnosticSettings/ta-set-diagnostics-hub.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Event Hub configuration for real-time log streaming
+    - Added: Parallel job execution with throttling
+    - Added: Progress tracking and summary statistics
+    - Added: Author attribution to Jason Rinehart
+    - Added: SIEM integration use cases and benefits
+    - Improved: Better error handling and validation
+
+28. **infrastructure/scripts/local/DiagnosticSettings/ta-set-diagnostics-mysql.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: MySQL-specific diagnostic configuration
+    - Added: Workspace validation
+    - Added: Parallel job execution with throttling
+    - Added: Author attribution to Jason Rinehart
+    - Added: Query performance monitoring use cases
+    - Improved: Better error handling and progress tracking
+
+## Scripts Requiring Updates (69 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -460,14 +490,15 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 25 of 97 (26%)
-- **Scripts Remaining:** 72 (74%)
+- **Scripts Updated:** 28 of 97 (29%)
+- **Scripts Remaining:** 69 (71%)
 - **Estimated Time per Script:** 15-30 minutes
-- **Total Estimated Time:** 18-36 hours remaining
+- **Total Estimated Time:** 17-34.5 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
-- **Progress:** Excellent - 16 scripts updated in this session
+- **Progress:** Excellent - 19 scripts updated in this session
   * Infrastructure deployment scripts: COMPLETE
   * VM extension scripts: 2 of 6 complete
+  * DiagnosticSettings scripts: 7 of 8 complete
 
 ## Benefits of Completion
 
