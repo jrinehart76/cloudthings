@@ -12,7 +12,7 @@ This audit reviewed all PowerShell scripts in the repository for:
 3. Code quality and improvements
 4. Adherence to enterprise coding standards
 
-## Scripts Updated (35 of 97)
+## Scripts Updated (46 of 97)
 
 ### ✅ Fully Updated Scripts
 
@@ -343,7 +343,91 @@ This audit reviewed all PowerShell scripts in the repository for:
     - Added: Query Store and performance tuning use cases
     - Improved: Better error handling and progress tracking
 
-## Scripts Requiring Updates (62 remaining)
+36. **infrastructure/arm-templates/automationscripts/ta-configure-diagnostics-runbook.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Progress tracking and summary statistics
+    - Added: Better error handling for unsupported resources
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Resource Graph query formatting
+    - Improved: Cleaner output with status indicators
+
+37. **infrastructure/arm-templates/automationscripts/ta-enable-backup-runbook.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Progress tracking and summary statistics
+    - Added: Regional validation and mismatch tracking
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling and validation
+    - Improved: Detailed connection and vault information
+
+38. **infrastructure/arm-templates/automationscripts/ta-enable-bootdiag-runbook.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Tag-based filtering (PLATFORMMonitored=y)
+    - Added: Progress tracking and summary statistics
+    - Added: Storage account validation
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling per VM
+
+39. **infrastructure/arm-templates/automationscripts/ta-install-loganalytics-runbook.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Migration notes for Azure Monitor Agent (AMA)
+    - Added: Progress tracking and summary statistics
+    - Added: Workspace key retrieval and validation
+    - Added: Author attribution to Jason Rinehart
+    - Improved: OS-specific extension handling
+    - Improved: Better error handling and validation
+
+40. **infrastructure/arm-templates/automationscripts/ta-install-dependency-runbook.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Critical installation order documentation (Linux requirement)
+    - Added: Progress tracking with multiple status categories
+    - Added: Prerequisite checking (Log Analytics agent)
+    - Added: VM power state validation
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling and status tracking
+
+41. **infrastructure/arm-templates/automationscripts/ta-enable-diagnostics-runbook.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Progress tracking and summary statistics
+    - Added: Unsupported resource type handling
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error categorization
+    - Improved: Workspace validation
+
+42. **infrastructure/arm-templates/automationscripts/ta-create-fileshare-snapshot-runbook.ps1**
+    - ✅ UPDATED: Complete rewrite
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Configurable retention period (default 7 days)
+    - Added: Snapshot validation and verification
+    - Added: Detailed cleanup logging
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Better error handling and validation
+    - Improved: Storage account and file share validation
+
+43. **infrastructure/arm-templates/platformtools/alerts/ta-alerts-agent.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Parameter validation
+    - Added: Deployment status output
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Error handling for deployment
+
+44. **infrastructure/arm-templates/platformtools/alerts/ta-alerts-windows.ps1**
+    - ✅ UPDATED: Enhanced documentation
+    - Added: Comprehensive comment-based help with all sections
+    - Added: Detailed threshold documentation
+    - Added: Parameter validation
+    - Added: Deployment summary with all alert types
+    - Added: Author attribution to Jason Rinehart
+    - Improved: Error handling for each deployment
+    - Improved: Clear output for each alert type
+
+## Scripts Requiring Updates (51 remaining)
 
 ### High Priority - Missing Documentation
 
@@ -558,8 +642,8 @@ Target metrics for all scripts:
 
 ## Estimated Effort
 
-- **Scripts Updated:** 35 of 97 (36%)
-- **Scripts Remaining:** 62 (64%)
+- **Scripts Updated:** 46 of 97 (47%)
+- **Scripts Remaining:** 51 (53%)
 - **Estimated Time per Script:** 15-30 minutes
 - **Total Estimated Time:** 15.5-31 hours remaining
 - **Recommended Approach:** 2-4 hours per day over 2-3 weeks
