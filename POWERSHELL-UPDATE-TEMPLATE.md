@@ -334,11 +334,13 @@ Get-Help .\ScriptName.ps1 -Examples
 ## Common Improvements
 
 ### Before: Hardcoded Path
+
 ```powershell
 $csvFile = "C:\Users\JasonRinehart\Documents\output.csv"
 ```
 
 ### After: Dynamic Path
+
 ```powershell
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $outputPath = [Environment]::GetFolderPath("MyDocuments")
@@ -346,12 +348,14 @@ $csvFile = Join-Path $outputPath "output-$timestamp.csv"
 ```
 
 ### Before: No Error Handling
+
 ```powershell
 $vm = Get-AzVM -Name $vmName
 Stop-AzVM -Name $vmName -Force
 ```
 
 ### After: Proper Error Handling
+
 ```powershell
 try {
     $vm = Get-AzVM -Name $vmName -ErrorAction Stop
@@ -366,6 +370,7 @@ try {
 ```
 
 ### Before: No Progress Tracking
+
 ```powershell
 foreach ($vm in $vms) {
     # Process VM
@@ -373,6 +378,7 @@ foreach ($vm in $vms) {
 ```
 
 ### After: With Progress Tracking
+
 ```powershell
 $total = $vms.Count
 $current = 0
@@ -391,6 +397,7 @@ foreach ($vm in $vms) {
 - **Patch (1.0.X)**: Bug fixes, documentation updates
 
 For this update effort:
+
 - Scripts with complete rewrites: Bump to 2.0.0
 - Scripts with enhanced documentation only: Bump to 1.1.0
 - Scripts with minor fixes: Bump to 1.0.1
