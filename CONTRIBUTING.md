@@ -14,12 +14,14 @@ Thank you for your interest in contributing! This repository aims to provide pro
 ### Submitting Changes
 
 1. **Fork the repository**
+
    ```bash
    git clone https://github.com/yourusername/cloudthings.git
    cd cloudthings
    ```
 
 2. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -30,12 +32,14 @@ Thank you for your interest in contributing! This repository aims to provide pro
    - Test your changes thoroughly
 
 4. **Commit your changes**
+
    ```bash
    git add .
    git commit -m "Description of your changes"
    ```
 
 5. **Push to your fork**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -81,7 +85,8 @@ Thank you for your interest in contributing! This repository aims to provide pro
 
 ## Code Style
 
-### ARM Templates
+### ARM Template Format
+
 ```json
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -97,7 +102,8 @@ Thank you for your interest in contributing! This repository aims to provide pro
 }
 ```
 
-### PowerShell
+### PowerShell Format
+
 ```powershell
 <#
 .SYNOPSIS
@@ -114,7 +120,8 @@ Thank you for your interest in contributing! This repository aims to provide pro
 #>
 ```
 
-### KQL
+### KQL Format
+
 ```kql
 // Query description
 // Expected result: What this query returns
@@ -136,6 +143,7 @@ Before submitting:
 ## What We're Looking For
 
 ### High Priority
+
 - Bug fixes
 - Security improvements
 - Performance optimizations
@@ -143,6 +151,7 @@ Before submitting:
 - Updated API versions
 
 ### Welcome Contributions
+
 - New ARM templates for common scenarios
 - Additional KQL queries for monitoring
 - Automation runbooks
@@ -150,6 +159,7 @@ Before submitting:
 - Real-world examples
 
 ### Not Accepting
+
 - Templates for deprecated Azure services
 - Code using deprecated APIs without migration path
 - Undocumented changes
