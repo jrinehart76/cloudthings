@@ -5,6 +5,7 @@ A production-ready Azure landing zone designed for healthcare organizations requ
 ## Overview
 
 This landing zone implements all technical safeguards required by HIPAA, including:
+
 - Access controls (§164.312(a)(1))
 - Audit controls (§164.312(b))
 - Integrity controls (§164.312(c)(1))
@@ -13,7 +14,7 @@ This landing zone implements all technical safeguards required by HIPAA, includi
 
 ## Architecture
 
-```
+```text
 Healthcare HIPAA Landing Zone
 │
 ├── Management Groups
@@ -74,8 +75,9 @@ Healthcare HIPAA Landing Zone
 ## HIPAA Compliance Mapping
 
 ### Administrative Safeguards
+
 | Requirement | Implementation |
-|-------------|----------------|
+| ----------- | -------------- |
 | Security Management Process | Azure Policy, Security Center |
 | Workforce Security | Azure AD, RBAC, PIM |
 | Information Access Management | Conditional Access, JIT |
@@ -83,15 +85,17 @@ Healthcare HIPAA Landing Zone
 | Security Incident Procedures | Azure Sentinel, Playbooks |
 
 ### Physical Safeguards
+
 | Requirement | Implementation |
-|-------------|----------------|
+| ----------- | -------------- |
 | Facility Access Controls | Azure Data Centers (SOC 2, ISO 27001) |
 | Workstation Security | Bastion Host, No Direct Access |
 | Device and Media Controls | Managed Disks, Encryption |
 
 ### Technical Safeguards
+
 | Requirement | Implementation |
-|-------------|----------------|
+| ----------- | -------------- |
 | Access Control | Azure AD, RBAC, PIM, MFA |
 | Audit Controls | Log Analytics, 365-day retention |
 | Integrity | File Integrity Monitoring |
@@ -101,6 +105,7 @@ Healthcare HIPAA Landing Zone
 ## Deployment
 
 ### Prerequisites
+
 - Azure subscription with Owner access
 - Azure AD Premium P2 licenses
 - Terraform 1.0+ or Azure CLI
@@ -109,6 +114,7 @@ Healthcare HIPAA Landing Zone
 ### Step 1: Configure Parameters
 
 Edit `parameters.json`:
+
 ```json
 {
   "organizationName": "contoso-health",
@@ -194,12 +200,14 @@ az security contact create \
 ## Security Features
 
 ### Encryption
+
 - **At Rest:** AES-256 encryption for all storage
 - **In Transit:** TLS 1.2+ for all connections
 - **Key Management:** Azure Key Vault with HSM backing
 - **Certificate Management:** Automated rotation
 
 ### Network Security
+
 - **Segmentation:** Hub-spoke topology with NSGs
 - **Firewall:** Azure Firewall with threat intelligence
 - **Private Connectivity:** Private endpoints for all PaaS
@@ -207,12 +215,14 @@ az security contact create \
 - **Bastion:** Secure RDP/SSH without public IPs
 
 ### Identity Protection
+
 - **MFA:** Required for all users
 - **Conditional Access:** Risk-based policies
 - **PIM:** Just-in-time privileged access
 - **Identity Protection:** Risk detection and remediation
 
 ### Monitoring
+
 - **Log Retention:** 365 days minimum
 - **SIEM:** Azure Sentinel with analytics rules
 - **Alerts:** Security events trigger automated response
@@ -223,7 +233,7 @@ az security contact create \
 Monthly costs for typical healthcare deployment (approximate):
 
 | Component | Monthly Cost |
-|-----------|--------------|
+| --------- | ------------ |
 | Compute (VMs) | $2,000 - $5,000 |
 | Networking | $500 - $1,000 |
 | Storage | $500 - $1,500 |
@@ -233,27 +243,31 @@ Monthly costs for typical healthcare deployment (approximate):
 | Backup | $200 - $500 |
 | **Total** | **$4,000 - $10,600** |
 
-*Costs vary based on scale and usage patterns*
+> Costs vary based on scale and usage patterns
 
 ## Maintenance
 
 ### Daily
+
 - Review security alerts
 - Monitor backup status
 - Check compliance dashboard
 
 ### Weekly
+
 - Review access logs
 - Validate policy compliance
 - Update threat intelligence
 
 ### Monthly
+
 - Security assessment
 - Cost optimization review
 - Compliance reporting
 - Certificate expiration check
 
 ### Quarterly
+
 - Disaster recovery test
 - Security training
 - Policy review and updates
@@ -262,6 +276,7 @@ Monthly costs for typical healthcare deployment (approximate):
 ## Compliance Reporting
 
 ### Built-in Reports
+
 - HIPAA Compliance Dashboard
 - Security Posture Score
 - Audit Log Summary
@@ -269,6 +284,7 @@ Monthly costs for typical healthcare deployment (approximate):
 - Encryption Status Report
 
 ### Custom Reports
+
 ```bash
 # Generate compliance report
 ./scripts/generate-compliance-report.sh --format pdf
@@ -283,16 +299,19 @@ Monthly costs for typical healthcare deployment (approximate):
 ## Disaster Recovery
 
 ### RPO/RTO Targets
+
 - **Production:** RPO 1 hour, RTO 4 hours
 - **Non-Production:** RPO 24 hours, RTO 8 hours
 
 ### Backup Strategy
+
 - Daily VM backups (retained 30 days)
 - Database backups every 6 hours
 - Geo-redundant storage
 - Automated testing monthly
 
 ### Failover Process
+
 1. Declare disaster
 2. Activate DR team
 3. Failover to secondary region
@@ -319,6 +338,7 @@ Monthly costs for typical healthcare deployment (approximate):
 ## Support
 
 For issues or questions:
+
 1. Review troubleshooting guide
 2. Check Azure Service Health
 3. Consult HIPAA compliance documentation
