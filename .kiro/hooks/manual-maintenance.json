@@ -1,0 +1,34 @@
+{
+  "name": "Manual Maintenance Operations",
+  "description": "Manual triggers for bulk operations and quality assurance",
+  "triggers": [
+    {
+      "event": "manual",
+      "name": "Generate Documentation",
+      "description": "Bulk generate or update documentation across the repository",
+      "action": "send_message",
+      "message": "Running bulk documentation generation. I will:\n1. Scan all Bicep templates and ensure they have proper README files\n2. Check all PowerShell scripts for documentation compliance\n3. Validate parameter documentation matches actual template parameters\n4. Generate missing parameter files for Bicep templates\n5. Update folder-level README files for navigation\n6. Provide a summary of what was updated or needs attention"
+    },
+    {
+      "event": "manual",
+      "name": "Validate All Templates",
+      "description": "Comprehensive validation of all Bicep templates and scripts",
+      "action": "send_message",
+      "message": "Running comprehensive template validation. I will:\n1. Validate syntax of all Bicep templates using az deployment validate\n2. Check PowerShell scripts for syntax errors and best practices\n3. Verify all parameter files are valid JSON and match templates\n4. Test all internal links in README files\n5. Check for security issues (hardcoded secrets, etc.)\n6. Provide detailed validation report with any issues found"
+    },
+    {
+      "event": "manual", 
+      "name": "Update Blog Mappings",
+      "description": "Review and update BLOG-TO-CODE-MAPPING.md with new content",
+      "action": "send_message",
+      "message": "Updating BLOG-TO-CODE-MAPPING.md. I will:\n1. Scan repository for new implementations not yet mapped\n2. Suggest blog articles from technicalanxiety.com that relate to new content\n3. Identify existing implementations that could be better connected\n4. Recommend new sections or categories for the mapping\n5. Check for broken links to blog articles\n6. Suggest improvements to existing mapping entries"
+    },
+    {
+      "event": "manual",
+      "name": "Repository Health Check", 
+      "description": "Comprehensive repository quality and organization review",
+      "action": "send_message",
+      "message": "Running repository health check. I will:\n1. Review folder organization and suggest improvements\n2. Identify outdated content that should be archived\n3. Check version consistency across related templates\n4. Validate all cross-references and related resource links\n5. Review security practices across all implementations\n6. Suggest opportunities for new content based on gaps\n7. Provide recommendations for repository optimization"
+    }
+  ]
+}

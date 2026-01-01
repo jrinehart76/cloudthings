@@ -1,0 +1,24 @@
+{
+  "name": "File Save Automation",
+  "description": "Automatically validate and update documentation when files are saved",
+  "triggers": [
+    {
+      "event": "file_saved",
+      "filePattern": "**/*.bicep",
+      "action": "send_message",
+      "message": "A Bicep template was saved at {filePath}. Please:\n1. Validate the template syntax and parameters\n2. Extract parameter information for documentation\n3. Check if README.md exists and update parameter table\n4. Suggest blog article connections if this is new content\n5. Recommend BLOG-TO-CODE-MAPPING.md updates if applicable"
+    },
+    {
+      "event": "file_saved", 
+      "filePattern": "**/*.ps1",
+      "action": "send_message",
+      "message": "A PowerShell script was saved at {filePath}. Please:\n1. Check syntax and validate comment-based help\n2. Verify parameter validation and error handling\n3. Update or create README.md using the PowerShell template\n4. Suggest blog article connections for new scripts\n5. Check if BLOG-TO-CODE-MAPPING.md needs updates"
+    },
+    {
+      "event": "file_saved",
+      "filePattern": "**/README.md",
+      "action": "send_message", 
+      "message": "A README file was updated at {filePath}. Please:\n1. Validate all links (blog articles, internal references)\n2. Check formatting and template compliance\n3. Verify parameter documentation matches actual files\n4. Suggest related resources that might be missing"
+    }
+  ]
+}

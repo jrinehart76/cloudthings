@@ -1,0 +1,24 @@
+{
+  "name": "New Content Creation Assistance",
+  "description": "Provide guidance and automation when new content is created",
+  "triggers": [
+    {
+      "event": "folder_created",
+      "filePattern": "infrastructure/**",
+      "action": "send_message",
+      "message": "A new infrastructure folder was created at {filePath}. I can help you:\n1. Generate a README.md using the appropriate template\n2. Create a basic folder structure for this Azure service\n3. Suggest blog articles that might relate to this implementation\n4. Set up parameter file templates\n5. Add entry to BLOG-TO-CODE-MAPPING.md if connected to existing content"
+    },
+    {
+      "event": "folder_created",
+      "filePattern": "scripts/**",
+      "action": "send_message",
+      "message": "A new scripts folder was created at {filePath}. I can help you:\n1. Set up the folder structure (powershell/, python/, etc.)\n2. Create README.md with script documentation standards\n3. Suggest blog articles that might relate to these scripts\n4. Provide script templates with proper headers and error handling"
+    },
+    {
+      "event": "file_created",
+      "filePattern": "**/*.bicep",
+      "action": "send_message",
+      "message": "A new Bicep template was created at {filePath}. Let me help you:\n1. Generate a comprehensive README.md using the Bicep template\n2. Create a matching .parameters.json file with placeholder values\n3. Suggest blog articles from Technical Anxiety that relate to this implementation\n4. Recommend related templates and scripts in the repository\n5. Add appropriate entry to BLOG-TO-CODE-MAPPING.md"
+    }
+  ]
+}
