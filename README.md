@@ -19,7 +19,7 @@ This repository connects blog articles from [Technical Anxiety](https://technica
 ## What's Inside
 
 ### 🏗️ Infrastructure & Governance
-- **ARM Templates & Policies** - Enterprise governance implementing the five disciplines from [From Base Camp to Summit](https://technicalanxiety.com/basecamp-summit/)
+- **ARM Templates & Policies** - Enterprise governance implementing the five disciplines from [From Base Camp to Summit](https://www.technicalanxiety.com/basecamp-summit/)
 - **Landing Zones** - Production-ready environments including Healthcare HIPAA compliance
 - **Alert Management** - Comprehensive alerting configurations for critical, security, and operational events
 - All templates follow current Azure API versions and enterprise patterns
@@ -107,7 +107,7 @@ az deployment sub create \
 ### 🟢 Getting Started: "I need to reduce cloud costs immediately"
 **Time Investment:** 30 minutes | **Expected Savings:** 20-30%
 
-1. **Learn the Why:** [From Base Camp to Summit - Cost Management](https://technicalanxiety.com/basecamp-summit/)
+1. **Learn the Why:** [From Base Camp to Summit](https://www.technicalanxiety.com/basecamp-summit/)
 2. **Quick Wins:** Run [Cost Optimization Queries](infrastructure/log-analytics/cost-optimization/)
 3. **Implement:** Deploy basic [Cost Management Policies](infrastructure/arm-templates/policies/)
 4. **Measure:** Track savings with automated reporting
@@ -117,7 +117,7 @@ az deployment sub create \
 ### 🟡 Intermediate: "I need comprehensive security governance"
 **Time Investment:** 2-4 weeks | **Expected Outcome:** 100% policy compliance
 
-1. **Understand the Framework:** [From Base Camp to Summit - Security Baseline](https://technicalanxiety.com/basecamp-summit/)
+1. **Understand the Framework:** [From Base Camp to Summit](https://www.technicalanxiety.com/basecamp-summit/)
 2. **Assess Current State:** Run [Security Monitoring Queries](infrastructure/log-analytics/security-monitoring/)
 3. **Deploy Incrementally:** Implement [Security Policies](infrastructure/arm-templates/policies/) using phased approach
 4. **Monitor Continuously:** Set up automated compliance reporting
@@ -127,7 +127,7 @@ az deployment sub create \
 ### 🔴 Advanced: "I need a production-ready HIPAA environment"
 **Time Investment:** 2-4 weeks | **Expected Outcome:** Audit-ready compliance
 
-1. **Master the Concepts:** [Governance in Azure](https://technicalanxiety.com/azure-governance/)
+1. **Master the Concepts:** [Governance in Azure?](https://www.technicalanxiety.com/governance-in-azure/)
 2. **Plan Architecture:** Review [Healthcare HIPAA Landing Zone](infrastructure/landing-zones/healthcare-hipaa/) design
 3. **Deploy with Governance:** Full landing zone with integrated compliance controls
 4. **Validate Compliance:** Complete audit checklist and documentation
@@ -155,13 +155,13 @@ These templates and patterns have been proven across 100+ organizations with mea
 This repository implements concepts from these Technical Anxiety articles with progressive complexity:
 
 ### Foundation Articles
-- **[Governance in Azure](https://technicalanxiety.com/azure-governance/)** - Core concepts and management groups
-- **[From Base Camp to Summit](https://technicalanxiety.com/basecamp-summit/)** - Five governance disciplines with real-world examples
-- **[Using Log Analytics](https://technicalanxiety.com/log-analytics/)** - Beyond basic logging to actionable insights
+- **[Governance in Azure?](https://www.technicalanxiety.com/governance-in-azure/)** - Core concepts and management groups  
+- **[From Base Camp to Summit](https://www.technicalanxiety.com/basecamp-summit/)** - Five governance disciplines with real-world examples
+- **[Governance Disciplines Deep Dive](https://www.technicalanxiety.com/governance-disciplines-deep-dive/)** - Quick reference guide to the five governance disciplines
 
-### Advanced Operations
-- **[Operational Change Series](https://technicalanxiety.com/operations/)** - Cloud operations transformation patterns
-- **AI and Intelligent Operations** - Future-focused automation approaches
+### Advanced Operations  
+- **[Operational Change - Part 1](https://www.technicalanxiety.com/operational-change-part-1/)** - The translation problem in cloud operations
+- **[Operational Change - Part 2](https://www.technicalanxiety.com/operational-change-part-2/)** - The operations waterline and AI-enabled systems
 
 **Complete Mapping:** See [BLOG-TO-CODE-MAPPING.md](BLOG-TO-CODE-MAPPING.md) for detailed connections between articles and implementations.
 
