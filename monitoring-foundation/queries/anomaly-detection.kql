@@ -1,0 +1,36 @@
+// ============================================================================
+// ERROR RATE ANOMALY DETECTION (Part 2)
+// Detects error rate spikes against baseline
+// ============================================================================
+
+let errorThreshold = 2.0;  // Adjust per environment
+let baselineWindow = 7d;
+let currentWindow = 15m;
+let baseline = AppRequests
+| where TimeGenerated between (ago(baselineWindow) .. ago(currentWindow))
+| summarize
+    ['Baseline Total'] = count(),
+    ['Baseline Errors'] = countif(Success == false)
+    by Name
+| extend ['Baseline Error Rate'] = round(100.0 * ['Baseline Errors'] / ['Baseline Total'], 2);
+let current = AppRequests
+| where TimeGenerated > ago(currentWindow)
+| summarize
+    ['Current Total'] = count(),
+    ['Current Errors'] = countif(Success == false)
+    by Name
+| extend ['Current Error Rate'] = round(100.0 * ['Current Errors'] / ['Current Total'], 2);
+baseline
+| join kind=inner current on Name
+| where ['Current Total'] > 10
+| extend ['Error Rate Change'] = ['Current Error Rate'] - ['Baseline Error Rate']
+| where ['Current Error Rate'] > errorThreshold
+| where ['Error Rate Change'] > 2.0
+| project
+    Name,
+    ['Current Error Rate'],
+    ['Baseline Error Rate'],
+    ['Error Rate Change'],
+    ['Current Errors'],
+    ['Current Total']
+| order by ['Error Rate Change'] desc

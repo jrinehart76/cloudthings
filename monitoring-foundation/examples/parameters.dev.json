@@ -1,0 +1,36 @@
+{
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "dev"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "namePrefix": {
+      "value": "mon"
+    },
+    "retentionDays": {
+      "value": 30
+    },
+    "alertEmailAddresses": {
+      "value": [
+        "dev-team@yourcompany.com"
+      ]
+    },
+    "itsmWebhookUrl": {
+      "value": ""
+    },
+    "enableSelfHealing": {
+      "value": false
+    },
+    "tags": {
+      "value": {
+        "environment": "dev",
+        "managedBy": "monitoring-foundation",
+        "costCenter": "development",
+        "owner": "dev-team"
+      }
+    }
+  }
+}

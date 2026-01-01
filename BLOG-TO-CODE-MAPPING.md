@@ -10,6 +10,73 @@ Each blog article explains the "why" and "what." This repository provides the "h
 
 ## 📚 Blog Article Index
 
+### Monitoring & Operations
+
+#### [Monitoring Foundation: The Reference Implementation](https://technicalanxiety.com/monitoring-reference/)
+
+**Topic:** Deploy the Beyond Azure Monitor patterns as infrastructure code
+
+**Implementation:**
+
+- **Complete Monitoring Stack:** [`/monitoring-foundation/`](monitoring-foundation/)
+  - Main orchestration template with environment-aware thresholds
+  - Log Analytics workspace with saved KQL searches from the series
+  - Action groups for email and ITSM webhook integration
+  - Context-aware alert rules with business hours intelligence
+  - Operational workbooks for NOC teams
+
+- **Bicep Templates:**
+  - [`main.bicep`](monitoring-foundation/main.bicep) - Complete deployment orchestration
+  - [`modules/log-analytics.bicep`](monitoring-foundation/modules/log-analytics.bicep) - Workspace with saved searches
+  - [`modules/action-groups.bicep`](monitoring-foundation/modules/action-groups.bicep) - Notification routing
+  - [`modules/alert-rules.bicep`](monitoring-foundation/modules/alert-rules.bicep) - Intelligent alert rules
+  - [`modules/workbooks.bicep`](monitoring-foundation/modules/workbooks.bicep) - Operational dashboards
+
+- **KQL Query Library:** [`/monitoring-foundation/queries/`](monitoring-foundation/queries/)
+  - [`context-aware-cpu.kql`](monitoring-foundation/queries/context-aware-cpu.kql) - Business hours CPU monitoring
+  - [`dynamic-baseline.kql`](monitoring-foundation/queries/dynamic-baseline.kql) - Historical performance comparison
+  - [`service-correlation.kql`](monitoring-foundation/queries/service-correlation.kql) - Cross-service error correlation
+  - [`capacity-prediction.kql`](monitoring-foundation/queries/capacity-prediction.kql) - 7-day capacity forecasting
+  - [`anomaly-detection.kql`](monitoring-foundation/queries/anomaly-detection.kql) - Error rate spike detection
+
+- **Deployment Automation:**
+  - [`Deploy-MonitoringFoundation.ps1`](monitoring-foundation/scripts/Deploy-MonitoringFoundation.ps1) - PowerShell deployment script
+  - Environment-specific parameter files for dev, staging, and production
+  - Validation-only mode for dry runs
+
+**Key Patterns Implemented:**
+
+- **Context-Aware Monitoring:** CPU thresholds adjust based on business hours (70% during business, 85% after hours)
+- **Dynamic Baselines:** Response time alerts compare against 14-day historical patterns instead of static thresholds
+- **Predictive Alerting:** Capacity prediction alerts warn 7 days before resources hit 85% utilization
+- **Anomaly Detection:** Error rate monitoring uses statistical analysis to reduce false positives
+- **Environment Intelligence:** Thresholds automatically adjust based on dev/staging/prod deployment
+
+**Enterprise Architecture Benefits:**
+
+- **Cost Optimization:** Prevents over-alerting in dev (90% CPU threshold) vs production (75% threshold)
+- **Operational Efficiency:** Workbooks surface actionable information instead of raw metrics
+- **ITSM Integration:** Webhook support for ServiceNow, PagerDuty, and other ticketing systems
+- **Scalable Deployment:** Single command deploys complete monitoring stack across environments
+
+**Real-World Impact:**
+
+- Reduces alert noise by 60-80% through intelligent thresholds
+- Enables proactive capacity management with 7-day forecasting
+- Correlates application errors with infrastructure events for faster MTTR
+- Provides NOC teams with actionable dashboards instead of metric overload
+
+**Quick Start:**
+```bash
+# Deploy to production
+az deployment group create \
+  --resource-group rg-monitoring \
+  --template-file monitoring-foundation/main.bicep \
+  --parameters @monitoring-foundation/examples/parameters.prod.json
+```
+
+---
+
 ### Governance
 
 #### [From Base Camp to Summit](https://technicalanxiety.com/basecamp-summit/)
@@ -184,6 +251,13 @@ Each blog article explains the "why" and "what." This repository provides the "h
 
 ## 🎯 Quick Navigation by Use Case
 
+### "I need intelligent monitoring that reduces noise"
+
+1. Read: [Monitoring Foundation: The Reference Implementation](https://technicalanxiety.com/monitoring-reference/)
+2. Deploy: [Monitoring Foundation](monitoring-foundation/)
+3. Customize: Adjust business hours and thresholds in alert rules
+4. Expected: 60-80% reduction in alert noise, proactive capacity warnings
+
 ### "I need to reduce cloud costs"
 
 1. Read: [From Base Camp to Summit - Cost Management](https://technicalanxiety.com/basecamp-summit/)
@@ -221,6 +295,15 @@ Each blog article explains the "why" and "what." This repository provides the "h
 
 ## 📊 Impact Metrics
 
+### Monitoring & Alerting
+
+| Blog Claim | Implementation | Validation |
+| ---------- | -------------- | ---------- |
+| 60-80% reduction in alert noise | Context-aware thresholds + dynamic baselines | Alert volume before/after |
+| 7-day capacity forecasting | capacity-prediction.kql | Actual vs predicted capacity |
+| Business hours intelligence | context-aware-cpu.kql | Threshold adjustment verification |
+| Cross-service correlation | service-correlation.kql | MTTR improvement metrics |
+
 ### Cost Management
 
 | Blog Claim | Implementation | Validation |
@@ -251,6 +334,7 @@ This mapping is updated as new blog articles are published and new implementatio
 
 ### Recently Added
 
+- **2025-01-01:** Monitoring Foundation - Complete Beyond Azure Monitor implementation
 - **2025-01-15:** From Base Camp to Summit implementation
 - **2025-01-15:** Log Analytics query library
 - **2025-01-15:** Healthcare HIPAA landing zone
@@ -278,12 +362,20 @@ Found a better way to implement something from the blog? Contributions welcome!
 1. [Governance in Azure](https://technicalanxiety.com/azure-governance/) → [Landing Zones](infrastructure/landing-zones/)
 2. [From Base Camp to Summit](https://technicalanxiety.com/basecamp-summit/) → [Policies](infrastructure/arm-templates/policies/)
 3. [Using Log Analytics](https://technicalanxiety.com/log-analytics/) → [Queries](infrastructure/log-analytics/)
+4. [Monitoring Foundation](https://technicalanxiety.com/monitoring-reference/) → [Monitoring Foundation](monitoring-foundation/)
 
 ### For Experienced Architects
 
 1. [From Base Camp to Summit](https://technicalanxiety.com/basecamp-summit/) → [Five Disciplines](infrastructure/arm-templates/policies/FIVE-DISCIPLINES.md)
-2. [Operational Change Series](https://technicalanxiety.com/operations/) → [Automation](infrastructure/automation/)
-3. Review landing zones for patterns
+2. [Monitoring Foundation](https://technicalanxiety.com/monitoring-reference/) → [Intelligent Monitoring](monitoring-foundation/)
+3. [Operational Change Series](https://technicalanxiety.com/operations/) → [Automation](infrastructure/automation/)
+4. Review landing zones for patterns
+
+### For Operations Teams
+
+1. [Monitoring Foundation](https://technicalanxiety.com/monitoring-reference/) → [Intelligent Monitoring](monitoring-foundation/)
+2. [Using Log Analytics](https://technicalanxiety.com/log-analytics/) → [Operational Queries](infrastructure/log-analytics/operational-health/)
+3. [Operational Change Series](https://technicalanxiety.com/operations/) → [Automation Runbooks](infrastructure/automation/)
 
 ### For Security Teams
 

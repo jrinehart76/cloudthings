@@ -1,0 +1,39 @@
+// ============================================================================
+// DYNAMIC BASELINE PERFORMANCE (Part 1)
+// Compares current performance against 14-day historical patterns
+// ============================================================================
+
+let lookbackPeriod = 14d;
+let currentWindow = 1h;
+let historicalPattern = AppRequests
+| where TimeGenerated between (ago(lookbackPeriod) .. ago(currentWindow))
+| extend ['Hour of Day'] = hourofday(TimeGenerated)
+| extend ['Day of Week'] = toint(dayofweek(TimeGenerated) / 1d)
+| summarize
+    ['Baseline Mean'] = avg(DurationMs),
+    ['Baseline StdDev'] = stdev(DurationMs),
+    ['Baseline P95'] = percentile(DurationMs, 95)
+    by Name, ['Hour of Day'], ['Day of Week']
+| where ['Baseline Mean'] > 0;
+let currentPerformance = AppRequests
+| where TimeGenerated > ago(currentWindow)
+| extend ['Hour of Day'] = hourofday(TimeGenerated)
+| extend ['Day of Week'] = toint(dayofweek(TimeGenerated) / 1d)
+| summarize
+    ['Current Mean'] = avg(DurationMs),
+    ['Current P95'] = percentile(DurationMs, 95),
+    ['Request Count'] = count()
+    by Name, ['Hour of Day'], ['Day of Week'];
+historicalPattern
+| join kind=inner currentPerformance on Name, ['Hour of Day'], ['Day of Week']
+| extend ['Performance Ratio'] = ['Current Mean'] / ['Baseline Mean']
+| extend ['Deviation Score'] = (['Current Mean'] - ['Baseline Mean']) / ['Baseline StdDev']
+| where ['Request Count'] > 10
+| project
+    Name,
+    ['Current Mean'],
+    ['Baseline Mean'],
+    ['Performance Ratio'],
+    ['Deviation Score'],
+    ['Request Count']
+| order by ['Deviation Score'] desc

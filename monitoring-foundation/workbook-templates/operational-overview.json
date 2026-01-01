@@ -1,0 +1,83 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# Operational Overview\n\nReal-time operational health across infrastructure and applications. Click any row to drill down.\n\n---"
+      },
+      "name": "header"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "timeRange",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 3600000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                { "durationMs": 900000, "displayText": "Last 15 minutes" },
+                { "durationMs": 1800000, "displayText": "Last 30 minutes" },
+                { "durationMs": 3600000, "displayText": "Last hour" },
+                { "durationMs": 14400000, "displayText": "Last 4 hours" },
+                { "durationMs": 86400000, "displayText": "Last 24 hours" }
+              ]
+            }
+          }
+        ]
+      },
+      "name": "parameters"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "Heartbeat | where TimeGenerated > ago({TimeRange:value}) | summarize LastHeartbeat = max(TimeGenerated) by Computer, OSType | extend Status = case(LastHeartbeat > ago(5m), \"Online\", LastHeartbeat > ago(15m), \"Warning\", \"Offline\") | summarize Online = countif(Status == \"Online\"), Warning = countif(Status == \"Warning\"), Offline = countif(Status == \"Offline\") | extend Total = Online + Warning + Offline",
+        "size": 4,
+        "title": "System Status Summary",
+        "queryType": 0,
+        "visualization": "tiles"
+      },
+      "name": "systemStatusSummary"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "Heartbeat | where TimeGenerated > ago({TimeRange:value}) | summarize LastHeartbeat = max(TimeGenerated) by Computer, OSType | extend Status = case(LastHeartbeat > ago(5m), \"Online\", LastHeartbeat > ago(15m), \"Warning\", \"Offline\") | order by Status desc, Computer asc",
+        "size": 0,
+        "title": "System Status Detail",
+        "exportFieldName": "Computer",
+        "exportParameterName": "SelectedComputer",
+        "queryType": 0
+      },
+      "name": "systemStatusDetail"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "Perf | where TimeGenerated > ago({TimeRange:value}) | where Computer == '{SelectedComputer}' or '{SelectedComputer}' == '' | where ObjectName has 'processor' and CounterName has 'processor time' and InstanceName has 'total' | summarize AvgCPU = avg(CounterValue), MaxCPU = max(CounterValue) by bin(TimeGenerated, 5m) | order by TimeGenerated asc",
+        "size": 0,
+        "title": "CPU Trend",
+        "queryType": 0,
+        "visualization": "timechart"
+      },
+      "conditionalVisibility": {
+        "parameterName": "SelectedComputer",
+        "comparison": "isNotEqualTo",
+        "value": ""
+      },
+      "name": "cpuTrend"
+    }
+  ],
+  "fallbackResourceIds": []
+}

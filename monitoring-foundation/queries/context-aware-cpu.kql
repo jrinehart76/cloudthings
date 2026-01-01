@@ -1,0 +1,29 @@
+// ============================================================================
+// CONTEXT-AWARE CPU MONITORING (Part 1)
+// Adjusts thresholds based on business hours
+// ============================================================================
+
+let businessHours = datatable(['Day of Week']:int, ['Start Hour']:int, ['End Hour']:int) [
+    1, 8, 18,  // Monday 8am-6pm
+    2, 8, 18,  // Tuesday
+    3, 8, 18,  // Wednesday
+    4, 8, 18,  // Thursday
+    5, 8, 18   // Friday
+];
+Perf
+| where TimeGenerated > ago(15m)
+| where ObjectName has 'processor'
+    and CounterName has 'processor time'
+    and InstanceName has 'total'
+| extend ['Day of Week'] = toint(dayofweek(TimeGenerated) / 1d)
+| extend ['Current Hour'] = hourofday(TimeGenerated)
+| join kind=leftouter businessHours on ['Day of Week']
+| extend ['Is Business Hours'] = (['Current Hour'] >= ['Start Hour'] and ['Current Hour'] <= ['End Hour'])
+| extend ['CPU Threshold'] = iff(['Is Business Hours'], 70.0, 85.0)
+| where CounterValue > ['CPU Threshold']
+| summarize
+    ['Average CPU'] = avg(CounterValue),
+    ['Max CPU'] = max(CounterValue),
+    ['Sample Count'] = count()
+    by Computer, bin(TimeGenerated, 5m)
+| where ['Sample Count'] >= 3

@@ -1,0 +1,37 @@
+// ============================================================================
+// CROSS-SERVICE ERROR CORRELATION (Part 2)
+// Correlates application errors with infrastructure events
+// ============================================================================
+
+let timeWindow = 1h;
+let appErrors = AppExceptions
+| where TimeGenerated > ago(timeWindow)
+| summarize ['App Errors'] = count() by bin(TimeGenerated, 5m), ['Service'] = AppRoleName;
+let infraEvents = Perf
+| where TimeGenerated > ago(timeWindow)
+| where ObjectName has 'processor' and CounterName has 'processor time'
+| where CounterValue > 80
+| summarize ['High CPU Events'] = count() by bin(TimeGenerated, 5m), ['Service'] = Computer;
+let dbLatency = AzureDiagnostics
+| where TimeGenerated > ago(timeWindow)
+| where ResourceType == 'SERVERS/DATABASES'
+| where MetricName == 'cpu_percent' and Average > 70
+| summarize ['DB Pressure Events'] = count() by bin(TimeGenerated, 5m), ['Service'] = Resource;
+appErrors
+| join kind=fullouter infraEvents on TimeGenerated
+| join kind=fullouter dbLatency on TimeGenerated
+| extend ['Correlation Window'] = TimeGenerated
+| summarize
+    ['Total App Errors'] = sum(['App Errors']),
+    ['Total CPU Events'] = sum(['High CPU Events']),
+    ['Total DB Events'] = sum(['DB Pressure Events'])
+    by bin(['Correlation Window'], 15m)
+| where ['Total App Errors'] > 0
+| extend ['Infra Correlation'] = iff(['Total CPU Events'] > 0, 'CPU Pressure Detected', 'No CPU Issues')
+| extend ['DB Correlation'] = iff(['Total DB Events'] > 0, 'Database Pressure Detected', 'No DB Issues')
+| project
+    ['Time Window'] = ['Correlation Window'],
+    ['Application Errors'] = ['Total App Errors'],
+    ['Infrastructure Status'] = ['Infra Correlation'],
+    ['Database Status'] = ['DB Correlation']
+| order by ['Time Window'] desc

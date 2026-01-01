@@ -1,0 +1,37 @@
+{
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "staging"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "namePrefix": {
+      "value": "mon"
+    },
+    "retentionDays": {
+      "value": 60
+    },
+    "alertEmailAddresses": {
+      "value": [
+        "staging-team@yourcompany.com",
+        "platform-team@yourcompany.com"
+      ]
+    },
+    "itsmWebhookUrl": {
+      "value": ""
+    },
+    "enableSelfHealing": {
+      "value": false
+    },
+    "tags": {
+      "value": {
+        "environment": "staging",
+        "managedBy": "monitoring-foundation",
+        "costCenter": "platform",
+        "owner": "platform-team"
+      }
+    }
+  }
+}
